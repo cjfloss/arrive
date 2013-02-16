@@ -16,7 +16,7 @@ set (DOLLAR "$")
 list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 add_subdirectory (src)
-#add_subdirectory(po)
+add_subdirectory(po)
 
 install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/Arrive.desktop DESTINATION share/applications)
 install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/arrive.svg DESTINATION share/icons/hicolor/48x48/apps)

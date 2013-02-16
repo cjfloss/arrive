@@ -47,10 +47,10 @@ public class Arrive.Widgets.DownloadingList : Object {
         selected_files=get_selected_files();    
         message("sleceted length %ud".printf(selected_files.length()));
         var menu = new Gtk.Menu();
-        var start = new Gtk.MenuItem.with_label("Continue");
-        var pause = new Gtk.MenuItem.with_label("Pause");
-        var cancel = new Gtk.MenuItem.with_label("Cancel");
-        var properties = new Gtk.MenuItem.with_label("Properties");
+        var start = new Gtk.MenuItem.with_label(_("Continue"));
+        var pause = new Gtk.MenuItem.with_label(_("Pause"));
+        var cancel = new Gtk.MenuItem.with_label(_("Cancel"));
+        var properties = new Gtk.MenuItem.with_label(_("Properties"));
         //TODO:implement right click event
         start.activate.connect(()=>{
             foreach(Arrive.Model.DownloadItem d_item in selected_files){

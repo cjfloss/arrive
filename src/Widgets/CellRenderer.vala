@@ -26,7 +26,7 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
             if(_file.total_length!=0)download_progress_renderer.value=(int)(100*_file.completed_length/_file.total_length);
             download_progress_renderer.text="%s/%s".printf(format_size(_file.completed_length)
                                                                       ,format_size(_file.total_length));
-            status_renderer.text="status:%s pieces:%d".printf(_file.status,_file.num_pieces);
+            status_renderer.text=_("status:%s pieces:%d").printf(_file.status,_file.num_pieces);
             
             download_renderer.text=format_size(_file.download_speed)+"ps";
             upload_renderer.text=format_size(_file.upload_speed)+"ps";
@@ -221,8 +221,8 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
         ri_renderer.render(ctx, widget, ri_renderer_rect, ri_renderer_rect, flags);//time icon
     }
     private string get_remaining_time(){
-        if(_file.download_speed==0)return "unknown";
-        if(_file.total_length<_file.completed_length)return "few seconds";
+        if(_file.download_speed==0)return _("unknown");
+        if(_file.total_length<_file.completed_length)return _("few seconds");
         uint64 seconds = (_file.total_length-_file.completed_length)/_file.download_speed;
         
         string remaining="";
@@ -230,28 +230,28 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
         //divided by one week
         div = seconds/604800;
         if(div>=1){
-            remaining+="%lldw".printf(div);
+            remaining+=_("%lldw").printf(div);
             seconds=seconds%604800;
         }
         //divided by one day
         div = seconds/86400;
         if(div>=1){
-            remaining+="%lldd".printf(div);
+            remaining+=_("%lldd").printf(div);
             seconds=seconds%86400;
         }
         //divided by one day
         div = seconds/3600;
         if(div>=1){
-            remaining+="%lldh".printf(div);
+            remaining+=_("%lldh").printf(div);
             seconds=seconds%3600;
         }
 //~         //divided by one minute
         div = seconds/60;
         if(div>=1){
-            remaining+="%lldm".printf(div);
+            remaining+=_("%lldm").printf(div);
             seconds=seconds%60;
         }
-        remaining += "%llds".printf(seconds);
+        remaining += _("%llds").printf(seconds);
         return remaining;
         
     }
