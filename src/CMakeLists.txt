@@ -12,11 +12,12 @@ add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 #install (FILES ${CMAKE_BINARY_DIR}/src/appcenter.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig/)
 # appcenter
 
-set (ARRIVE_DEPS "gtk+-3.0;granite;libsoup-2.4;libxml-2.0")
+set (ARRIVE_DEPS "gtk+-3.0;granite;libsoup-2.4;gee-1.0;unity;")
 find_package (PkgConfig)
 pkg_check_modules (GTK+ REQUIRED "gtk+-3.0 >= 3.4")
 pkg_check_modules (LIBGRANITE REQUIRED "granite")
 pkg_check_modules (DEPS REQUIRED ${ARRIVE_DEPS} gthread-2.0)
+pkg_check_modules (LIBUNITY REQUIRED "unity")
 set(NORMAL_CFLAGS ${DEPS_CFLAGS} ${LIBSOURCE_CFLAGS} ${GCONF_CFLAGS})
 set(NORMAL_LINK_DIRS ${DEPS_LIBRARY_DIRS} ${LIBSOURCE_LIBRARY_DIRS} ${GCONF_LIBRARY_DIRS})
 set(NORMAL_LIBRARIES ${DEPS_LIBRARIES} ${LIBSOURCE_LIBRARIES} ${GCONF_LIBRARIES})
@@ -27,15 +28,24 @@ vala_precompile(VALA_C
     Arrive.vala
     config.vala
     Widgets/MainWindow.vala
+    Widgets/PauseButton.vala
+    Widgets/AddFileDialog.vala
+    #Widgets/AddFilePopOver.vala
     Widgets/CellRenderer.vala
     Widgets/DownloadingList.vala
     Widgets/FinishedList.vala
-    Model/Aria2Model.vala
+    Model/Aria2.vala
+    Model/IDownloadItem.vala
+    Model/DownloadItem.vala
+    Model/IDownloadList.vala
+    Model/DownloadList.vala
+    #Model/LauncherEntry.vala
 PACKAGES
     ${ARRIVE_DEPS}
 OPTIONS
     --vapidir=${CMAKE_SOURCE_DIR}/vapi
     --thread
+    -g
 )
 
 add_executable (arrive ${VALA_C})
