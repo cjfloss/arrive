@@ -1,0 +1,124 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-17 00:27+0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Arrive.vala:35
+msgid "Download Manager that support http,ftp, torrent, and metalink"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Model/DownloadItem.vala:89
+msgid "cant get filename"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/DownloadingList.vala:50
+msgid "Continue"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/DownloadingList.vala:51
+msgid "Pause"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/DownloadingList.vala:52
+msgid "Cancel"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/DownloadingList.vala:53
+msgid "Properties"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/AddFileDialog.vala:11
+msgid "Uri :"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/AddFileDialog.vala:30
+msgid "Save to :"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/AddFileDialog.vala:31
+msgid "Save to"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/AddFileDialog.vala:34
+msgid "Segment :"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/AddFileDialog.vala:38
+msgid "Add to list"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/AddFileDialog.vala:57
+msgid "http/ftp"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/AddFileDialog.vala:58
+msgid "torrent"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/AddFileDialog.vala:59
+msgid "metalink"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/MainWindow.vala:77
+msgid "Search"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/MainWindow.vala:92
+msgid "Downloading"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/MainWindow.vala:93
+msgid "Finished"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/CellRenderer.vala:29
+#, c-format
+msgid "status:%s pieces:%d"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/CellRenderer.vala:224
+msgid "unknown"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/CellRenderer.vala:225
+msgid "few seconds"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/CellRenderer.vala:233
+#, c-format
+msgid "%lldw"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/CellRenderer.vala:239
+#, c-format
+msgid "%lldd"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/CellRenderer.vala:245
+#, c-format
+msgid "%lldh"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/CellRenderer.vala:251
+#, c-format
+msgid "%lldm"
+msgstr ""
+
+#: /home/vikoadi/Dokumen/vala/arrive/po/../src/Widgets/CellRenderer.vala:254
+#, c-format
+msgid "%llds"
+msgstr ""
