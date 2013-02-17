@@ -35,26 +35,46 @@ public class Arrive.Widgets.AddFileDialog : Granite.Widgets.LightWindow{
         var segment_spin1 = new Gtk.SpinButton.with_range(1,16,1);
         grid1.attach(segment_spin1,5,1,1,1);
         
-        Gtk.Button add_button1 = new Gtk.Button.with_label(_("Add to list"));
+        var add_button1 = new Gtk.Button.with_label(_("Add to list"));
         add_button1.clicked.connect(()=>{
             if(uri_entry1.text!="http://"){  
-                var  d_item= new Arrive.Model.DownloadItem();
+                //var  d_item= new Arrive.Model.DownloadItem();
                 
                 var v_array = new ValueArray(0);
                 v_array.append(uri_entry1.text);
-                d_item.uris=v_array;
+                //d_item.uris=v_array;
                 
                 var option = new HashTable<string,Value?>(str_hash,str_equal);
                 option.insert("dir",file_chooser1.get_uris().nth_data(0).replace("file://",""));
                 option.insert("split",segment_spin1.get_value_as_int().to_string());
-//~                 Arrive.App.aria2.add_uri(v_array, option);
-                d_item.start(option);
-                Arrive.App.aria2.download_list.add_file(d_item);
+                Soup.Message msg = Soup.XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.addUri",typeof(ValueArray),v_array,typeof(HashTable),option);
+
+                string data = send_message (msg);
+        //~         stdout.printf(data);
+                Arrive.App.aria2.download_list.list_changed();
             }
             this.destroy();
             Logger.notification("addFileDialog destroyed");
         });
-        
+//~         var add_paused_button1 = new Gtk.Button.with_label(_("Add paused"));
+//~         add_paused_button1.clicked.connect(()=>{
+//~             if(uri_entry1.text!="http://"){  
+//~                 var  d_item= new Arrive.Model.DownloadItem();
+//~                 
+//~                 var v_array = new ValueArray(0);
+//~                 v_array.append(uri_entry1.text);
+//~                 d_item.uris=v_array;
+//~                 
+//~                 var option = new HashTable<string,Value?>(str_hash,str_equal);
+//~                 option.insert("dir",file_chooser1.get_uris().nth_data(0).replace("file://",""));
+//~                 option.insert("split",segment_spin1.get_value_as_int().to_string());
+//~                 Arrive.App.aria2.download_list.add_file(d_item);
+//~             }
+//~             this.destroy();
+//~             Logger.notification("addFileDialog destroyed");
+//~         });        
+//~         
+//~         grid1.attach(add_paused_button1,4,2,1,1);
         grid1.attach(add_button1,5,2,1,1);
         grid1.margin=12;
         grid1.margin_top = 0;
@@ -65,5 +85,11 @@ public class Arrive.Widgets.AddFileDialog : Granite.Widgets.LightWindow{
         this.add(static_notebook);
         //get_content_area().add(uri_entry);
 
+    }
+    private string send_message(Soup.Message msg) {
+        var session = new Soup.SessionSync();
+        session.send_message(msg);
+        string data = (string) msg.response_body.flatten().data;
+        return data;
     }
 }

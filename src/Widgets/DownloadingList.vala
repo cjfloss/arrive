@@ -1,5 +1,5 @@
 public class Arrive.Widgets.DownloadingList : Object {
-    private static int REFRESH_TIME=200;
+    private static int REFRESH_TIME=1000;
     public Gtk.ScrolledWindow widget;
     private Gtk.ListStore list_store;
     private Gtk.TreeView tree_view;
@@ -11,24 +11,22 @@ public class Arrive.Widgets.DownloadingList : Object {
         tree_view.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE);
         widget = new Gtk.ScrolledWindow(null, null);
         widget.add(tree_view);
-        
-        
-//~         tree_view.get_selection().changed.connect((object)=>{
-//~                 message("button release event");
-//~         });
+
         tree_view.button_press_event.connect((event)=>{
-                if(event.button==3){                        
-                        show_popup_menu(event);
-                }
-                return false;
+            if(event.button==3){                        
+                show_popup_menu(event);
+            }
+            return false;
         });
-        
-        Arrive.App.aria2.download_list.add_file.connect((file)=>{
                 
-                Gtk.TreeIter iter;
-                list_store.append(out iter);
-                list_store.set(iter,0,file);
-                message("added %s\n",file.filename);
+        Arrive.App.aria2.download_list.list_changed.connect(()=>{
+            //message("pupulate list store, list store lenght %");
+            populate_list_store();
+//~             populate_list_store();
+//~             Gtk.TreeIter iter;
+//~             list_store.append(out iter);
+//~             list_store.set(iter,0,file);
+//~             message("added %s\n",file.filename);
         });
         
         var cell_renderer = new Arrive.Widgets.DownloadCellRenderer ();
@@ -36,11 +34,24 @@ public class Arrive.Widgets.DownloadingList : Object {
         
         var refresh_timer = new TimeoutSource(REFRESH_TIME);
         refresh_timer.set_callback(()=>{
+            //populate_list_store();
             tree_view.queue_draw();
             return true;
         });
         refresh_timer.attach(null);
         message("DownloadingList created");
+    }
+    private void populate_list_store(){
+        uint len=0;
+        list_store.clear();
+        foreach(Arrive.Model.DownloadItem file in Arrive.App.aria2.download_list._list){
+            Gtk.TreeIter iter;
+            list_store.append(out iter);
+            list_store.set(iter,0,file);
+            len++;
+//~             message("added %s\n",file.filename);
+        }
+        message("list store lenght %u", len);
     }
     private void show_popup_menu(Gdk.EventButton event){
         List<Arrive.Model.DownloadItem> selected_files;
@@ -53,7 +64,8 @@ public class Arrive.Widgets.DownloadingList : Object {
         //TODO:implement right click event
         start.activate.connect(()=>{
             foreach(Arrive.Model.DownloadItem d_item in selected_files){
-                d_item.unpause();
+                if(d_item.status=="paused")d_item.unpause();
+                if(d_item.status=="")d_item.start(null);
             }
         });
         pause.activate.connect(()=>{
@@ -63,7 +75,7 @@ public class Arrive.Widgets.DownloadingList : Object {
         });
         cancel.activate.connect(()=>{
             foreach(Arrive.Model.DownloadItem d_item in selected_files){
-                d_item.refresh_status();
+                d_item.remove();
             }
         });
 //~         properties.connect();
@@ -80,7 +92,8 @@ public class Arrive.Widgets.DownloadingList : Object {
     private bool allow_start(List<Arrive.Model.DownloadItem> selected_files){
         bool allow=false;
         foreach(Arrive.Model.DownloadItem d_item in selected_files){
-            if(d_item.status=="paused")allow=false;
+            if(d_item.status=="paused")allow=true;
+            if(d_item.status=="")allow=true;
         }
         return allow;
     }

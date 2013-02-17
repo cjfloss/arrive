@@ -68,40 +68,6 @@ public class Arrive.Model.Aria2 : Object {
             
         }
     }
-//~     public void add_file(ValueArray uris) {
-//~         DownloadItem d_item = new DownloadItem();
-//~         d_item.gid = add_uri(uris);
-//~         message("uri added");
-//~         download_list.add_file((DownloadItem) d_item);
-//~     }
-    public void add_uri(ValueArray uris, HashTable<string,Value?> option) {
-//~         DownloadItem d_item = new DownloadItem();
-//~         var option = new HashTable<string,Value?>(str_hash,str_equal);
-//~         option.insert("dir","/home/vikoadi");
-        
-//~         Soup.Message msg = XMLRPC.request_new(aria_uri,"aria2.addUri",typeof(ValueArray),uris,typeof(HashTable),option);
-//~         string data = send_message (msg);
-//~         stdout.printf(data);
-//~         try {
-//~             Value v = Value(typeof(string));
-//~             if(XMLRPC.parse_method_response(data, -1, out v)) {
-//~                 string gid;
-//~                 if(v.holds(typeof(string))){
-//~                     gid = v.get_string();
-//~                     Granite.Services.Logger.notification("added gid = %s \n".printf(gid));
-//~                     d_item.gid=gid;
-//~                     download_list.add_file(d_item);
-//~                 }
-//~             }else{
-//~                 message("cant pares_method_response");
-//~             }
-//~         } catch(Error e) {
-//~             message("Error while processing addUri response");
-//~         }
-//~         message("cant adduri");
-    }
-    public void remove_file(string GID) {
-    }
     private void refresh_status() {
         get_global_stat();
         get_global_option();

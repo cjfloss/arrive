@@ -3,7 +3,7 @@ using Soup;
 public class Arrive.Model.DownloadItem:Object {
 //~     public DownloadType tipe{get;set;}
     public string status{get;set;default="";}
-    private static int REFRESH_TIME=500;
+    private static int REFRESH_TIME=1000;
     private string _gid;
     public  string gid{
         get{return _gid;}
@@ -32,7 +32,7 @@ public class Arrive.Model.DownloadItem:Object {
 //~         status=Status.WAITING;
         var refresh_timer = new TimeoutSource(REFRESH_TIME);
         refresh_timer.set_callback(()=>{
-            if(status=="active")refresh_status();
+           // if(status=="active")refresh_status();
             return true;
         });
         refresh_timer.attach(null);
@@ -64,6 +64,11 @@ public class Arrive.Model.DownloadItem:Object {
         }
         //message("cant adduri");
     }
+    public void remove(){
+        Soup.Message msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.remove",typeof(string),gid);
+        send_message (msg);
+        refresh_status();
+    }
     public void pause(){
         Soup.Message msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.pause",typeof(string),gid);
         send_message (msg);
@@ -75,19 +80,22 @@ public class Arrive.Model.DownloadItem:Object {
         refresh_status();
     }
     public void refresh_status(){
-        tell_status();
+        //tell_status();
     }
-    public void tell_status(){
-        Soup.Message msg = Soup.XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.tellStatus",typeof(string),gid);
-        string data = send_message (msg);
-        //stdout.printf(data);
-        try {
-            Value v;
-            if(Soup.XMLRPC.parse_method_response(data, -1, out v) && v.holds(typeof(HashTable))) {
+    public void tell_status(Value v){
+//~         Soup.Message msg = Soup.XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.tellStatus",typeof(string),gid);
+//~         string data = send_message (msg);
+//~         //stdout.printf(data);
+//~         try {
+//~             Value v;
+            if(/*Soup.XMLRPC.parse_method_response(data, -1, out v) &&*/ v.holds(typeof(HashTable))) {
                 HashTable<string,Value?> ht;
                 Value val;
                 
                 ht = (HashTable<string,Value?>) v;
+
+                val=ht.get("gid");
+                gid=val.get_string();
                 
                 val=ht.get("totalLength");
                 total_length=uint64.parse(val.get_string());
@@ -128,11 +136,11 @@ public class Arrive.Model.DownloadItem:Object {
                 status = val.get_string();
             }else{
                 Granite.Services.Logger.notification("cant parse_method_response");
-                stdout.printf(data+"\n");
+                //stdout.printf(data+"\n");
             }
-        } catch(Error e) {
-            message("Error while processing tellStatus response");
-        }
+//~         } catch(Error e) {
+//~             message("Error while processing tellStatus response");
+//~         }
     }
     private string parse_filename(string path){
         if (path!=null && path!=""){
