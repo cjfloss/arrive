@@ -44,8 +44,7 @@ public class Arrive.Widgets.DownloadingList : Object {
     }
     private void show_popup_menu(Gdk.EventButton event){
         List<Arrive.Model.DownloadItem> selected_files;
-        selected_files=get_selected_files();    
-        message("sleceted length %ud".printf(selected_files.length()));
+        selected_files=get_selected_files();
         var menu = new Gtk.Menu();
         var start = new Gtk.MenuItem.with_label(_("Continue"));
         var pause = new Gtk.MenuItem.with_label(_("Pause"));

@@ -19,7 +19,7 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
             
             icon_renderer.pixbuf=get_icon_for_file();
             
-            file_name_renderer.text=_file.filename;//parse file from path
+            //file_name_renderer.text=_file.filename;//parse file from path
             file_name_renderer.markup = Markup.printf_escaped ( "<span weight='bold' size='larger'>%s</span>",
             _file.filename);
 
@@ -32,12 +32,7 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
             upload_renderer.text=format_size(_file.upload_speed)+"ps";
             time_renderer.text=get_remaining_time();
 
-//~             Granite.Services.Logger.notification("CellRenderer file set comp/total=%lld/%lld".printf(_file.completed_length,_file.total_length));
 
-//~             filename=_file.filename;
-//~             file_name_renderer.text = filename;
-//~             file_name_renderer.markup = Markup.printf_escaped ( "<span weight='bold' size='larger'>%s</span>",
-//~             filename);
 //~             switch(_file.status){
 //~                 case IDownloadItem.Status.ACTIVE:
 //~                     status_renderer.text="Downloading";
@@ -61,7 +56,6 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
 //~                     status_renderer.text="status unknown";
 //~                     break;
 //~             }
-            //icon_renderer.pixbuf= new Gdk.Pixbuf.from_file("/usr/local/share/icons/hicolor/48x48/apps/arrive.svg");
         }
     }
 //~     public DownloadType tipe{get;set;}
@@ -102,7 +96,7 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
         file_name_renderer.get_preferred_height (widget, null, out file_name_renderer_height);
         status_renderer.get_preferred_height (widget, null, out status_renderer_height);
         download_progress_renderer.get_preferred_height (widget, null, out download_progress_renderer_height);
-        //width=width;
+//~         width=width;
         height = 2 * PADDING + file_name_renderer_height + download_progress_renderer_height + status_renderer_height;
     }
     public override void render (Cairo.Context ctx, Gtk.Widget widget,
@@ -245,12 +239,13 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
             remaining+=_("%lldh").printf(div);
             seconds=seconds%3600;
         }
-//~         //divided by one minute
+        //divided by one minute
         div = seconds/60;
         if(div>=1){
             remaining+=_("%lldm").printf(div);
             seconds=seconds%60;
         }
+        //adding seconds left
         remaining += _("%llds").printf(seconds);
         return remaining;
         
