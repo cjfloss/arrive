@@ -24,9 +24,9 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
             _file.filename);
 
             if(_file.total_length!=0)download_progress_renderer.value=(int)(100*_file.completed_length/_file.total_length);
-            download_progress_renderer.text="%s/%s".printf(format_size(_file.completed_length)
+            download_progress_renderer.text="%s of %s".printf(format_size(_file.completed_length)
                                                                       ,format_size(_file.total_length));
-            status_renderer.text=_("status:%s pieces:%d").printf(_file.status,_file.num_pieces);
+            status_renderer.text=_("status:%s connections:%d").printf(_file.status,_file.connections);
             
             download_renderer.text=format_size(_file.download_speed)+"ps";
             upload_renderer.text=format_size(_file.upload_speed)+"ps";
@@ -184,7 +184,7 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
         try{
             ri_renderer.pixbuf = Gtk.IconTheme.get_default().load_icon("go-down", download_renderer_height-6,0);
         }catch(Error e){
-            message("error code %d",e.code);
+            debug("error code %d",e.code);
         }
         ri_renderer.render(ctx, widget, ri_renderer_rect, ri_renderer_rect, flags);//download icon
         
@@ -197,7 +197,7 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
         try{
             ri_renderer.pixbuf = Gtk.IconTheme.get_default().load_icon("go-up", upload_renderer_height-6,0);
         }catch(Error e){
-            message("error code %d",e.code);
+            debug("error code %d",e.code);
         }
         ri_renderer.render(ctx, widget, ri_renderer_rect, ri_renderer_rect, flags);//upload icon
         
@@ -210,7 +210,7 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
         try{
             ri_renderer.pixbuf = Gtk.IconTheme.get_default().load_icon("preferences-system-time", time_renderer_height-6,0);
         }catch(Error e){
-            message("error code %d",e.code);
+            debug("error code %d",e.code);
         }
         ri_renderer.render(ctx, widget, ri_renderer_rect, ri_renderer_rect, flags);//time icon
     }

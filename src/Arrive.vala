@@ -50,6 +50,8 @@ public class Arrive.App : Granite.Application {
 
         var main_window = new Arrive.Widgets.MainWindow ();
         main_window.set_application (this);
+        
+        
         //FIXME:cant compile with unity, cant find unity.h it seems like cmake fails
         //var launcher_entry = new Arrive.Model.LauncherEntry();
     }

@@ -20,13 +20,7 @@ public class Arrive.Widgets.DownloadingList : Object {
         });
                 
         Arrive.App.aria2.download_list.list_changed.connect(()=>{
-            //message("pupulate list store, list store lenght %");
             populate_list_store();
-//~             populate_list_store();
-//~             Gtk.TreeIter iter;
-//~             list_store.append(out iter);
-//~             list_store.set(iter,0,file);
-//~             message("added %s\n",file.filename);
         });
         
         var cell_renderer = new Arrive.Widgets.DownloadCellRenderer ();
@@ -34,24 +28,19 @@ public class Arrive.Widgets.DownloadingList : Object {
         
         var refresh_timer = new TimeoutSource(REFRESH_TIME);
         refresh_timer.set_callback(()=>{
-            //populate_list_store();
             tree_view.queue_draw();
             return true;
         });
         refresh_timer.attach(null);
-        message("DownloadingList created");
+        debug("DownloadingList created");
     }
     private void populate_list_store(){
-        uint len=0;
         list_store.clear();
         foreach(Arrive.Model.DownloadItem file in Arrive.App.aria2.download_list._list){
             Gtk.TreeIter iter;
             list_store.append(out iter);
             list_store.set(iter,0,file);
-            len++;
-//~             message("added %s\n",file.filename);
         }
-        message("list store lenght %u", len);
     }
     private void show_popup_menu(Gdk.EventButton event){
         List<Arrive.Model.DownloadItem> selected_files;
@@ -127,7 +116,7 @@ public class Arrive.Widgets.DownloadingList : Object {
            if(d_item.holds(typeof(Arrive.Model.DownloadItem))){
                 list.append((Arrive.Model.DownloadItem)d_item);
             } else {
-                message("value arent download item");
+                debug("value arent download item");
             }
         }
         

@@ -37,12 +37,9 @@ public class Arrive.Widgets.AddFileDialog : Granite.Widgets.LightWindow{
         
         var add_button1 = new Gtk.Button.with_label(_("Add to list"));
         add_button1.clicked.connect(()=>{
-            if(uri_entry1.text!="http://"){  
-                //var  d_item= new Arrive.Model.DownloadItem();
-                
+            if(uri_entry1.text!="http://"){                
                 var v_array = new ValueArray(0);
                 v_array.append(uri_entry1.text);
-                //d_item.uris=v_array;
                 
                 var option = new HashTable<string,Value?>(str_hash,str_equal);
                 option.insert("dir",file_chooser1.get_uris().nth_data(0).replace("file://",""));
@@ -54,27 +51,7 @@ public class Arrive.Widgets.AddFileDialog : Granite.Widgets.LightWindow{
                 Arrive.App.aria2.download_list.list_changed();
             }
             this.destroy();
-            Logger.notification("addFileDialog destroyed");
         });
-//~         var add_paused_button1 = new Gtk.Button.with_label(_("Add paused"));
-//~         add_paused_button1.clicked.connect(()=>{
-//~             if(uri_entry1.text!="http://"){  
-//~                 var  d_item= new Arrive.Model.DownloadItem();
-//~                 
-//~                 var v_array = new ValueArray(0);
-//~                 v_array.append(uri_entry1.text);
-//~                 d_item.uris=v_array;
-//~                 
-//~                 var option = new HashTable<string,Value?>(str_hash,str_equal);
-//~                 option.insert("dir",file_chooser1.get_uris().nth_data(0).replace("file://",""));
-//~                 option.insert("split",segment_spin1.get_value_as_int().to_string());
-//~                 Arrive.App.aria2.download_list.add_file(d_item);
-//~             }
-//~             this.destroy();
-//~             Logger.notification("addFileDialog destroyed");
-//~         });        
-//~         
-//~         grid1.attach(add_paused_button1,4,2,1,1);
         grid1.attach(add_button1,5,2,1,1);
         grid1.margin=12;
         grid1.margin_top = 0;
@@ -83,7 +60,6 @@ public class Arrive.Widgets.AddFileDialog : Granite.Widgets.LightWindow{
         static_notebook.append_page(new Gtk.Label("torrent"),new Gtk.Label(_("torrent")));
         static_notebook.append_page(new Gtk.Label("metalink"),new Gtk.Label(_("metalink")));
         this.add(static_notebook);
-        //get_content_area().add(uri_entry);
 
     }
     private string send_message(Soup.Message msg) {

@@ -37,11 +37,6 @@ public class Arrive.Model.Aria2 : Object {
         //if(port==null)aria_port="6800" else aria_port = port;
         aria_uri = aria_ip+":"+aria_port+"/rpc";
         start_aria2c();
-//~         var d_item=new IDownloadItem();
-//~         d_item.uris.append("http://example.com");
-//~         var v_array = new ValueArray(0);
-//~         v_array.append("http://google.com");
-//~         add_file(v_array);
         download_list=new DownloadList();
         get_global_option();
         
@@ -64,19 +59,14 @@ public class Arrive.Model.Aria2 : Object {
             GLib.Process.spawn_command_line_async ("aria2c --enable-rpc");
         }catch(GLib.SpawnError error)
         {
-            message("cant start aria2c");
-            
+            critical("cant start aria2c");
         }
+        get_version();
+        //if(version=="")critical("cant start or bind port, try to restart %s", version);
     }
     private void refresh_status() {
         get_global_stat();
         get_global_option();
-    }
-    public int get_percent_completed(){
-        return 0;
-    }
-    public string get_time_remaining(){
-        return "don't know";
     }
 
     private void tell_active() {
@@ -102,7 +92,6 @@ public class Arrive.Model.Aria2 : Object {
                 ht = (HashTable<string,Value?>) v;
                 
                 val=ht.get("numStopped");
-                //stdout.printf("coba = "+val.get_string());
                 num_stopped=int.parse(val.get_string());
                 
                 val = ht.get("numWaiting");
@@ -116,12 +105,10 @@ public class Arrive.Model.Aria2 : Object {
                 
                 val = ht.get("uploadSpeed");
                 upload_speed=int.parse(val.get_string());
-                //stdout.printf(val.get_string());
             }
         } catch(Error e) {
-            message("Error while processing tellStatus response");
+            debug("Error while processing tellStatus response");
         }
-        //stdout.printf("num_active = %s\n num_stopped = %d \n num_waiting = %d \n",num_active.to_string(),(int)num_stopped,(int)num_waiting);
     }
     private void get_version() {
         Soup.Message msg = XMLRPC.request_new(aria_uri,"aria2.getVersion");
@@ -138,7 +125,7 @@ public class Arrive.Model.Aria2 : Object {
                 version=val.get_string();
             }
         }catch(Error e){
-            message("Error while processing getVersion response");
+            debug("Error while processing getVersion response");
         }
         stdout.printf("version  = %s\n",version);
     }
