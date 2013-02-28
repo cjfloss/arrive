@@ -27,11 +27,11 @@ public class Arrive.Model.Aria2 : Object {
         set;
     default=0;
     }
-    public Arrive.Model.DownloadList download_list;
     public string version="";
     private string aria_ip="http://localhost";
     private string aria_port="6800";
     public string aria_uri="";
+    public Arrive.Model.DownloadList download_list;
     public Aria2() {
         //if(ip==null)aria_ip="http://localhost" else aria_ip = ip;
         //if(port==null)aria_port="6800" else aria_port = port;
@@ -56,24 +56,26 @@ public class Arrive.Model.Aria2 : Object {
 //~         sc.run();
 //~         message("aria output %s",sc.output_str);
         try{
-            GLib.Process.spawn_command_line_async ("aria2c --enable-rpc");
+            //max connection and split size are hardcoded for now
+            //TODO:create preferences dialog to set max-connection-per-server and min-split-size (and almost everything)
+            GLib.Process.spawn_command_line_async ("aria2c --enable-rpc --max-connection-per-server 5 --min-split-size 1M --pause=true");
         }catch(GLib.SpawnError error)
         {
             critical("cant start aria2c");
         }
-        get_version();
-        //if(version=="")critical("cant start or bind port, try to restart %s", version);
+//~         delay(1000);//FIXME:need to wait for aria to load
+			Thread.usleep(500000);//in microsecond
+            get_version();
+            if(version==""){
+                critical("cant start or bind port, try to restart %s", version);
+                shutdown();
+            }
+            debug(version);
+
     }
     private void refresh_status() {
         get_global_stat();
         get_global_option();
-    }
-
-    private void tell_active() {
-    }
-    private void tell_waiting() {
-    }
-    private void tell_stopped() {
     }
     //TODO:Parse getGlobalOption response
     private void get_global_option() {

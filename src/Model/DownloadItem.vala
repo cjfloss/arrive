@@ -8,7 +8,7 @@ public class Arrive.Model.DownloadItem:Object {
         get{return _gid;}
         set{
             _gid = value;
-            refresh_status();
+            //refresh_status();
         }
     }
     public  string filename{get;set;}
@@ -27,19 +27,88 @@ public class Arrive.Model.DownloadItem:Object {
         set{
             _uris=value.copy();
         }}
+    private Value _xml_value;
+    public Value xml_value{
+        get{
+            return _xml_value;
+        }
+        set{
+            _xml_value=value;
+            if(_xml_value.holds(typeof(HashTable))) {
+                HashTable<string,Value?> ht;
+                Value val;
+
+                ht = (HashTable<string,Value?>) _xml_value;
+
+                val=ht.get("gid");
+                gid=val.get_string();
+
+                val=ht.get("totalLength");
+                total_length=uint64.parse(val.get_string());
+
+                val = ht.get("completedLength");
+                if(val.holds(typeof(string))){
+                    completed_length=uint64.parse(val.get_string());
+                }
+
+                val = ht.get("downloadSpeed");
+                download_speed=int.parse(val.get_string());
+
+                val = ht.get("uploadSpeed");
+                upload_speed=int.parse(val.get_string());
+
+                val = ht.get("dir");
+                dir = val.get_string();
+
+                val = ht.get("connections");
+                connections = int.parse(val.get_string());
+
+                val = ht.get("files");
+                if(val.holds(typeof(ValueArray))){
+                    unowned ValueArray va;
+                    va=(ValueArray) val;//va contains array
+                    if(va.n_values > 0){
+                        Value vhtable=va.get_nth(0);//we choose the first array member
+                        HashTable<string,Value?> htable=(HashTable<string,Value?>)vhtable;//extract hashtable from v
+                        Value vfiles=htable.get("path");//find path in hashtable
+                        var path = vfiles.get_string();
+                        filename = parse_filename(path);
+                        //TODO: fillin _uris so can be used by downloadlist.load_save_file
+                        Value vuris = htable.get("uris");
+                        var duris = ((ValueArray) vuris).copy();
+                        foreach(Value vuri in duris){
+                            var hturi= (HashTable<string,Value?>) vuri;
+                            Value duri = hturi.get("uri");
+                            _uris.append(duri.get_string());
+                        }
+                    }
+                }else {
+                    filename=_("cant get filename");
+                }
+
+                val = ht.get("status");
+                status = val.get_string();
+            }else{
+                Granite.Services.Logger.notification("cant parse_method_response");
+                //stdout.printf(data+"\n");
+            }
+        }
+    }
     public DownloadItem() {
+        _uris=new ValueArray(0);
 //~         tipe=DownloadType.URI;
 //~         status=Status.WAITING;
     }
     public void start(HashTable? options){
         Soup.Message msg;
+        debug("start");
         if (options!=null){
             msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.addUri",typeof(ValueArray),_uris,typeof(HashTable),options);
         }else{
             msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.addUri",typeof(ValueArray),_uris);
         }
         string data = send_message (msg);
-//~         stdout.printf(data);
+        stdout.printf(data);
         try {
             Value v = Value(typeof(string));
             if(XMLRPC.parse_method_response(data, -1, out v)) {
@@ -56,77 +125,75 @@ public class Arrive.Model.DownloadItem:Object {
             debug("Error while processing addUri response");
         }
     }
-    public void remove(){
-        Soup.Message msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.remove",typeof(string),gid);
+    public void remove_download_result(){
+        Soup.Message msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.removeDownloadResult",typeof(string),gid);
         send_message (msg);
-        refresh_status();
+        //debug(data);
+        //refresh_status();
     }
     public void pause(){
         Soup.Message msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.pause",typeof(string),gid);
         send_message (msg);
-        refresh_status();
+        //refresh_status();
     }
     public void unpause(){
         Soup.Message msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.unpause",typeof(string),gid);
         send_message (msg);
-        refresh_status();
+        //refresh_status();
     }
-    public void refresh_status(){
-        //tell_status();
-    }
-    public void tell_status(Value v){
-            if(v.holds(typeof(HashTable))) {
-                HashTable<string,Value?> ht;
-                Value val;
-                
-                ht = (HashTable<string,Value?>) v;
+//~     public void tell_status(Value v){
+//~             if(v.holds(typeof(HashTable))) {
+//~                 HashTable<string,Value?> ht;
+//~                 Value val;
+//~ 
+//~                 ht = (HashTable<string,Value?>) v;
+//~ 
+//~                 val=ht.get("gid");
+//~                 gid=val.get_string();
+//~ 
+//~                 val=ht.get("totalLength");
+//~                 total_length=uint64.parse(val.get_string());
+//~ 
+//~                 val = ht.get("completedLength");
+//~                 if(val.holds(typeof(string))){
+//~                     completed_length=uint64.parse(val.get_string());
+//~                 }
+//~ 
+//~                 val = ht.get("downloadSpeed");
+//~                 download_speed=int.parse(val.get_string());
+//~ 
+//~                 val = ht.get("uploadSpeed");
+//~                 upload_speed=int.parse(val.get_string());
+//~ 
+//~                 val = ht.get("dir");
+//~                 dir = val.get_string();
+//~ 
+//~                 val = ht.get("connections");
+//~                 connections = int.parse(val.get_string());
+//~ 
+//~                 val = ht.get("files");
+//~                 if(val.holds(typeof(ValueArray))){
+//~                     unowned ValueArray va;
+//~                     va=(ValueArray) val;//va contains array
+//~                     if(va.n_values > 0){
+//~                         Value vhtable=va.get_nth(0);//we choose the first array member
+//~                         HashTable<string,Value?> htable=(HashTable<string,Value?>)vhtable;//extract hashtable from v
+//~                         Value vfiles=htable.get("path");//find path in hashtable
+//~                         var path = vfiles.get_string();
+//~                         filename = parse_filename(path);
+//~                     }
+//~                 }else {
+//~                     filename=_("cant get filename");
+//~                 }
+//~ 
+//~                 val = ht.get("status");
+//~                 status = val.get_string();
+//~             }else{
+//~                 Granite.Services.Logger.notification("cant parse_method_response");
+//~                 //stdout.printf(data+"\n");
+//~             }
 
-                val=ht.get("gid");
-                gid=val.get_string();
-                
-                val=ht.get("totalLength");
-                total_length=uint64.parse(val.get_string());
-                
-                val = ht.get("completedLength");
-                if(val.holds(typeof(string))){
-                    completed_length=uint64.parse(val.get_string());
-                }
-                
-                val = ht.get("downloadSpeed");
-                download_speed=int.parse(val.get_string());
-                
-                val = ht.get("uploadSpeed");
-                upload_speed=int.parse(val.get_string());
-                
-                val = ht.get("dir");
-                dir = val.get_string();
-                
-                val = ht.get("connections");
-                connections = int.parse(val.get_string());
-
-                val = ht.get("files");
-                if(val.holds(typeof(ValueArray))){
-                    unowned ValueArray va;
-                    va=(ValueArray) val;//va contains array 
-                    if(va.n_values > 0){
-                        Value vhtable=va.get_nth(0);//we choose the first array member
-                        HashTable<string,Value?> htable=(HashTable<string,Value?>)vhtable;//extract hashtable from v
-                        Value vfiles=htable.get("path");//find path in hashtable
-                        var path = vfiles.get_string();
-                        filename = parse_filename(path);
-                    }
-                }else {
-                    filename=_("cant get filename");
-                }
-                
-                val = ht.get("status");
-                status = val.get_string();
-            }else{
-                Granite.Services.Logger.notification("cant parse_method_response");
-                //stdout.printf(data+"\n");
-            }
-
-    }
+//~     }
     private string parse_filename(string path){
         if (path!=null && path!=""){
             string[] array = path.split("/");

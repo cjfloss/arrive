@@ -11,7 +11,6 @@ public class Arrive.Widgets.MainWindow : Gtk.Window  {
     public Gtk.Label download_speed_label;
     private Box vbox;
     private Arrive.Widgets.AddFileDialog add_file_dialog;
-    private static int REFRESH_TIME = 1000;
     public MainWindow () {
         set_title ("Arrive");
         set_position (Gtk.WindowPosition.CENTER);
@@ -22,15 +21,8 @@ public class Arrive.Widgets.MainWindow : Gtk.Window  {
         get_style_context ().add_class ("content-view-window");
         show_all ();
         refresh_status();
-        
-        var refresh_timer = new TimeoutSource(REFRESH_TIME);
-        refresh_timer.set_callback(()=>{
-                refresh_status();
-                return true;
-        });
-        refresh_timer.attach(null);
-        Arrive.App.aria2.notify["download_speed"].connect((object,param)=>{refresh_status();});
-        Arrive.App.aria2.notify["upload_speed"].connect((object,param)=>{refresh_status();});
+        Arrive.App.aria2.notify["download-speed"].connect((object,param)=>{refresh_status();});
+        Arrive.App.aria2.notify["upload-speed"].connect((object,param)=>{refresh_status();});
     }
     private void refresh_status(){
         download_speed_label.set_text("dl/up speed:%sps/%sps    ".printf(format_size(Arrive.App.aria2.download_speed),
@@ -78,8 +70,13 @@ public class Arrive.Widgets.MainWindow : Gtk.Window  {
         search_bar.sensitive = false;//disabled while hasnt implemented
         var search_bar_toolitem = new Gtk.ToolItem ();
         search_bar_toolitem.add (search_bar);
+        
+        //creating cogl menu
         var menu = new Gtk.Menu ();
-        app_menu = new Granite.Widgets.AppMenu.with_app (Arrive.App.instance, menu);
+        Gtk.MenuItem about_item = new Gtk.MenuItem.with_label("About");
+        about_item.activate.connect(()=>{Arrive.App.instance.show_about(this);});
+        menu.append(about_item);
+        app_menu = new Granite.Widgets.AppMenu(menu);
         toolbar.insert (search_bar_toolitem,-1);
         toolbar.insert (app_menu,-1);
 

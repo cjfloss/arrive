@@ -32,10 +32,13 @@ public class Arrive.Widgets.DownloadingList : Object {
             return true;
         });
         refresh_timer.attach(null);
+        
+        populate_list_store();
         debug("DownloadingList created");
     }
     private void populate_list_store(){
         list_store.clear();
+        debug("list lenght %u",Arrive.App.aria2.download_list._list.length());
         foreach(Arrive.Model.DownloadItem file in Arrive.App.aria2.download_list._list){
             Gtk.TreeIter iter;
             list_store.append(out iter);
@@ -55,6 +58,7 @@ public class Arrive.Widgets.DownloadingList : Object {
             foreach(Arrive.Model.DownloadItem d_item in selected_files){
                 if(d_item.status=="paused")d_item.unpause();
                 if(d_item.status=="")d_item.start(null);
+                if(d_item.status=="stopped")d_item.start(null);
             }
         });
         pause.activate.connect(()=>{
@@ -64,7 +68,7 @@ public class Arrive.Widgets.DownloadingList : Object {
         });
         cancel.activate.connect(()=>{
             foreach(Arrive.Model.DownloadItem d_item in selected_files){
-                d_item.remove();
+                //d_item.remove_download_result();
             }
         });
 //~         properties.connect();

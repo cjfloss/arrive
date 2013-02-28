@@ -26,10 +26,10 @@ public class Arrive.App : Granite.Application {
         app_launcher = "arrive.desktop";
         application_id = "org.vikoadi.arrive";
 
-        main_url = "https://launchpad.net/bouquin";
-        bug_url = "https://bugs.launchpad.net/bouquin";
-        help_url = "https://answers.launchpad.net/bouquin";
-        translate_url = "https://translations.launchpad.net/bouquin";
+        main_url = "https://launchpad.net/arrive";
+        bug_url = "https://bugs.launchpad.net/arrive";
+        help_url = "https://answers.launchpad.net/arrive";
+        translate_url = "https://translations.launchpad.net/arrive";
 
         about_authors = {"Viko Adi Rahmawan <vikoadi@gmail.com>", null };
         about_comments = _("Download Manager that support http,ftp, torrent, and metalink");
@@ -50,15 +50,21 @@ public class Arrive.App : Granite.Application {
 
         var main_window = new Arrive.Widgets.MainWindow ();
         main_window.set_application (this);
-        
-        
+
+
         //FIXME:cant compile with unity, cant find unity.h it seems like cmake fails
-        //var launcher_entry = new Arrive.Model.LauncherEntry();
+//~         var launcher_entry = new Arrive.Model.LauncherEntry();
     }
 }
-
+private bool closing(){
+	debug("arrive is closing");
+	return true;
+}
 public static int main (string[] args) {
     Gtk.init(ref args);
+    //FIXME:cant compile with libnotification too. what is this with ubuntu's library
+//~     Notify.init(Arrive.App.instance.application_id);
     Arrive.App.instance.run (args);
+    Timeout.add_seconds(5,closing);
     return 0;
 }

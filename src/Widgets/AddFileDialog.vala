@@ -44,6 +44,7 @@ public class Arrive.Widgets.AddFileDialog : Granite.Widgets.LightWindow{
                 var option = new HashTable<string,Value?>(str_hash,str_equal);
                 option.insert("dir",file_chooser1.get_uris().nth_data(0).replace("file://",""));
                 option.insert("split",segment_spin1.get_value_as_int().to_string());
+                option.insert("pause","false");
                 Soup.Message msg = Soup.XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.addUri",typeof(ValueArray),v_array,typeof(HashTable),option);
 
                 string data = send_message (msg);

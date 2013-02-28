@@ -69,10 +69,8 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
             _dir=value;
         }
     }
-    //public ValueArray uris{get;set;}
     public uint64 total_length{get;set;}
     public uint64 completed_length{get;set;}
-//~     public uint64 upload_length;
     public uint download_speed{get;set;}
     public uint upload_speed{get;set;}
 
