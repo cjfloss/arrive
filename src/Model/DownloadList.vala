@@ -3,6 +3,7 @@ public class Arrive.Model.DownloadList: Object {
     public List <DownloadItem> _list;
     private File save_file = File.new_for_path(Environment.get_user_data_dir()+"/arrive/download_list.xml");
     private uint prev_list_lenght;//used to determine list change;
+    private bool is_populate_needed;
     public uint length{
         get{
             if(_list!=null){
@@ -17,9 +18,15 @@ public class Arrive.Model.DownloadList: Object {
 //~            // _list.append(download_item);   
 //~             list_changed();         
 //~         });
+		is_populate_needed=true;
         var refresh_timer = new TimeoutSource(REFRESH_TIME);
         refresh_timer.set_callback(()=>{
-            refresh_list();
+			if(is_populate_needed){
+				populate_list();
+				is_populate_needed=false;
+			}else{
+				refresh_list();
+			}
             save_list_to_file();
             return true;
         });
@@ -111,7 +118,7 @@ public class Arrive.Model.DownloadList: Object {
                             _list.append(diptr);
                         }else{
                             var diptr = get_download_item_from_value(viter);
-                            if(diptr != null){diptr.xml_value=viter;} else {populate_list();}//bad-bad recursion
+                            if(diptr != null){diptr.xml_value=viter;} else {is_populate_needed=true;}
                         }
                     }
                     
