@@ -182,7 +182,9 @@ public class Arrive.Model.DownloadList: Object {
             //FIXME:the xml always save connections to 0 and caused aria2c unable to parse
             //option.insert("split",ditem.connections.to_string());
             if(ditem.status=="active"){option.insert("pause","false");} else{option.insert("pause","true");}
-            Soup.Message msg = Soup.XMLRPC.request_new("http://localhost:6800/rpc","aria2.addUri",typeof(ValueArray),v_array,typeof(HashTable),option);
+            Soup.Message msg = Soup.XMLRPC.request_new("http://localhost:6800/rpc","aria2.addUri",
+													   typeof(ValueArray),v_array,
+													   typeof(HashTable),option);
             string data = send_message (msg);
             debug("ditem.data %s",data);
         }

@@ -49,7 +49,7 @@ public class Arrive.Model.DownloadItem:Object {
                 val = ht.get("completedLength");
                 if(val.holds(typeof(string))){
                     completed_length=uint64.parse(val.get_string());
-                }
+				}
 
                 val = ht.get("downloadSpeed");
                 download_speed=int.parse(val.get_string());
@@ -108,7 +108,9 @@ public class Arrive.Model.DownloadItem:Object {
         Soup.Message msg;
         debug("start");
         if (options!=null){
-            msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.addUri",typeof(ValueArray),_uris,typeof(HashTable),options);
+            msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.addUri",
+									 typeof(ValueArray),_uris,
+									 typeof(HashTable),options);
         }else{
             msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.addUri",typeof(ValueArray),_uris);
         }
@@ -139,20 +141,23 @@ public class Arrive.Model.DownloadItem:Object {
         //refresh_status();
     }
     public void remove_download_result(){
-        Soup.Message msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.removeDownloadResult",typeof(string),gid);
+        Soup.Message msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.removeDownloadResult",
+											  typeof(string),gid);
         send_message (msg);
 //~         Arrive.App.aria2.download_list.list_changed();
         //debug(data);
         //refresh_status();
     }
     public void pause(){
-        Soup.Message msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.pause",typeof(string),gid);
+        Soup.Message msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.pause",
+											  typeof(string),gid);
         send_message (msg);
 //~         Arrive.App.aria2.download_list.list_changed();
         //refresh_status();
     }
     public void unpause(){
-        Soup.Message msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.unpause",typeof(string),gid);
+        Soup.Message msg = XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.unpause",
+											  typeof(string),gid);
         send_message (msg);
 //~         Arrive.App.aria2.download_list.list_changed();
         //refresh_status();

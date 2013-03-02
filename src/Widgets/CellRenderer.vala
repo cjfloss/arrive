@@ -23,9 +23,10 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
             file_name_renderer.markup = Markup.printf_escaped ( "<span weight='bold' size='larger'>%s</span>",
             _file.filename);
 
-            if(_file.total_length!=0)download_progress_renderer.value=(int)(100*_file.completed_length/_file.total_length);
-            download_progress_renderer.text="%s of %s".printf(format_size(_file.completed_length)
-                                                                      ,format_size(_file.total_length));
+            if(_file.total_length!=0)
+				download_progress_renderer.value=(int)(100*_file.completed_length/_file.total_length);
+            download_progress_renderer.text="%s of %s".printf(format_size(_file.completed_length),
+                                                              format_size(_file.total_length));
             status_renderer.text=_("status:%s connections:%d").printf(_file.status,_file.connections);
             
             download_renderer.text=format_size(_file.download_speed)+"ps";
@@ -95,7 +96,8 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
         status_renderer.get_preferred_height (widget, null, out status_renderer_height);
         download_progress_renderer.get_preferred_height (widget, null, out download_progress_renderer_height);
 //~         width=width;
-        height = 2 * PADDING + file_name_renderer_height + download_progress_renderer_height + status_renderer_height;
+        height = 2 * PADDING + file_name_renderer_height 
+				 + download_progress_renderer_height + status_renderer_height;
     }
     public override void render (Cairo.Context ctx, Gtk.Widget widget,
                                  Gdk.Rectangle background_area,
@@ -206,7 +208,8 @@ public class Arrive.Widgets.DownloadCellRenderer : Gtk.CellRenderer  {
             width = time_renderer_height
         };
         try{
-            ri_renderer.pixbuf = Gtk.IconTheme.get_default().load_icon("preferences-system-time", time_renderer_height-6,0);
+            ri_renderer.pixbuf = Gtk.IconTheme.get_default().load_icon("preferences-system-time", 
+																		time_renderer_height-6,0);
         }catch(Error e){
             debug("error code %d",e.code);
         }

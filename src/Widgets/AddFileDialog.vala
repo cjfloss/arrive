@@ -28,7 +28,8 @@ public class Arrive.Widgets.AddFileDialog : Granite.Widgets.LightWindow{
         
         grid1.attach(uri_entry1,1,0,6,1);
         grid1.attach(new Gtk.Label(_("Save to :")),0,1,1,1);
-        var file_chooser1 = new Gtk.FileChooserButton(_("Save to"),Gtk.FileChooserAction.SELECT_FOLDER);
+        var file_chooser1 = new Gtk.FileChooserButton(_("Save to"),
+														Gtk.FileChooserAction.SELECT_FOLDER);
         grid1.attach(file_chooser1,1,1,3,1);
         
         grid1.attach(new Gtk.Label(_("Segment :")),4,1,1,1);
@@ -42,12 +43,17 @@ public class Arrive.Widgets.AddFileDialog : Granite.Widgets.LightWindow{
                 v_array.append(uri_entry1.text);
                 
                 var option = new HashTable<string,Value?>(str_hash,str_equal);
-                option.insert("dir",file_chooser1.get_uris().nth_data(0).replace("file://",""));
-                option.insert("split",segment_spin1.get_value_as_int().to_string());
+                option.insert("dir",
+							  file_chooser1.get_uris().nth_data(0).replace("file://",""));
+                option.insert("split",
+							  segment_spin1.get_value_as_int().to_string());
                 option.insert("pause","false");
-                Soup.Message msg = Soup.XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.addUri",typeof(ValueArray),v_array,typeof(HashTable),option);
-
-                string data = send_message (msg);
+                Soup.Message msg = Soup.XMLRPC.request_new(Arrive.App.aria2.aria_uri,
+														   "aria2.addUri",
+														   typeof(ValueArray), v_array,
+														   typeof(HashTable),option
+														   );
+                send_message (msg);
                 Arrive.App.aria2.download_list.list_changed();
             }
             this.destroy();
