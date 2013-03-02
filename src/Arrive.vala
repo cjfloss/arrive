@@ -56,15 +56,11 @@ public class Arrive.App : Granite.Application {
 //~         var launcher_entry = new Arrive.Model.LauncherEntry();
     }
 }
-private bool closing(){
-	debug("arrive is closing");
-	return true;
-}
+
 public static int main (string[] args) {
     Gtk.init(ref args);
     //FIXME:cant compile with libnotification too. what is this with ubuntu's library
 //~     Notify.init(Arrive.App.instance.application_id);
     Arrive.App.instance.run (args);
-    Timeout.add_seconds(5,closing);
     return 0;
 }

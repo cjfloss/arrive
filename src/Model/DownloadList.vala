@@ -51,17 +51,16 @@ public class Arrive.Model.DownloadList: Object {
         val=ht.get("gid");
         return get_download_item(val.get_string());
     }
-    //FIXME:seems like it needs tellPaused and tellWaiting too
     private void populate_list(){
         //clearing all _list content
-        foreach(Arrive.Model.DownloadItem diter in _list){
-            _list.remove(diter);
-        }
+        while(length>0){
+			_list.remove(_list.nth_data(0));
+		}
         refresh_active(true);
         refresh_waiting(true);
         refresh_stopped(true);
         list_changed();
-        debug("populating  download_list");
+        debug("populating  download_list, lenght %u",length);
     }
     private void refresh_list(){      
         refresh_active();
@@ -72,7 +71,7 @@ public class Arrive.Model.DownloadList: Object {
     }
     private void clean_finished(){
         foreach(Arrive.Model.DownloadItem di in _list){
-            if(di.status=="complete"){
+            if(di.status=="complete"||di.status=="removed"){
                 //new Notify.Notification(di.filename,"completed",null).show();
                 di.remove_download_result();
                 populate_list();
@@ -135,7 +134,7 @@ public class Arrive.Model.DownloadList: Object {
         string data = (string) msg.response_body.flatten().data;
         return data;
     }
-    private void save_list_to_file(){//FIXME:saved file doest reflect aria
+    private void save_list_to_file(){
         //create ValueArray of all DownloadItem in list
         ValueArray va= new ValueArray(0);
         foreach(Arrive.Model.DownloadItem di in _list){
@@ -144,7 +143,6 @@ public class Arrive.Model.DownloadList: Object {
         //create xml string of valuearray
         string data = Soup.XMLRPC.build_method_response(va);
         //save xmlstring
-//~         File file= File.new_for_path(Environment.get_user_data_dir()+"/arrive/"+save_file);
         if(!save_file.get_parent().query_exists())save_file.get_parent().make_directory_with_parents();
         if(save_file.query_exists()){
             save_file.delete();
@@ -185,10 +183,8 @@ public class Arrive.Model.DownloadList: Object {
             //option.insert("split",ditem.connections.to_string());
             if(ditem.status=="active"){option.insert("pause","false");} else{option.insert("pause","true");}
             Soup.Message msg = Soup.XMLRPC.request_new("http://localhost:6800/rpc","aria2.addUri",typeof(ValueArray),v_array,typeof(HashTable),option);
-
             string data = send_message (msg);
             debug("ditem.data %s",data);
-            
         }
         list_changed();
     }

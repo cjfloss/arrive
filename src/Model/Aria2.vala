@@ -64,13 +64,13 @@ public class Arrive.Model.Aria2 : Object {
             critical("cant start aria2c");
         }
 //~         delay(1000);//FIXME:need to wait for aria to load
-			Thread.usleep(500000);//in microsecond
-            get_version();
-            if(version==""){
-                critical("cant start or bind port, try to restart %s", version);
-                shutdown();
-            }
-            debug(version);
+		Thread.usleep(500000);
+		get_version();
+		if(version==""){
+			critical("cant start or bind port, try to restart %s", version);
+			shutdown();
+		}
+		debug(version);
 
     }
     private void refresh_status() {

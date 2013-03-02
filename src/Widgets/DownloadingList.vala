@@ -68,7 +68,7 @@ public class Arrive.Widgets.DownloadingList : Object {
         });
         cancel.activate.connect(()=>{
             foreach(Arrive.Model.DownloadItem d_item in selected_files){
-                //d_item.remove_download_result();
+                d_item.remove();
             }
         });
 //~         properties.connect();
@@ -100,7 +100,7 @@ public class Arrive.Widgets.DownloadingList : Object {
     private bool allow_cancel(List<Arrive.Model.DownloadItem> selected_files){
         bool allow=false;
         foreach(Arrive.Model.DownloadItem d_item in selected_files){
-            if(d_item.status=="active")allow=true;
+            if(d_item.status=="active"||d_item.status=="paused")allow=true;
         }
         return allow;
     }

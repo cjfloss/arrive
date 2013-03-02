@@ -16,7 +16,7 @@ public class Arrive.Widgets.MainWindow : Gtk.Window  {
         set_position (Gtk.WindowPosition.CENTER);
         set_default_size (400, 500);
         resizable = true;
-        destroy.connect(()=> { Arrive.App.aria2.shutdown();Gtk.main_quit(); });
+        destroy.connect(()=> { this.hide();Gtk.main_quit();Arrive.App.aria2.shutdown(); });
         build_gui();
         get_style_context ().add_class ("content-view-window");
         show_all ();

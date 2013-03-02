@@ -48,7 +48,6 @@ public class Arrive.Widgets.AddFileDialog : Granite.Widgets.LightWindow{
                 Soup.Message msg = Soup.XMLRPC.request_new(Arrive.App.aria2.aria_uri,"aria2.addUri",typeof(ValueArray),v_array,typeof(HashTable),option);
 
                 string data = send_message (msg);
-        //~         stdout.printf(data);
                 Arrive.App.aria2.download_list.list_changed();
             }
             this.destroy();
