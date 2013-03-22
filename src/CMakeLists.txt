@@ -32,7 +32,6 @@ vala_precompile(VALA_C
     Arrive.vala
     config.vala
     Widgets/MainWindow.vala
-    Widgets/PauseButton.vala
     Widgets/AddFileDialog.vala
     #Widgets/AddFilePopOver.vala
     Widgets/CellRenderer.vala

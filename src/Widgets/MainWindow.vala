@@ -81,7 +81,6 @@ public class Arrive.Widgets.MainWindow : Gtk.Window  {
                 
 
         });
-        //var pause_button = new Arrive.Widgets.PauseButton();
         start_all = new Gtk.ToolButton.from_stock (Gtk.Stock.MEDIA_PLAY);
         start_all.clicked.connect(()=>{
 			foreach(Arrive.Model.DownloadItem ditem in Arrive.App.aria2.download_list._list){
