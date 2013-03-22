@@ -1,5 +1,5 @@
-public class Arrive.Widgets.PauseButton:Gtk.ToolButton{
-    private enum State{
+public class Arrive.Widgets.PauseButton : Gtk.ToolButton {
+    private enum State {
         START = 0,
         PAUSE,
         INACTIVE
@@ -7,9 +7,6 @@ public class Arrive.Widgets.PauseButton:Gtk.ToolButton{
     private State state;
     public PauseButton(){
         state=State.PAUSE;
-        change_icon();
-        determine_state();
-        change_icon();
         this.clicked.connect(()=>{
             switch(state){
                 case state.START:
@@ -29,7 +26,7 @@ public class Arrive.Widgets.PauseButton:Gtk.ToolButton{
             determine_state();
             change_icon();
         });
-        Arrive.App.aria2.download_list.notify["length"].connect((object)=>{
+        Arrive.App.aria2.download_list.list_changed.connect(()=>{
             determine_state();
             change_icon();
             debug("list change");

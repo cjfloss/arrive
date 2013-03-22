@@ -2,6 +2,8 @@
 //      valac --pkg granite arrive.vala MainWindow.vala
 using Gtk;
 public class Arrive.Widgets.MainWindow : Gtk.Window  {
+	private Gtk.ToolButton start_all;
+	private Gtk.ToolButton pause_all;
     private Granite.Widgets.SearchBar search_bar;
     private Granite.Widgets.AppMenu app_menu;
     private Granite.Widgets.StaticNotebook static_notebook;
@@ -16,19 +18,41 @@ public class Arrive.Widgets.MainWindow : Gtk.Window  {
         set_position (Gtk.WindowPosition.CENTER);
         set_default_size (400, 500);
         resizable = true;
-        destroy.connect(()=> { this.hide();Gtk.main_quit();Arrive.App.aria2.shutdown(); });
-        build_gui();
         get_style_context ().add_class ("content-view-window");
+        
+        build_gui();
         show_all ();
-        refresh_status();
+
         Arrive.App.aria2.notify["download-speed"].connect((object,param)=>{refresh_status();});
         Arrive.App.aria2.notify["upload-speed"].connect((object,param)=>{refresh_status();});
+        destroy.connect(()=> { this.hide();Gtk.main_quit();Arrive.App.aria2.shutdown(); });
     }
     private void refresh_status(){
         download_speed_label.set_text("dl/up speed:%sps/%sps    ".printf(format_size(Arrive.App.aria2.download_speed),
                                                                                     format_size(Arrive.App.aria2.upload_speed)
                                                                                     ));
+		determine_toolbutton_status();
     }
+    private void determine_toolbutton_status (){
+		bool active_all=true;
+		bool paused_all=true;
+		foreach (Arrive.Model.DownloadItem ditem in Arrive.App.aria2.download_list._list){
+			if (ditem.status!="active")
+				active_all = false;
+			if (ditem.status!="paused")
+				paused_all = false;
+		}
+		if (active_all){
+			start_all.sensitive = false;
+		}else{
+			start_all.sensitive = true;
+		}
+		if (paused_all){
+			pause_all.sensitive = false;
+		}else{
+			pause_all.sensitive = true;
+		}
+	}
     void build_gui () {
         var toolbar = new Toolbar ();
         toolbar.set_vexpand (false);
@@ -57,10 +81,23 @@ public class Arrive.Widgets.MainWindow : Gtk.Window  {
                 
 
         });
-        var pause_button = new Arrive.Widgets.PauseButton();
+        //var pause_button = new Arrive.Widgets.PauseButton();
+        start_all = new Gtk.ToolButton.from_stock (Gtk.Stock.MEDIA_PLAY);
+        start_all.clicked.connect(()=>{
+			foreach(Arrive.Model.DownloadItem ditem in Arrive.App.aria2.download_list._list){
+                            ditem.unpause();
+			}
+		});
+        pause_all = new Gtk.ToolButton.from_stock (Gtk.Stock.MEDIA_PAUSE);
+        pause_all.clicked.connect(()=>{
+			foreach(Arrive.Model.DownloadItem ditem in Arrive.App.aria2.download_list._list){
+                            ditem.pause();
+			}
+		});
 
-        toolbar.insert (add_button,-1);
-        toolbar.insert (pause_button,-1);
+        toolbar.insert (add_button, -1);
+        toolbar.insert (start_all, -1);
+        toolbar.insert (pause_all, -1);
 
         var spacer = new Gtk.ToolItem ();
         spacer.set_expand (true);
