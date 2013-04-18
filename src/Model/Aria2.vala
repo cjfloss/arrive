@@ -32,12 +32,14 @@ public class Arrive.Model.Aria2 : Object {
     private string aria_port="6800";
     public string aria_uri="";
     public Arrive.Model.DownloadList download_list;
+    public Arrive.Model.FinishedList finished_list;
     public Aria2() {
         //if(ip==null)aria_ip="http://localhost" else aria_ip = ip;
         //if(port==null)aria_port="6800" else aria_port = port;
         aria_uri = aria_ip+":"+aria_port+"/rpc";
         start_aria2c();
         download_list=new DownloadList();
+        finished_list = new Arrive.Model.FinishedList();
         get_global_option();
         
         var refresh_timer = new TimeoutSource(REFRESH_TIME);

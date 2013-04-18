@@ -42,6 +42,8 @@ vala_precompile(VALA_C
     Model/DownloadItem.vala
     Model/IDownloadList.vala
     Model/DownloadList.vala
+    Model/FinishedList.vala
+    Model/FinishedItem.vala
     #Model/LauncherEntry.vala
 PACKAGES
     ${ARRIVE_DEPS}

@@ -123,7 +123,7 @@ public class Arrive.Widgets.MainWindow : Gtk.Window  {
         static_notebook = new Granite.Widgets.StaticNotebook ();
         static_notebook.get_style_context ().add_class ("content-view");
         static_notebook.append_page (downloading_list.widget, new Gtk.Label (_("Downloading")));
-        static_notebook.append_page (finished_list, new Gtk.Label (_("Finished")));
+        static_notebook.append_page (finished_list.widget, new Gtk.Label (_("Finished")));
 
         status_bar = new Granite.Widgets.StatusBar ();
         download_speed_label = new Label("");
