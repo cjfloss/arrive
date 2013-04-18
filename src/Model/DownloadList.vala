@@ -73,6 +73,7 @@ public class Arrive.Model.DownloadList: Object {
         foreach(Arrive.Model.DownloadItem di in _list){
             if(di.status=="complete"||di.status=="removed"){
                 //new Notify.Notification(di.filename,"completed",null).show();
+                Arrive.App.aria2.finished_list.append(di);
                 di.remove_download_result();
                 populate_list();
             }
