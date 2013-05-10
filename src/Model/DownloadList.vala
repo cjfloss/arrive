@@ -18,15 +18,15 @@ public class Arrive.Model.DownloadList: Object {
 //~            // _list.append(download_item);   
 //~             list_changed();         
 //~         });
-		is_populate_needed=true;
+        is_populate_needed=true;
         var refresh_timer = new TimeoutSource(REFRESH_TIME);
         refresh_timer.set_callback(()=>{
-			if(is_populate_needed){
-				populate_list();
-				is_populate_needed=false;
-			}else{
-				refresh_list();
-			}
+            if(is_populate_needed){
+                populate_list();
+                is_populate_needed=false;
+            }else{
+                refresh_list();
+            }
             save_list_to_file();
             return true;
         });
@@ -144,10 +144,12 @@ public class Arrive.Model.DownloadList: Object {
         //create xml string of valuearray
         string data = Soup.XMLRPC.build_method_response(va);
         //save xmlstring
-        if(!save_file.get_parent().query_exists())save_file.get_parent().make_directory_with_parents();
-        if(save_file.query_exists()){
+        if(!save_file.get_parent().query_exists())
+            save_file.get_parent().make_directory_with_parents();
+
+        if(save_file.query_exists())
             save_file.delete();
-        }
+
         try{
             {
                 var file_stream = save_file.create(FileCreateFlags.NONE);

@@ -25,7 +25,11 @@ public class Arrive.Widgets.MainWindow : Gtk.Window  {
 
         Arrive.App.aria2.notify["download-speed"].connect((object,param)=>{refresh_status();});
         Arrive.App.aria2.notify["upload-speed"].connect((object,param)=>{refresh_status();});
-        destroy.connect(()=> { this.hide();Gtk.main_quit();Arrive.App.aria2.shutdown(); });
+        destroy.connect(()=> { 
+            this.hide();
+            Gtk.main_quit();
+            Arrive.App.aria2.shutdown(); 
+        });
     }
     private void refresh_status(){
         download_speed_label.set_text("dl/up speed:%sps/%sps    ".printf(format_size(Arrive.App.aria2.download_speed),

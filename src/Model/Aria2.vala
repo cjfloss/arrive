@@ -2,38 +2,24 @@ using Soup;
 using Granite.Services;
 public class Arrive.Model.Aria2 : Object {
     private static int REFRESH_TIME=1000;
-    public int num_active {
-        get;
-        set;
-    default=0;
-    }
-    public int num_waiting {
-        get;
-        set;
-    default=0;
-    }
-    public int num_stopped {
-        get;
-        set;
-    default=0;
-    }
-    public int download_speed {
-        get;
-        set;
-    default=0;
-    }
-    public int upload_speed {
-        get;
-        set;
-    default=0;
-    }
-    public string version="";
+    public int num_active;
+    public int num_waiting;
+    public int num_stopped;
+    public int download_speed;
+    public int upload_speed;
     private string aria_ip="http://localhost";
     private string aria_port="6800";
-    public string aria_uri="";
+    public string aria_uri;
+    public bool is_listened;
     public Arrive.Model.DownloadList download_list;
     public Arrive.Model.FinishedList finished_list;
+    
     public Aria2() {
+        num_active = 0;
+        num_waiting = 0;
+        num_stopped = 0;
+        download_speed = 0;
+        upload_speed = 0;
         //if(ip==null)aria_ip="http://localhost" else aria_ip = ip;
         //if(port==null)aria_port="6800" else aria_port = port;
         aria_uri = aria_ip+":"+aria_port+"/rpc";
@@ -48,7 +34,7 @@ public class Arrive.Model.Aria2 : Object {
             return true;
         });
         refresh_timer.attach(null);
-        
+        message ("version = %s",get_version());
     }
     ~Aria2(){
         shutdown();
@@ -61,19 +47,18 @@ public class Arrive.Model.Aria2 : Object {
             //max connection and split size are hardcoded for now
             //TODO:create preferences dialog to set max-connection-per-server and min-split-size (and almost everything)
             GLib.Process.spawn_command_line_async ("aria2c --enable-rpc --max-connection-per-server 5 --min-split-size 1M --pause=true");
+            is_listened = true;
         }catch(GLib.SpawnError error)
         {
             critical("cant start aria2c");
         }
 //~         delay(1000);//FIXME:need to wait for aria to load
 		Thread.usleep(500000);
-		get_version();
-		if(version==""){
-			critical("cant start or bind port, try to restart %s", version);
+		if(get_version()==""){
+			critical("cant start or bind port, try to restart");
+			is_listened = false;
 			shutdown();
 		}
-		debug(version);
-
     }
     private void refresh_status() {
         get_global_stat();
@@ -82,7 +67,7 @@ public class Arrive.Model.Aria2 : Object {
     //TODO:Parse getGlobalOption response
     private void get_global_option() {
         Soup.Message msg = XMLRPC.request_new(aria_uri,"aria2.getGlobalOption");
-        string data = send_message (msg);        
+        string data = send_message (msg);
     }
     private void get_global_stat() {
         Soup.Message msg = XMLRPC.request_new(aria_uri,"aria2.getGlobalStat");
@@ -114,7 +99,8 @@ public class Arrive.Model.Aria2 : Object {
             debug("Error while processing tellStatus response");
         }
     }
-    private void get_version() {
+    private string get_version() {
+        string version = "";
         Soup.Message msg = XMLRPC.request_new(aria_uri,"aria2.getVersion");
         string data = send_message (msg);
         try{
@@ -131,7 +117,7 @@ public class Arrive.Model.Aria2 : Object {
         }catch(Error e){
             debug("Error while processing getVersion response");
         }
-        stdout.printf("version  = %s\n",version);
+        return version;
     }
     public void shutdown() {
         Soup.Message msg = XMLRPC.request_new(aria_uri,"aria2.shutdown");
