@@ -37,12 +37,6 @@ namespace Arrive.Model {
             debug ("DownloadList created");
             load_list_from_file ();
         }
-        public bool is_downloading (){
-            foreach (DownloadItem di in _list)
-                if (di.status == "active")
-                    return true;
-            return false;
-        }
         private DownloadItem get_download_item(string gid){
             foreach(DownloadItem di in _list)
                 if(di.gid == gid) return di;

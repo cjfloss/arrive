@@ -46,7 +46,6 @@ namespace Arrive {
 
             if (main_window == null) main_window = new Arrive.Widgets.MainWindow ();
             main_window.set_application (this);
-            main_window.deiconify ();
             main_window.present ();
 
             //FIXME:cant compile with unity, cant find unity.h it seems like cmake fails

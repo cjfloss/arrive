@@ -32,7 +32,6 @@ namespace Arrive.Widgets {
                                  Arrive.App.aria2.shutdown ();
                              });
         }
-        
         private void refresh_status(){
             download_speed_label.set_text ("dl/up speed:%sps/%sps    ".printf (format_size (Arrive.App.aria2.download_speed),
                                                                                format_size (Arrive.App.aria2.upload_speed)
@@ -57,8 +56,8 @@ namespace Arrive.Widgets {
             else
                 pause_all.sensitive = true;
         }
-        public override bool delete_event (Gdk.EventAny event){
-            if (Arrive.App.aria2.download_list.is_downloading()){
+        public override bool delete_event(Gdk.EventAny event){
+            if (Arrive.App.aria2.num_active > 0){
                 iconify ();
                 return true;
             }
