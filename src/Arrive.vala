@@ -42,16 +42,11 @@ namespace Arrive {
             _instance = this;
         }
         protected override void activate () {
-            if (DEBUG)
-                Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.DEBUG;
-            else
-                Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
+            if (aria2 == null) aria2= new Arrive.Model.Aria2 ();
 
-            aria2= new Arrive.Model.Aria2 ();
-
-            var main_window = new Arrive.Widgets.MainWindow ();
+            if (main_window == null) main_window = new Arrive.Widgets.MainWindow ();
             main_window.set_application (this);
-
+            main_window.present ();
 
             //FIXME:cant compile with unity, cant find unity.h it seems like cmake fails
             //~         var launcher_entry = new Arrive.Model.LauncherEntry();

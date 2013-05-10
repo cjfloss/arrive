@@ -1,5 +1,5 @@
 namespace Arrive.Widgets {
-    public class DownloadCellRenderer : Gtk.CellRenderer  {
+    public class DownloadCellRenderer : Gtk.CellRenderer {
         private static const int PADDING = 4;
         private static const int ICON_SIZE = 48;
         private static const int RIGHT_COLUMN_WIDTH = 80;
