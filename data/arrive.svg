@@ -38,14 +38,14 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1366"
-     inkscape:window-height="680"
+     inkscape:window-height="677"
      id="namedview40"
      showgrid="false"
-     inkscape:zoom="10"
-     inkscape:cx="22.573644"
-     inkscape:cy="25.363998"
+     inkscape:zoom="1"
+     inkscape:cx="-140.88967"
+     inkscape:cy="171.99199"
      inkscape:window-x="0"
-     inkscape:window-y="26"
+     inkscape:window-y="24"
      inkscape:window-maximized="1"
      inkscape:current-layer="g3836"
      showguides="true"
@@ -908,14 +908,6 @@
          style="stop-color:#000000;stop-opacity:0"
          offset="1" />
     </linearGradient>
-    <filter
-       inkscape:collect="always"
-       id="filter3937">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="1.4322434"
-         id="feGaussianBlur3939" />
-    </filter>
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient3947"
@@ -925,6 +917,24 @@
        x2="25.293749"
        y2="24.396786"
        gradientUnits="userSpaceOnUse" />
+    <filter
+       inkscape:collect="always"
+       id="filter3938">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.57289738"
+         id="feGaussianBlur3940" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3947"
+       id="linearGradient3972"
+       gradientUnits="userSpaceOnUse"
+       x1="17.26655"
+       y1="17.096786"
+       x2="25.293749"
+       y2="24.396786"
+       gradientTransform="matrix(9.9547904,0,0,9.9547904,-545.48952,-386.46131)" />
   </defs>
   <g
      inkscape:groupmode="layer"
@@ -1059,7 +1069,7 @@
        id="g3836"
        transform="matrix(0.74807714,0,0,0.74807714,12.255189,5.9713401)">
       <rect
-         transform="matrix(0.7071068,0.70710676,-0.70710676,0.7071068,1.7377884,2.6735211)"
+         transform="matrix(0.7071068,0.70710676,-0.70710676,0.7071068,0.53470522,0.66837718)"
          ry="1.0177653"
          rx="1.0629996"
          y="-14.619158"
@@ -1067,9 +1077,9 @@
          height="41.117718"
          width="41.117718"
          id="rect3919"
-         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;filter:url(#filter3937)" />
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none;filter:url(#filter3938)" />
       <rect
-         style="fill:#ffd531;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         style="fill:#ffd531;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-opacity:1;stroke-width:0.33419013"
          id="rect3917"
          width="41.117718"
          height="41.117718"
@@ -1080,19 +1090,19 @@
          transform="matrix(0.7071068,0.70710676,-0.70710676,0.7071068,0,0)" />
       <rect
          transform="matrix(0.7071068,0.70710676,-0.70710676,0.7071068,0,0)"
-         ry="0.95238096"
-         rx="0.99470931"
-         y="-13.298398"
-         x="8.9047546"
-         height="38.476192"
-         width="38.476192"
+         ry="0.88704765"
+         rx="0.92647225"
+         y="-11.978665"
+         x="10.224487"
+         height="35.836727"
+         width="35.836727"
          id="rect3064"
-         style="fill:#ffd531;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.95238096px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+         style="fill:#ffd531;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.88704765px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
       <path
          sodipodi:nodetypes="ccczczcc"
          inkscape:connector-curvature="0"
          id="path3834"
-         d="m 11.322372,6.8141919 8.213351,0.016549 0.05287,22.7369071 c 0,0 8.146392,-2.865665 8.857855,-1.458071 0.711463,1.407594 -12.451309,12.890424 -12.451309,12.890424 0,0 -13.2662163,-11.212333 -12.7522379,-12.354266 0.5139783,-1.141932 8.8833549,1.170442 8.8833549,1.170442 z"
+         d="m 11.993827,9.3483631 6.99565,0.014095 -0.427586,19.4841179 c 0,0 5.34354,-0.609418 6.953831,-0.887437 1.61029,-0.278019 -9.541908,10.506691 -9.541908,10.506691 0,0 -12.5990796,-10.613395 -10.8616085,-10.522639 1.7374711,0.09076 7.5663205,0.996914 7.5663205,0.996914 z"
          style="fill:#000000;stroke:none" />
       <path
          style="opacity:0.20000000000000001;fill:url(#linearGradient3953);fill-opacity:1;fill-rule:evenodd;stroke:none"
