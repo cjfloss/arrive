@@ -24,7 +24,7 @@ namespace Arrive {
             app_copyright = "2013";
             app_years = "2013";
             app_icon = "arrive";
-            app_launcher = "arrive.desktop";
+            app_launcher = "Arrive.desktop";
             application_id = "org.vikoadi.arrive";
 
             main_url = "https://launchpad.net/arrive";
@@ -42,21 +42,24 @@ namespace Arrive {
             _instance = this;
         }
         protected override void activate () {
+            if (DEBUG)
+                Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.DEBUG;
+            else
+                Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
+            
             if (aria2 == null) aria2= new Arrive.Model.Aria2 ();
 
             if (main_window == null) main_window = new Arrive.Widgets.MainWindow ();
             main_window.set_application (this);
             main_window.present ();
 
-            //FIXME:cant compile with unity, cant find unity.h it seems like cmake fails
-            //~         var launcher_entry = new Arrive.Model.LauncherEntry();
+            var launcher_entry = new Arrive.Model.LauncherEntry();
         }
     }
 }
 public static int main (string[] args) {
     Gtk.init (ref args);
-    //FIXME:cant compile with libnotification too. what is this with ubuntu's library
-//~     Notify.init(Arrive.App.instance.application_id);
+    Notify.init(Arrive.App.instance.application_id);
     Arrive.App.instance.run (args);
     return 0;
 }

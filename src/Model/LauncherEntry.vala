@@ -3,34 +3,37 @@ namespace Arrive.Model {
         private static int REFRESH_TIME=1000;
         private Unity.LauncherEntry le;
         public LauncherEntry (){
-            le = Unity.LauncherEntry.get_for_desktop_id ("arrive.desktop");
+            le = Unity.LauncherEntry.get_for_desktop_id(Arrive.App.instance.app_launcher);
             //~         Arrive.App.aria2.download_list._list.notify("length").connect(()=>{
             //~             set_progress();
             //~         });
             var refresh_timer = new TimeoutSource (REFRESH_TIME);
             refresh_timer.set_callback (()=>{
-                                            set_progress ();
+                                            set_progress (calculate_progress ());
                                             return true;
                                         });
             refresh_timer.attach (null);
         }
-        private void set_progress(){
-            uint64 completed_length=0;
-            uint64 total_length=0;
+        private void set_progress(double progress){
+            if (progress < 1.0 && progress > 0.0) {
+                le.progress = progress;
+                le.progress_visible = true;
+            }else{
+                le.progress_visible = false;
+            }
+        }
+        private double calculate_progress (){
+            uint64 completed_length = 0;
+            uint64 total_length = 0;
 
             foreach(DownloadItem d_item in Arrive.App.aria2.download_list._list) {
-                completed_length+=d_item.completed_length;
-                total_length+=total_length;
+                if (d_item.status == "active"){
+                    completed_length += d_item.completed_length;
+                    total_length += d_item.total_length;
+                }
             }
-            double completed_percentage=completed_length/total_length;
-
-            if(completed_length != 1.0) {
-                le.progress = completed_length;
-                le.progress_visible=true;
-            }else{
-                le.progress = 1.0;
-                le.progress_visible=false;
-            }
+            double completed_percentage = (double) completed_length / total_length;
+            return completed_percentage;
         }
     }
 }

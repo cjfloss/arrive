@@ -71,7 +71,7 @@ namespace Arrive.Model {
         private void clean_finished(){
             foreach(DownloadItem di in _list)
                 if(di.status == "complete"||di.status == "removed") {
-                    //new Notify.Notification(di.filename,"completed",null).show();
+                    new Notify.Notification(di.filename,"Download completed",null).show();
                     Arrive.App.aria2.finished_list.append (di);
                     di.remove_download_result ();
                     populate_list ();
