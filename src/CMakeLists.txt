@@ -28,20 +28,24 @@ link_directories (${DEPS_LIBRARY_DIRS} ${LIBSOURCE_LIBRARY_DIRS} ${GCONF_LIBRARY
 vala_precompile(VALA_C
     Arrive.vala
     config.vala
-    Widgets/MainWindow.vala
+    Utils.vala
+    Model/IDownloadItem.vala
+    Model/Aria2.vala
+    Model/AriaHttp.vala
+    Model/AriaTorrent.vala
+    Model/DownloadItem.vala
+    Model/IDownloadList.vala
+    Model/DownloadList.vala
+    Model/FinishedItem.vala
+    Model/FinishedList.vala
+    Model/LauncherEntry.vala
+    Model/Settings.vala
     Widgets/AddFileDialog.vala
     #Widgets/AddFilePopOver.vala
     Widgets/CellRenderer.vala
     Widgets/DownloadingList.vala
     Widgets/FinishedList.vala
-    Model/Aria2.vala
-    Model/IDownloadItem.vala
-    Model/DownloadItem.vala
-    Model/IDownloadList.vala
-    Model/DownloadList.vala
-    Model/FinishedList.vala
-    Model/FinishedItem.vala
-    Model/LauncherEntry.vala
+    Widgets/MainWindow.vala
 PACKAGES
     ${ARRIVE_DEPS}
 OPTIONS

@@ -1,87 +1,106 @@
 namespace Arrive.Model {
     public class FinishedItem : Object {
-        private Soup.Date _date_finished;
-        public Soup.Date date_finished {
-            get{
-                return _date_finished;
-            }
-            private set{}
-        }
-        private string _date_compact;
-        public string date_compact {
-            get{
-                return _date_compact;
-            }
-            private set{
-            }
-        }
-        private Value _xml_value;
-        //used for saving and loading finished list
-        public Value xml_value {
-            get{
-                var finished_item=new HashTable<string, Value ?>(str_hash, str_equal);
-                //FIXME:inserting some value causing corruption
-                finished_item.insert ("filename", filename);
-                finished_item.insert ("dir", dir);
-                finished_item.insert ("totalLength", total_length.to_string ());
-                //TODO:finished date should be saved
-                finished_item.insert ("dateFinished", _date_finished.to_string (Soup.DateFormat.ISO8601_COMPACT));;
-                _xml_value=finished_item;
-                return _xml_value; //return the value
-            }
-            set{
-                _xml_value=value;
-                if(_xml_value.holds (typeof(HashTable))) {
-                    HashTable<string, Value ?> ht;
-                    Value val;
-                    ht = (HashTable<string, Value ?>)_xml_value;
-
-                    val=ht.get ("filename");
-                    filename=val.get_string ();
-
-                    val=ht.get ("dir");
-                    dir=val.get_string ();
-
-                    val=ht.get ("totalLength");
-                    total_length=uint64.parse (val.get_string ());
-
-                    val=ht.get ("dateFinished");
-                    var finished_string = val.get_string ();
-                    _date_finished=new Soup.Date.from_string (finished_string);
-                    _date_compact= _date_finished.to_string (Soup.DateFormat.ISO8601_COMPACT);
-                }
-
-            }
-        }
+        public Soup.Date date_finished {get;protected set;}
+        public string date_compact {get;protected set;}
         public string filename;
         private string dir;
+        private string _path;
         public unowned string path {
             get{
-                return dir;
+                _path = dir+"/"+filename;
+                return _path;
             }
-            private set{}
-        }
+            protected set{
+                _path = value;
+            }}
         public uint64 total_length;
-
-        public FinishedItem (DownloadItem ? download_item){
-            _xml_value= Value (typeof(HashTable));
-            filename="";
-            dir="";
-            total_length=0;
-            _date_finished=new Soup.Date.from_now (0);
-            _date_compact= _date_finished.to_string (Soup.DateFormat.ISO8601_COMPACT);
-            if(download_item != null) {
-                filename=download_item.filename;
-                dir=download_item.dir;
-                total_length=download_item.total_length;
-            }
+        public FinishedItem (IDownloadItem download_item){            
+            filename = download_item.filename;
+            dir = download_item.dir;
+            //path = dir +"/"+ filename;
+            total_length = download_item.total_length;
+            date_finished = new Soup.Date.from_now (0);
+            date_compact= date_finished.to_string (Soup.DateFormat.ISO8601_COMPACT);
         }
-        //FIXME:it should be localized as what it named
+        public FinishedItem.from_ht(HashTable<string, Value ?> ht){
+            set_ht (ht);
+        }
+        public void set_ht (HashTable<string, Value ?> ht){
+            Value val;
+            
+            val=ht.get ("filename");
+            filename=val.get_string ();
+
+            val=ht.get ("dir");
+            dir=val.get_string ();
+            
+            //path = dir+"/"+filename;
+
+            val=ht.get ("totalLength");
+            total_length=uint64.parse (val.get_string ());
+
+            val=ht.get ("dateFinished");
+            var finished_string = val.get_string ();
+            date_finished=new Soup.Date.from_string (finished_string);
+            date_compact= date_finished.to_string (Soup.DateFormat.ISO8601_COMPACT);
+        }
+        public HashTable<string, Value ?> get_ht (){
+            var finished_item=new HashTable<string, Value ?>(str_hash, str_equal);
+            //FIXME:inserting some value causing corruption
+            finished_item.insert ("filename", filename);
+            finished_item.insert ("dir", dir);
+            finished_item.insert ("totalLength", total_length.to_string ());
+            //TODO:finished date should be saved
+            finished_item.insert ("dateFinished", date_finished.to_string (Soup.DateFormat.ISO8601_COMPACT));
+            return finished_item;
+        }
+        public void open_file (){
+            Utils.open_file (dir+"/"+filename);
+            message ("open file "+dir+"/"+filename);
+        }
+        public void open_folder (){
+            Utils.open_file(dir);
+        }
+        public void move_to (){
+        }
+        //FIXME: file copy doesnt work
+        public void copy (){
+            Gdk.Atom atom = Gdk.Atom.intern ("CLIPBOARD",false);
+            var clipboard = Gtk.Clipboard.get (atom);
+            
+            Gtk.TargetEntry target0 = {"x-special/gnome-copied-files", 0, 0};
+            Gtk.TargetEntry target1 = {"text/uri-list", 0, 0};
+            
+            Gtk.TargetEntry[] targets = {
+                target0,
+                target1
+            };
+            
+            //clipboard.set_with_data (targets, (Gtk.ClipboardGetFunc) get_func, (Gtk.ClipboardClearFunc) clear_func);
+        }
+        public void remove_file (){
+            Utils.remove_file (dir+"/"+filename);
+        }
+        public void trash_file (){
+            Utils.trash_file (dir+"/"+filename);
+        }
+        public bool file_exist (){
+            var file = File.new_for_path (dir+"/"+filename);
+            return file.query_exists ();
+        }
+        private void get_func (Gtk.Clipboard clipboard, Gtk.SelectionData selection, uint info){
+            var data = "copy\n"+path;
+            selection.set (selection.get_target (), 8, (uchar[]) data);
+        }
+        private void clear_func (Gtk.Clipboard clipboard){
+        }
         public string get_date_localized(){
-            time_t date_t = _date_finished.to_time_t ();
+            time_t date_t = date_finished.to_time_t ();
             var date = Date ();
             date.set_time_t (date_t);
-            return "%u-%u-%u".printf (date.get_day (), date.get_month (), date.get_year ());
+            var date_c = new char[100];
+            date.strftime (date_c, "%x");
+            return (string)date_c;
         }
     }
 }

@@ -4,7 +4,7 @@ namespace Arrive.Model {
         private Unity.LauncherEntry le;
         public LauncherEntry (){
             le = Unity.LauncherEntry.get_for_desktop_id(Arrive.App.instance.app_launcher);
-            //~         Arrive.App.aria2.download_list._list.notify("length").connect(()=>{
+            //~         aria2.download_list._list.notify("length").connect(()=>{
             //~             set_progress();
             //~         });
             var refresh_timer = new TimeoutSource (REFRESH_TIME);
@@ -26,7 +26,7 @@ namespace Arrive.Model {
             uint64 completed_length = 0;
             uint64 total_length = 0;
 
-            foreach(DownloadItem d_item in Arrive.App.aria2.download_list._list) {
+            foreach(IDownloadItem d_item in aria2.download_list.files) {
                 if (d_item.status == "active"){
                     completed_length += d_item.completed_length;
                     total_length += d_item.total_length;

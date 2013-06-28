@@ -1,7 +1,8 @@
 namespace Arrive {
     public class App : Granite.Application {
-        public Arrive.Widgets.MainWindow main_window = null;
-        public static Arrive.Model.Aria2 aria2;
+        public static Widgets.MainWindow main_window;
+        //public static Arrive.Model.Aria2 aria2;
+        public Model.IDownloadList download_list;
         private static App _instance;
         public static App instance {
             get{
@@ -33,7 +34,7 @@ namespace Arrive {
             translate_url = "https://translations.launchpad.net/arrive";
 
             about_authors = {"Viko Adi Rahmawan <vikoadi@gmail.com>", null };
-            about_comments = _("Download Manager that support http,ftp, torrent, and metalink");
+            about_comments = _("Simple and practical download manager");
             about_documenters = {};
             about_artists = {};
             about_translators = "Launchpad Translators";
@@ -47,12 +48,17 @@ namespace Arrive {
             else
                 Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
             
-            if (aria2 == null) aria2= new Arrive.Model.Aria2 ();
-
-            if (main_window == null) main_window = new Arrive.Widgets.MainWindow ();
+            download_list = new Model.DownloadList ();
+            
+            if (Model.aria2 == null){
+                Model.aria2 = new Model.Aria2 (download_list);
+                (download_list as Model.DownloadList).start ();
+            }
+            
+            if (main_window == null) main_window = new Widgets.MainWindow ();
             main_window.set_application (this);
             main_window.present ();
-
+            
             var launcher_entry = new Arrive.Model.LauncherEntry();
         }
     }

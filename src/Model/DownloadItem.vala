@@ -106,11 +106,11 @@ namespace Arrive.Model {
             Soup.Message msg;
             debug ("start");
             if (options != null)
-                msg = XMLRPC.request_new (Arrive.App.aria2.aria_uri, "aria2.addUri",
+                msg = XMLRPC.request_new (aria2.aria_uri, "aria2.addUri",
                                           typeof(ValueArray), _uris,
                                           typeof(HashTable), options);
             else
-                msg = XMLRPC.request_new (Arrive.App.aria2.aria_uri, "aria2.addUri", typeof(ValueArray), _uris);
+                msg = XMLRPC.request_new (aria2.aria_uri, "aria2.addUri", typeof(ValueArray), _uris);
             string data = send_message (msg);
             stdout.printf (data);
             try {
@@ -127,35 +127,35 @@ namespace Arrive.Model {
             } catch (Error e) {
                 debug ("Error while processing addUri response");
             }
-            //~         Arrive.App.aria2.download_list.list_changed();
+            //~         aria2.download_list.list_changed();
         }
         public void remove(){
-            Soup.Message msg = XMLRPC.request_new (Arrive.App.aria2.aria_uri, "aria2.remove", typeof(string), gid);
+            Soup.Message msg = XMLRPC.request_new (aria2.aria_uri, "aria2.remove", typeof(string), gid);
             send_message (msg);
-            //~         Arrive.App.aria2.download_list.list_changed();
+            //~         aria2.download_list.list_changed();
             //debug(data);
             //refresh_status();
         }
         public void remove_download_result(){
-            Soup.Message msg = XMLRPC.request_new (Arrive.App.aria2.aria_uri, "aria2.removeDownloadResult",
+            Soup.Message msg = XMLRPC.request_new (aria2.aria_uri, "aria2.removeDownloadResult",
                                                    typeof(string), gid);
             send_message (msg);
-            //~         Arrive.App.aria2.download_list.list_changed();
+            //~         aria2.download_list.list_changed();
             //debug(data);
             //refresh_status();
         }
         public void pause(){
-            Soup.Message msg = XMLRPC.request_new (Arrive.App.aria2.aria_uri, "aria2.pause",
+            Soup.Message msg = XMLRPC.request_new (aria2.aria_uri, "aria2.pause",
                                                    typeof(string), gid);
             send_message (msg);
-            //~         Arrive.App.aria2.download_list.list_changed();
+            //~         aria2.download_list.list_changed();
             //refresh_status();
         }
         public void unpause(){
-            Soup.Message msg = XMLRPC.request_new (Arrive.App.aria2.aria_uri, "aria2.unpause",
+            Soup.Message msg = XMLRPC.request_new (aria2.aria_uri, "aria2.unpause",
                                                    typeof(string), gid);
             send_message (msg);
-            //~         Arrive.App.aria2.download_list.list_changed();
+            //~         aria2.download_list.list_changed();
             //refresh_status();
         }
         private string parse_filename(string path){

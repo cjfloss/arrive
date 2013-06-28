@@ -35,25 +35,14 @@ namespace Arrive.Widgets {
             var segment_spin1 = new Gtk.SpinButton.with_range (1, 16, 1);
             grid1.attach (segment_spin1, 5, 1, 1, 1);
 
-            var add_button1 = new Gtk.Button.with_label (_("Add to list"));
+            var add_button1 = new Gtk.Button.with_label (_("Queue and start"));
             add_button1.clicked.connect (()=>{
                                              if (uri_entry1.text != "http://") {
-                                                 var v_array = new ValueArray (0);
-                                                 v_array.append (uri_entry1.text);
-
-                                                 var option = new HashTable<string, Value ?>(str_hash, str_equal);
-                                                 option.insert ("dir",
-                                                                file_chooser1.get_uris ().nth_data (0).replace ("file://", ""));
-                                                 option.insert ("split",
-                                                                segment_spin1.get_value_as_int ().to_string ());
-                                                 option.insert ("pause", "false");
-                                                 Soup.Message msg = Soup.XMLRPC.request_new (Arrive.App.aria2.aria_uri,
-                                                                                             "aria2.addUri",
-                                                                                             typeof(ValueArray), v_array,
-                                                                                             typeof(HashTable), option
-                                                                                             );
-                                                 send_message (msg);
-                                                 Arrive.App.aria2.download_list.list_changed ();
+                                                 var aria_http = new Model.AriaHttp.with_attribute (uri_entry1.text, 
+                                                                        file_chooser1.get_uris().nth_data(0).replace("file://", "") , 
+                                                                        segment_spin1.get_value_as_int ());
+                                                 aria_http.start ();
+                                                 Model.aria2.download_list.add_file(aria_http);
                                              }
                                              this.destroy ();
                                          });
@@ -66,12 +55,6 @@ namespace Arrive.Widgets {
             static_notebook.append_page (new Gtk.Label ("metalink"), new Gtk.Label (_("metalink")));
             this.add (static_notebook);
 
-        }
-        private string send_message(Soup.Message msg) {
-            var session = new Soup.SessionSync ();
-            session.send_message (msg);
-            string data = (string) msg.response_body.flatten ().data;
-            return data;
         }
     }
 }
