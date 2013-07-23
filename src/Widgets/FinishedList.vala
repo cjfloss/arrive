@@ -1,13 +1,19 @@
 namespace Arrive.Widgets {
-    public class FinishedList : Object {
+    public class FinishedList : Gtk.Notebook {
         public Gtk.ScrolledWindow widget;
         private Gtk.TreeView tree_view;
         private Gtk.TreeStore tree_store;
         private Gtk.TreeModelFilter tree_filter;
+        private Gtk.ScrolledWindow scrolled;
         private string filter_string = "";
         private Model.FinishedList finished_list;
         public FinishedList (Model.FinishedList finished_list) {
             this.finished_list = finished_list;
+            filter_string = "";            
+            
+            set_show_tabs (false);
+            set_show_border (false);
+            
             tree_store = new Gtk.TreeStore (3, typeof(string), typeof(string), typeof(Model.FinishedItem));
             tree_filter = new Gtk.TreeModelFilter (tree_store, null);
             tree_filter.set_visible_func (visible_func);
@@ -40,8 +46,13 @@ namespace Arrive.Widgets {
             tree_view.insert_column (column_s, -1);
             
             setup_list ();
-            widget = new Gtk.ScrolledWindow (null, null);
-            widget.add (tree_view);
+            scrolled = new Gtk.ScrolledWindow (null, null);
+            scrolled.add (tree_view);
+            append_page(scrolled);
+            
+            append_page(new Granite.Widgets.Welcome (_("You Haven't Finished \n a Download"), _("Your finished download \n will be listed here")));
+            
+            append_page(new Granite.Widgets.Welcome ("", _("Search Not Found")));
         
             finished_list.list_changed.connect (setup_list);
             tree_view.button_release_event.connect ((event)=>{
@@ -101,6 +112,15 @@ namespace Arrive.Widgets {
         public void filter (string filter_string){
             this.filter_string = filter_string;
             tree_filter.refilter ();
+            var row_length = length ();
+            //simple logic for showing welcome screen and search not found
+            if (row_length == 0){
+                if (filter_string == "")
+                    set_current_page (1);
+                else 
+                    set_current_page (2);
+            }else
+                set_current_page (0);
             tree_view.expand_all ();
         }
         private void show_popup_menu (Gdk.EventButton event){
@@ -178,6 +198,14 @@ namespace Arrive.Widgets {
                 }
             }
             return iter;
+        }
+        private int length (){
+            int length = 0;
+            Gtk.TreeIter iter;
+            for (bool next = tree_filter.get_iter_first (out iter); next; next = tree_filter.iter_next (ref iter)) {
+                length++;
+            }
+            return length;
         }
         private List<Model.FinishedItem> get_selected_files(){
             var list = new List<Model.FinishedItem>();

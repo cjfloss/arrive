@@ -1,16 +1,21 @@
 namespace Arrive.Widgets {
-    public class DownloadingList : Gtk.Widget {
+    public class DownloadingList : Gtk.Notebook {
         private static int REFRESH_TIME=1000;
         public Gtk.ScrolledWindow widget;
         private Gtk.ScrolledWindow scrolled;
         private Gtk.ListStore list_store;
         private Gtk.TreeView tree_view;
         private Gtk.TreeModelFilter tree_filter;
-        private string filter_string = "";
+        private string filter_string;
         private Model.DownloadList download_list;
 
         public DownloadingList (Model.DownloadList download_list) {
             this.download_list = download_list;
+            filter_string = "";            
+            
+            set_show_tabs (false);
+            set_show_border (false);
+            
             list_store = new Gtk.ListStore (1, typeof(Arrive.Model.IDownloadItem));
             tree_filter = new Gtk.TreeModelFilter (list_store, null);
             tree_filter.set_visible_func (visible_func);
@@ -19,7 +24,22 @@ namespace Arrive.Widgets {
             tree_view.get_selection ().set_mode (Gtk.SelectionMode.MULTIPLE);
             scrolled = new Gtk.ScrolledWindow (null, null);
             scrolled.add (tree_view);
-            widget = scrolled;
+            append_page (scrolled);
+            
+            var welcome = new Granite.Widgets.Welcome (_("No Download Yet"), _("But you can add it"));
+            welcome.append (Gtk.Stock.ADD, "Add Download", "Any http, ftp, or magnet link");
+            welcome.activated.connect ((index)=>{
+                switch (index){
+                    case 0:
+                        var add_file_dialog = new AddFileDialog ("");
+                        add_file_dialog.show_all ();
+                        break;
+                        
+                }
+            });
+            append_page (welcome);
+            
+            append_page (new Granite.Widgets.Welcome ("", _("Search Not Found")));
 
             tree_view.button_release_event.connect ((event)=>{
                                                       if(event.button == 3)
@@ -29,9 +49,11 @@ namespace Arrive.Widgets {
 
             download_list.file_added.connect (()=>{
                  populate_list_store ();
+                 filter (filter_string);
              });
             download_list.file_removed.connect (()=>{
                  populate_list_store ();
+                 filter (filter_string);
              });
 
             var cell_renderer = new DownloadCellRenderer ();
@@ -131,7 +153,7 @@ namespace Arrive.Widgets {
         }
                 //filetering using search bar
         private bool visible_func (Gtk.TreeModel t_model, Gtk.TreeIter t_iter){
-            if (filter_string == "")
+            if (filter_string == "" || filter_string == null)
                 return true;
             if (t_model.iter_has_child (t_iter)){//check if its date iter
                 for (int i=0;i<t_model.iter_n_children (t_iter);i++){
@@ -147,11 +169,24 @@ namespace Arrive.Widgets {
         }
         public void filter (string filter_string){
             this.filter_string = filter_string;
-            tree_filter.refilter ();/*  
-            if (filter_string == "")
-                widget = scrolled;
-            else 
-                widget = new Granite.Widgets.Welcome ("No Download Currently","but you can start it");*/
+            tree_filter.refilter (); 
+            var row_length = length ();
+            //simple logic for showing welcome screen and search not found
+            if (row_length == 0){
+                if (filter_string == "")
+                    set_current_page (1);
+                else 
+                    set_current_page (2);
+            }else
+                set_current_page (0);
+        }
+        private int length (){
+            int length = 0;
+            Gtk.TreeIter iter;
+            for (bool next = tree_filter.get_iter_first (out iter); next; next = tree_filter.iter_next (ref iter)) {
+                length++;
+            }
+            return length;
         }
         private bool contains_string (Gtk.TreeModel t_model, Gtk.TreeIter t_iter){
             Value item;

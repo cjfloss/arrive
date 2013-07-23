@@ -33,6 +33,9 @@ namespace Arrive.Widgets {
             restore_window_state ();
             set_position (Gtk.WindowPosition.CENTER);
             show_all ();
+            downloading_list.filter (search_bar.text);
+            finished_list.filter (search_bar.text);
+            static_notebook.page = saved_state.notebook_state;
             
             download_list_model.item_refreshed.connect (refresh_status);
             destroy.connect (()=> {
@@ -41,7 +44,7 @@ namespace Arrive.Widgets {
                 Model.aria2.shutdown ();
                 Gtk.main_quit ();
              });
-                             
+                        
             Notify.init(get_title ());
         }
         private void refresh_status(){
@@ -87,7 +90,6 @@ namespace Arrive.Widgets {
                 saved_state.window_state = Model.WindowState.NORMAL;
             
             if (saved_state.window_state == Model.WindowState.NORMAL){
-                debug ("window_state == NORMAL");
                 int width, height;
                 get_size (out width, out height);
                 saved_state.window_width = width;
@@ -98,10 +100,8 @@ namespace Arrive.Widgets {
         }
         private void restore_window_state (){
             resize (saved_state.window_width, saved_state.window_height);
-            //resize (300, 400);
             if (saved_state.window_state == Model.WindowState.MAXIMIZED)
                 maximize ();
-            static_notebook.page = saved_state.notebook_state;
             search_bar.text = saved_state.search_string;
         }
         public override bool delete_event(Gdk.EventAny event){
@@ -197,8 +197,8 @@ namespace Arrive.Widgets {
             //static notebook
             static_notebook = new Granite.Widgets.StaticNotebook ();
             static_notebook.get_style_context ().add_class (Granite.StyleClass.CONTENT_VIEW);
-            static_notebook.append_page (downloading_list.widget, new Gtk.Label (_ ("Downloading")));
-            static_notebook.append_page (finished_list.widget, new Gtk.Label (_ ("Finished")));
+            static_notebook.append_page (downloading_list, new Gtk.Label (_ ("Downloading")));
+            static_notebook.append_page (finished_list, new Gtk.Label (_ ("Finished")));
 
             //status bar
             status_bar = new Granite.Widgets.StatusBar ();

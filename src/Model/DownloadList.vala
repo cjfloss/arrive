@@ -10,7 +10,7 @@ namespace Arrive.Model {
             _files = new List<Model.IDownloadItem>();
         }
         public void destroy (){
-            message ("download list destructed");
+            debug ("download list destructed");
             save_list (save_file);
         }
         public void start (){
