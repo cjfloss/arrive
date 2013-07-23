@@ -4,11 +4,18 @@ namespace Arrive.Widgets {
         public AddFileDialog (string uri){
             var static_notebook = new Granite.Widgets.StaticNotebook (false);
             this.window_position=Gtk.WindowPosition.CENTER;
+            
+            static_notebook.append_page (create_page_1 (uri), new Gtk.Label (_("http/ftp")));
+            static_notebook.append_page (create_page_2 (uri), new Gtk.Label (_("magnet")));
+            static_notebook.append_page (create_page_3 (uri), new Gtk.Label (_("torrent")));
+            this.add (static_notebook);
+
+        }
+        private Gtk.Widget create_page_1 (string uri){
             var grid1=new Gtk.Grid ();
             grid1.set_column_homogeneous (false);
             grid1.set_row_homogeneous (true);
 
-            //~         http://majalah.detik.com/cb/90014839209b829c310ce94f6d34afff/2013/20130211_MajalahDetik_63.pdf
             grid1.attach (new Gtk.Label (_("Uri :")), 0, 0, 1, 1);
             var uri_entry1 = new Granite.Widgets.HintedEntry ("");
             if (uri == "") {
@@ -33,6 +40,7 @@ namespace Arrive.Widgets {
 
             grid1.attach (new Gtk.Label (_("Segment :")), 4, 1, 1, 1);
             var segment_spin1 = new Gtk.SpinButton.with_range (1, 16, 1);
+            segment_spin1.set_value ((double) App.instance.settings.default_segment_num);
             grid1.attach (segment_spin1, 5, 1, 1, 1);
 
             var add_button1 = new Gtk.Button.with_label (_("Queue and start"));
@@ -42,19 +50,84 @@ namespace Arrive.Widgets {
                                                                         file_chooser1.get_uris().nth_data(0).replace("file://", "") , 
                                                                         segment_spin1.get_value_as_int ());
                                                  aria_http.start ();
-                                                 Model.aria2.download_list.add_file(aria_http);
+                                                 App.instance.download_list.add_file(aria_http);
                                              }
                                              this.destroy ();
                                          });
             grid1.attach (add_button1, 5, 2, 1, 1);
             grid1.margin=12;
             grid1.margin_top = 0;
+            
+            return grid1;
+        }
+        private Gtk.Widget create_page_2 (string magnet){
+            var grid=new Gtk.Grid ();
+            grid.set_column_homogeneous (false);
+            grid.set_row_homogeneous (true);
 
-            static_notebook.append_page (grid1, new Gtk.Label (_("http/ftp")));
-            static_notebook.append_page (new Gtk.Label ("torrent"), new Gtk.Label (_("torrent")));
-            static_notebook.append_page (new Gtk.Label ("metalink"), new Gtk.Label (_("metalink")));
-            this.add (static_notebook);
+            grid.attach (new Gtk.Label (_("Magnet Link :")), 0, 0, 1, 1);
+            var uri_entry1 = new Granite.Widgets.HintedEntry ("");
+            if (magnet == "") {
+                Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ((clipboard, cbtext)=>{
+                                                                              //TODO:must verify that text are valid URI
+                                                                              if (cbtext != null && cbtext.has_prefix("magnet")) {
+                                                                                  string text=cbtext.strip ();
+                                                                                  uri_entry1.text = text;
+                                                                              }else
+                                                                                  uri_entry1.text = "";
+                                                                          }
+                                                                          );
+            }else
+                uri_entry1.text=magnet;
 
+            grid.attach (uri_entry1, 1, 0, 2, 1);
+            grid.attach (new Gtk.Label (_("Save to :")), 0, 1, 1, 1);
+            var file_chooser1 = new Gtk.FileChooserButton (_("Save to"),
+                                                           Gtk.FileChooserAction.SELECT_FOLDER);
+            grid.attach (file_chooser1, 1, 1, 2, 1);
+
+            var add_button1 = new Gtk.Button.with_label (_("Queue and start"));
+            add_button1.clicked.connect (()=>{
+                                             if (uri_entry1.text.has_prefix ("magnet")) {
+                                                 var aria_magnet = new Model.AriaMagnet.with_attribute (uri_entry1.text, 
+                                                                        file_chooser1.get_uris().nth_data(0).replace("file://", "") 
+                                                                        );
+                                                 aria_magnet.start ();
+                                                 App.instance.download_list.add_file(aria_magnet);
+                                             }
+                                             this.destroy ();
+                                         });
+            grid.attach (add_button1, 2, 2, 1, 1);
+            grid.margin=12;
+            grid.margin_top = 0;
+            
+            return grid;
+        }
+        private Gtk.Widget create_page_3 (string uri){
+            var grid = new Gtk.Grid ();
+            grid.set_column_homogeneous (false);
+            grid.set_row_homogeneous (false);
+            grid.margin = 12;
+            grid.margin_top = 0;
+            
+            grid.attach (new Gtk.Label (_("Torrent file :")), 0, 0, 1, 1);
+            var file_chooser = new Gtk.FileChooserButton (_("Select .torrent file"),
+                                                           Gtk.FileChooserAction.OPEN);
+            var filter = new Gtk.FileFilter ();
+            filter.add_mime_type ("application/x-bittorrent");
+            file_chooser.set_filter (filter);
+            grid.attach (file_chooser, 1, 0, 5, 1);
+            
+            var add_button = new Gtk.Button.with_label (_("Queue and start"));
+            add_button.clicked.connect (()=>{
+                                            //add_torrent (file_chooser.get_uris ().nth_data(0).replace ("file://",""));
+                                            message (file_chooser.get_uris ().nth_data(0));
+                                            this.destroy ();
+                                         });
+            grid.attach (add_button, 5, 2, 1, 1);
+            
+            //return grid;
+            return new Gtk.Label("torrent file");
         }
     }
 }

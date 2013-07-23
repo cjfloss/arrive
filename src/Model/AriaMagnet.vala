@@ -1,6 +1,26 @@
 namespace Arrive.Model {
-    public class AriaHttp : Object, IDownloadItem {
-        public string gid {get; protected set;}
+    public class AriaMagnet : Object, IDownloadItem {
+        public AriaMagnet (){
+            this.item_type = "AriaMagnet";
+        }
+        public AriaMagnet.with_attribute (string magnet, string dir, bool pause = true){
+            this.item_type = "AriaMagnet";
+            this.uris = magnet;
+            this.dir = dir;
+            
+            this.gid = Model.aria2.add_uri (uris, dir, 1, pause);
+        }
+        public AriaMagnet.with_ht (HashTable<string, Value ?> ht){
+            this.item_type = "AriaMagnet";
+            update_by_ht (ht);
+            
+            bool pause = true;
+            if (this.status == "active")
+                pause = false;
+            this.gid = Model.aria2.add_uri (uris, this.dir, 1, pause);
+            
+        }
+        public string gid {get; set;}
         public string item_type {get; protected set;}
         public string filename {get; protected set;}
         public string uris {get; protected set;}
@@ -10,34 +30,17 @@ namespace Arrive.Model {
         public uint64 completed_length {get; protected set;}
         public uint download_speed {get; protected set;}
         public uint upload_speed {get; protected set;}
-        public int connections {get;private set;}
-        public AriaHttp (){
-            this.item_type = "AriaHttp";
-        }
-        public AriaHttp.with_attribute (string uris, string dir, int split, bool pause = true){
-            this.item_type = "AriaHttp";
-            this.uris = uris;
-            this.dir = dir;
-            this.connections = split;
-            
-            this.gid = Model.aria2.add_uri (uris, dir, connections, pause);
-        }
-        public AriaHttp.with_ht (HashTable<string, Value ?> ht){
-            this.item_type = "AriaHttp";
-            update_by_ht (ht);
-            
-            bool pause = true;
-            if (this.status == "active")
-                pause = false;
-            this.gid = Model.aria2.add_uri (this.uris, this.dir, this.connections, pause);            
-        }
+        public string info_hash {get;private set;}
+        public unowned List<string> path_files {get;private set;}
         public void start (){
+            //gid = Model.aria2.add_uri (uris, dir, connections, true);
             unpause ();
         }
         public void pause (){
             aria2.pause (gid);
         }
         public void unpause (){
+            message (gid.to_string ());
             aria2.unpause (gid);
         }
         public void remove (){
@@ -49,33 +52,39 @@ namespace Arrive.Model {
         public void cancel (){
         }
         public void update_by_ht (HashTable<string, Value ?> ht){
-            /*if (status != null){
+            if (status == null || status == "active"){
                 status = get_string_from_ht (ht, "status");
-                download_speed = int.parse (get_string_from_ht (ht, "downloadSpeed"));
-                upload_speed = int.parse (get_string_from_ht (ht, "uploadSpeed"));
                 total_length = uint64.parse (get_string_from_ht (ht, "totalLength"));
-                return;
-            }*/
+                completed_length = uint64.parse (get_string_from_ht (ht, "completedLength"));
+            }
             
+            if (get_string_from_ht (ht, "status") == "complete" && path_files.length () == 0)
+                status = "waiting";
+            
+            Value val = Value (typeof(string));
             gid = get_string_from_ht (ht, "gid");
             download_speed = int.parse (get_string_from_ht (ht, "downloadSpeed"));
             upload_speed = int.parse (get_string_from_ht (ht, "uploadSpeed"));
             dir = get_string_from_ht (ht, "dir");
-            connections = int.parse (get_string_from_ht (ht, "connections"));
-            //the update_by_ht should not update completed_length and total_length, if download
-            //is not active. aria will return 0 
-            if (status == null || status == "active"){
-                completed_length = uint64.parse (get_string_from_ht (ht, "completedLength"));
-                total_length = uint64.parse (get_string_from_ht (ht, "totalLength"));
-            }
+            info_hash = get_string_from_ht (ht, "infoHash");
 
-            Value val = Value (typeof(string));
             val = ht.get ("files");
             if(val.holds (typeof(ValueArray))) {
                 unowned ValueArray va;
                 va=(ValueArray) val; //va contains array
+                path_files = new List<string> ();
+                foreach(Value vhtable in va){
+                    //extract hashtable from v
+                    HashTable<string, Value ?> htable=(HashTable<string, Value ?>)vhtable; 
+                    var path = parse_filename (get_string_from_ht (htable, "path"));
+                    path_files.append (path);
+
+                    if(path != "")
+                        filename = path;
+                    else
+                        filename = parse_filename (uris);
+                }/*
                 if(va.n_values > 0) {
-                    Value vhtable=va.get_nth (0); //we choose the first array member
                     //extract hashtable from v
                     HashTable<string, Value ?> htable=(HashTable<string, Value ?>)vhtable; 
                     var path = parse_filename (get_string_from_ht (htable, "path"));
@@ -86,17 +95,20 @@ namespace Arrive.Model {
                     foreach(Value vuri in duris) {
                         var hturi= (HashTable<string, Value ?>)vuri;
                         _uris.append (get_string_from_ht (hturi, "uri"));
-                        this.uris = get_string_from_ht (hturi, "uri");
+                        uris = get_string_from_ht (hturi, "uri");
                     }
                     if(path != "")
                         filename = path;
                     else
-                        filename = parse_filename (_uris.get_nth (0).get_string ());
-                }
+                        filename = parse_filename (uris);
+                }*/
             }else
                 filename=_("cant get filename");
             
-            status = get_string_from_ht (ht, "status");
+            if (get_string_from_ht (ht, "status") == "complete" && path_files.length () == 0){
+                status = "waiting";
+            }else
+                status = get_string_from_ht (ht, "status");
         }
         public HashTable<string, Value ?> get_ht (){
             var ht = new HashTable<string, Value ?>(str_hash, str_equal);
@@ -113,8 +125,8 @@ namespace Arrive.Model {
             ht.insert ("completedLength", val);
             val.set_string (dir);
             ht.insert ("dir", val);
-            val.set_string (connections.to_string ());
-            ht.insert ("connections", val);
+            val.set_string (info_hash);
+            ht.insert("infoHash", val);
             
             //create the frustating files Value Array
             val = Value(typeof(ValueArray));
@@ -148,6 +160,16 @@ namespace Arrive.Model {
             
             return ht;
         }
+        public Value get_value (){
+            var val = Value(typeof(string));
+            return val;
+        }
+        public void set_value (Value value){
+        }
+        public void change_gid (string gid){
+            this.gid = gid;
+            message (this.gid);
+        }
         private string get_string_from_ht(HashTable<string, Value?> ht, string key){
             if (ht.get (key) != null){
                 Value val = ht.get (key);
@@ -162,14 +184,6 @@ namespace Arrive.Model {
                 return fn;
             }
             return "";
-        }
-        public string to_string (){
-            return "gid : "+gid+
-                    "\n filename : "+filename+
-                    "\n status : "+status+
-                    "\n dir : "+dir+
-                    "\n uris : "+uris+
-                    "\n";
         }
     }
 }

@@ -20,3 +20,6 @@ add_subdirectory(po)
 
 install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/Arrive.desktop DESTINATION share/applications)
 install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/arrive.svg DESTINATION share/icons/hicolor/48x48/apps)
+
+include(GSettings)
+add_schema("data/org.pantheon.Arrive.gschema.xml")

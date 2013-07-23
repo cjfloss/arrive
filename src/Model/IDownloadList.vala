@@ -1,4 +1,5 @@
 namespace Arrive.Model {
+    public static Model.IDownloadList download_list;
     public interface IDownloadList : Object {
         public abstract List<IDownloadItem> files{get;}
         public abstract IDownloadItem? get_by_gid (string gid);

@@ -2,14 +2,12 @@ using Granite.Services;
 using Soup;
 namespace Arrive.Model {
     public class DownloadItem : Object {
-        //~     public DownloadType tipe{get;set;}
         public string status {get; set; default=""; }
         private string _gid;
         public string gid {
             get{return _gid; }
             set{
                 _gid = value;
-                //refresh_status();
             }
         }
         public string filename {get; set; }
@@ -29,78 +27,8 @@ namespace Arrive.Model {
                 _uris=value.copy ();
             }
         }
-        private Value _xml_value;
-        public Value xml_value {
-            get{
-                return _xml_value;
-            }
-            set{
-                _xml_value=value;
-                if(_xml_value.holds (typeof(HashTable))) {
-                    HashTable<string, Value ?> ht;
-                    Value val;
-
-                    ht = (HashTable<string, Value ?>)_xml_value;
-
-                    val=ht.get ("gid");
-                    gid=val.get_string ();
-
-                    val=ht.get ("totalLength");
-                    total_length=uint64.parse (val.get_string ());
-
-                    val = ht.get ("completedLength");
-                    if(val.holds (typeof(string)))
-                        completed_length=uint64.parse (val.get_string ());
-
-                    val = ht.get ("downloadSpeed");
-                    download_speed=int.parse (val.get_string ());
-
-                    val = ht.get ("uploadSpeed");
-                    upload_speed=int.parse (val.get_string ());
-
-                    val = ht.get ("dir");
-                    dir = val.get_string ();
-
-                    val = ht.get ("connections");
-                    connections = int.parse (val.get_string ());
-
-                    val = ht.get ("files");
-                    if(val.holds (typeof(ValueArray))) {
-                        unowned ValueArray va;
-                        va=(ValueArray) val; //va contains array
-                        if(va.n_values > 0) {
-                            Value vhtable=va.get_nth (0); //we choose the first array member
-                            HashTable<string, Value ?> htable=(HashTable<string, Value ?>)vhtable; //extract hashtable from v
-                            Value vfiles=htable.get ("path"); //find path in hashtable
-                            var path = parse_filename (vfiles.get_string ());
-
-                            //TODO: fillin _uris so can be used by downloadlist.load_save_file
-                            Value vuris = htable.get ("uris");
-                            var duris = ((ValueArray) vuris).copy ();
-                            foreach(Value vuri in duris) {
-                                var hturi= (HashTable<string, Value ?>)vuri;
-                                Value duri = hturi.get ("uri");
-                                _uris.append (duri.get_string ());
-                            }
-                            if(path != "")
-                                filename = path;
-                            else
-                                filename = parse_filename (_uris.get_nth (0).get_string ());
-                        }
-                    }else
-                        filename=_ ("cant get filename");
-
-                    val = ht.get ("status");
-                    status = val.get_string ();
-                }else
-                    Granite.Services.Logger.notification ("cant parse_method_response");
-                    //stdout.printf(data+"\n");
-            }
-        }
         public DownloadItem () {
             _uris=new ValueArray (0);
-            //~         tipe=DownloadType.URI;
-            //~         status=Status.WAITING;
         }
         public void start(HashTable ? options){
             Soup.Message msg;
@@ -119,7 +47,7 @@ namespace Arrive.Model {
                     string _gid;
                     if(v.holds (typeof(string))) {
                         _gid = v.get_string ();
-                        Granite.Services.Logger.notification ("added gid = %s \n".printf (gid));
+                        debug ("added gid = %s \n".printf (_gid));
                         this.gid=_gid;
                     }
                 }else
@@ -127,7 +55,6 @@ namespace Arrive.Model {
             } catch (Error e) {
                 debug ("Error while processing addUri response");
             }
-            //~         aria2.download_list.list_changed();
         }
         public void remove(){
             Soup.Message msg = XMLRPC.request_new (aria2.aria_uri, "aria2.remove", typeof(string), gid);
@@ -148,15 +75,18 @@ namespace Arrive.Model {
             Soup.Message msg = XMLRPC.request_new (aria2.aria_uri, "aria2.pause",
                                                    typeof(string), gid);
             send_message (msg);
-            //~         aria2.download_list.list_changed();
-            //refresh_status();
         }
         public void unpause(){
             Soup.Message msg = XMLRPC.request_new (aria2.aria_uri, "aria2.unpause",
                                                    typeof(string), gid);
             send_message (msg);
-            //~         aria2.download_list.list_changed();
-            //refresh_status();
+        }
+        public string to_string (){
+            return "gid : "+gid+
+                    "\n filename : "+filename+
+                    "\n status : "+status+
+                    "\n dir : "+dir+
+                    "\n";
         }
         private string parse_filename(string path){
             if (path != null && path != "") {

@@ -1,0 +1,53 @@
+<schemalist>
+	<enum id="org.pantheon.arrive.saved-state.window-state">
+		<value nick="Normal" value="0" />
+		<value nick="Maximized" value="1" />
+		<value nick="Fullscreen" value="2" />
+	</enum>
+	<enum id="org.pantheon.arrive.settings.finished-action">
+		<value nick="Nothing" value="0" />
+		<value nick="Suspend" value="1" />
+		<value nick="Hibernate" value="2" />
+		<value nick="Shutdown" value="3" />
+	</enum>
+
+	<schema path="/org/pantheon/arrive/settings/" id="org.pantheon.arrive.settings" gettext-domain="arrive">
+		<key name="default-segment-num" type="i">
+			<default>1</default>
+			<summary>default segment number.</summary>
+			<description>The default segment number in add URI dialog.</description>
+		</key>
+		<key name="finished-action" enum="org.pantheon.arrive.settings.finished-action">
+			<default>"Nothing"</default>
+			<summary>When All download finished.</summary>
+			<description>Action that will be taken when all download is completed.</description>
+		</key>
+	</schema>
+	<schema path="/org/pantheon/arrive/saved-state/" id="org.pantheon.arrive.saved-state" gettext-domain="arrive">
+		<key name="window-width" type="i">
+			<default>850</default>
+			<summary>The saved width of the window.</summary>
+			<description>The saved width of the window</description>
+		</key>
+		<key name="window-height" type="i">
+			<default>550</default>
+			<summary>The saved height of the window.</summary>
+			<description>The saved height of the window.</description>
+		</key>
+		<key name="window-state" enum="org.pantheon.arrive.saved-state.window-state">
+			<default>"Normal"</default>
+			<summary>The saved state of the window.</summary>
+			<description>The saved state of the window.</description>
+		</key>
+		<key name="notebook-state" type="i">
+			<default>0</default>
+			<summary>Static notebook State</summary>
+			<description>the saved state of static notebook.</description>
+		</key><key name="search-string" type="s">
+			<default>""</default>
+			<summary>Search string</summary>
+			<description>The string in search box.</description>
+		</key>
+	</schema>
+</schemalist>
+

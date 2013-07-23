@@ -1,17 +1,25 @@
 namespace Arrive.Widgets {
-    public class DownloadingList : Object {
+    public class DownloadingList : Gtk.Widget {
         private static int REFRESH_TIME=1000;
         public Gtk.ScrolledWindow widget;
+        private Gtk.ScrolledWindow scrolled;
         private Gtk.ListStore list_store;
         private Gtk.TreeView tree_view;
+        private Gtk.TreeModelFilter tree_filter;
+        private string filter_string = "";
+        private Model.DownloadList download_list;
 
-        public DownloadingList () {
+        public DownloadingList (Model.DownloadList download_list) {
+            this.download_list = download_list;
             list_store = new Gtk.ListStore (1, typeof(Arrive.Model.IDownloadItem));
-            tree_view = new Gtk.TreeView.with_model (list_store);
+            tree_filter = new Gtk.TreeModelFilter (list_store, null);
+            tree_filter.set_visible_func (visible_func);
+            tree_view = new Gtk.TreeView.with_model (tree_filter);
             tree_view.set_headers_visible (false);
             tree_view.get_selection ().set_mode (Gtk.SelectionMode.MULTIPLE);
-            widget = new Gtk.ScrolledWindow (null, null);
-            widget.add (tree_view);
+            scrolled = new Gtk.ScrolledWindow (null, null);
+            scrolled.add (tree_view);
+            widget = scrolled;
 
             tree_view.button_release_event.connect ((event)=>{
                                                       if(event.button == 3)
@@ -19,21 +27,21 @@ namespace Arrive.Widgets {
                                                       return false;
                                                   });
 
-            Model.aria2.download_list.file_added.connect (()=>{
-                                                                     populate_list_store ();
-                                                                 });
-            Model.aria2.download_list.file_removed.connect (()=>{
-                                                                     populate_list_store ();
-                                                                 });
+            download_list.file_added.connect (()=>{
+                 populate_list_store ();
+             });
+            download_list.file_removed.connect (()=>{
+                 populate_list_store ();
+             });
 
             var cell_renderer = new DownloadCellRenderer ();
             tree_view.insert_column_with_attributes (-1, "column", cell_renderer, "file", 0);
 
             var refresh_timer = new TimeoutSource (REFRESH_TIME);
             refresh_timer.set_callback (()=>{
-                                            tree_view.queue_draw ();
-                                            return true;
-                                        });
+                tree_view.queue_draw ();
+                return true;
+            });
             refresh_timer.attach (null);
 
             populate_list_store ();
@@ -41,8 +49,8 @@ namespace Arrive.Widgets {
         }
         private void populate_list_store(){
             list_store.clear ();
-            debug ("list lenght %u", App.instance.download_list.files.length ());
-            foreach(Arrive.Model.IDownloadItem file in App.instance.download_list.files) {
+            debug ("list lenght %u", download_list.files.length ());
+            foreach(Arrive.Model.IDownloadItem file in download_list.files) {
                 Gtk.TreeIter iter;
                 list_store.append (out iter);
                 list_store.set (iter, 0, file);
@@ -58,20 +66,20 @@ namespace Arrive.Widgets {
             var properties = new Gtk.MenuItem.with_label (_("Properties"));
             //TODO:implement right click event
             start.activate.connect (()=>{
-                                        foreach(Arrive.Model.IDownloadItem d_item in selected_files) {
-                                            if(d_item.status == "paused") d_item.unpause ();
-                                            if(d_item.status == "") d_item.start ();
-                                            if(d_item.status == "stopped") d_item.start ();
-                                        }
-                                    });
+                foreach(Arrive.Model.IDownloadItem d_item in selected_files) {
+                    if(d_item.status == "paused") d_item.unpause ();
+                    if(d_item.status == "") d_item.start ();
+                    if(d_item.status == "stopped") d_item.start ();
+                }
+            });
             pause.activate.connect (()=>{
-                                        foreach(Arrive.Model.IDownloadItem d_item in selected_files)
-                                            d_item.pause ();
-                                    });
+                foreach(Arrive.Model.IDownloadItem d_item in selected_files)
+                    d_item.pause ();
+            });
             remove.activate.connect (()=>{
-                                         foreach(Arrive.Model.IDownloadItem d_item in selected_files)
-                                             App.instance.download_list.remove_file (d_item);
-                                     });
+                 foreach(Arrive.Model.IDownloadItem d_item in selected_files)
+                     download_list.remove_file (d_item);
+             });
             //~         properties.connect();
 
             if(allow_start (selected_files)) menu.add (start);
@@ -87,7 +95,7 @@ namespace Arrive.Widgets {
         private bool allow_start(List<Arrive.Model.IDownloadItem> selected_files){
             bool allow=false;
             foreach(Arrive.Model.IDownloadItem d_item in selected_files) {
-                if(d_item.status == "paused" || d_item.status == "") 
+                if(d_item.status != "active") 
                     allow=true;
             }
             return allow;
@@ -105,7 +113,7 @@ namespace Arrive.Widgets {
             return true;
         }
         private List<Arrive.Model.IDownloadItem> get_selected_files(){
-            var list = new List<Arrive.Model.IDownloadItem>();
+            var list = new List<Model.IDownloadItem>();
             Gtk.TreeIter selection_iter;
             Gtk.TreeSelection selection=tree_view.get_selection ();
             GLib.List<Gtk.TreePath> d_items = selection.get_selected_rows (null);
@@ -114,12 +122,45 @@ namespace Arrive.Widgets {
                 Value d_item;
                 model.get_iter (out selection_iter, selection_item);
                 model.get_value (selection_iter, 0, out d_item);
-                if(d_item.holds (typeof(Arrive.Model.IDownloadItem)))
-                    list.append ((Arrive.Model.IDownloadItem)d_item);
+                if(d_item.holds (typeof(Model.IDownloadItem)))
+                    list.append ((Model.IDownloadItem)d_item);
                 else
                     debug ("value arent download item");
             }
             return list;
+        }
+                //filetering using search bar
+        private bool visible_func (Gtk.TreeModel t_model, Gtk.TreeIter t_iter){
+            if (filter_string == "")
+                return true;
+            if (t_model.iter_has_child (t_iter)){//check if its date iter
+                for (int i=0;i<t_model.iter_n_children (t_iter);i++){
+                    Gtk.TreeIter child_iter;
+                    t_model.iter_nth_child (out child_iter, t_iter, i);
+                    if (contains_string (t_model, child_iter))
+                        return true;//one of iter child contains search string 
+                }
+            }else{
+                return contains_string (t_model, t_iter);
+            }
+            return false;
+        }
+        public void filter (string filter_string){
+            this.filter_string = filter_string;
+            tree_filter.refilter ();/*  
+            if (filter_string == "")
+                widget = scrolled;
+            else 
+                widget = new Granite.Widgets.Welcome ("No Download Currently","but you can start it");*/
+        }
+        private bool contains_string (Gtk.TreeModel t_model, Gtk.TreeIter t_iter){
+            Value item;
+            t_model.get_value (t_iter, 0, out item);
+            Model.IDownloadItem d_item = (Model.IDownloadItem) item;
+            if (d_item.filename.down ().contains (filter_string.down ())){
+                return true;
+            }
+            return false;
         }
     }
 }

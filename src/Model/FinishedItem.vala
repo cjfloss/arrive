@@ -3,11 +3,13 @@ namespace Arrive.Model {
         public Soup.Date date_finished {get;protected set;}
         public string date_compact {get;protected set;}
         public string filename;
-        private string dir;
+        public string dir;
         private string _path;
         public unowned string path {
             get{
                 _path = dir+"/"+filename;
+                if (_path==null)
+                    return "";
                 return _path;
             }
             protected set{
@@ -17,7 +19,7 @@ namespace Arrive.Model {
         public FinishedItem (IDownloadItem download_item){            
             filename = download_item.filename;
             dir = download_item.dir;
-            //path = dir +"/"+ filename;
+            _path = dir +"/"+ filename;
             total_length = download_item.total_length;
             date_finished = new Soup.Date.from_now (0);
             date_compact= date_finished.to_string (Soup.DateFormat.ISO8601_COMPACT);
@@ -34,7 +36,7 @@ namespace Arrive.Model {
             val=ht.get ("dir");
             dir=val.get_string ();
             
-            //path = dir+"/"+filename;
+            _path = dir+"/"+filename;
 
             val=ht.get ("totalLength");
             total_length=uint64.parse (val.get_string ());

@@ -2,7 +2,8 @@ public class Utils{
     public static bool save_string (string path, string data){
         try {
             File save_file = File.new_for_path (path);
-            if(!save_file.get_parent ().query_exists ()) save_file.get_parent ().make_directory_with_parents ();
+            if(!save_file.get_parent ().query_exists ()) 
+                save_file.get_parent ().make_directory_with_parents ();
             if(save_file.query_exists ())
                 save_file.delete ();
         

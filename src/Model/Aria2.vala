@@ -3,7 +3,7 @@ using Granite.Services;
 namespace Arrive.Model {
     public static Aria2 aria2;
     public class Aria2 : Object {
-        private static int REFRESH_TIME = 1000;
+        private static int REFRESH_TIME = 500;
         public int num_active;
         public int num_waiting;
         public int num_stopped;
@@ -16,7 +16,7 @@ namespace Arrive.Model {
         public DownloadList download_list;
         public FinishedList finished_list;
         
-        public Aria2 (IDownloadList d_list) {
+        public Aria2 (IDownloadList d_list, FinishedList f_list) {
             num_active = 0;
             num_waiting = 0;
             num_stopped = 0;
@@ -27,7 +27,7 @@ namespace Arrive.Model {
             aria_uri = aria_ip+":"+aria_port+"/rpc";
             start_aria2c ();
             download_list = d_list as DownloadList;
-            finished_list = new FinishedList ();
+            finished_list = f_list;
             get_global_option ();
             
             var refresh_timer = new TimeoutSource (REFRESH_TIME);
@@ -52,7 +52,7 @@ namespace Arrive.Model {
             option.insert ("split", split.to_string ());
             option.insert ("pause", pause.to_string ());
 
-            Soup.Message msg = Soup.XMLRPC.request_new (Model.aria2.aria_uri,
+            Soup.Message msg = Soup.XMLRPC.request_new (aria_uri,
                                                          "aria2.addUri",
                                                          typeof(ValueArray), v_array,
                                                          typeof(HashTable), option
@@ -70,11 +70,75 @@ namespace Arrive.Model {
             }
             return "";
         }
+        public string add_torrent (string torrent_path){
+            // open the uri and base64 encode it
+            /*
+            var f = File.new_for_uri (torrent_path);
+            if (f == null)
+                return "";
+            FileInputStream input;
+            try{
+                input = f.read ();
+            }catch(Error e){
+                message (e.message );
+                return "";
+            }
+
+            int chunk_size = 128*1024;
+            uint8[] buffer = new uint8[chunk_size];
+            char[] encode_buffer = new char[(chunk_size / 3 + 1) * 4 + 4];
+            size_t read_bytes;
+            int state = 0;
+            int save = 0;
+            var encoded = new StringBuilder ();
+
+            read_bytes = input.read (buffer);
+            while (read_bytes != 0) {
+                buffer.length = (int) read_bytes;
+                size_t enc_len = Base64.encode_step ((uchar[]) buffer, 
+                                                    false, 
+                                                    encode_buffer, 
+                                                    ref state, 
+                                                    ref save);
+                encoded.append_len ((string) encode_buffer, (ssize_t) enc_len);
+                read_bytes = input.read (buffer);
+            }
+
+            size_t enc_close = Base64.encode_close (false, encode_buffer, ref state, ref save);
+            encoded.append_len ((string) encode_buffer, (ssize_t) enc_close);
+            message ((string) encoded.data);
+            */
+            /*
+            Soup.Message msg = Soup.XMLRPC.request_new (Model.aria2.aria_uri,
+                                                         "aria2.addTorrent",
+                                                         typeof(ByteArray), encoded
+                                                         );
+            
+            var data = send_message (msg);
+            try {
+                Value v;
+                if (Soup.XMLRPC.parse_method_response (data,-1,out v)){
+                    return v.get_string();//return gid
+                }else{
+                    debug ("error while add_torrent2");
+                }
+            }catch(Error e){
+                error ("error while add_uri "+e.message);
+            }*/
+            return "";
+        }
         private void start_aria2c (){
             try {
                 //max connection and split size are hardcoded for now
-                //TODO:create preferences dialog to set max-connection-per-server and min-split-size (and almost everything)
-                GLib.Process.spawn_command_line_async ("aria2c --enable-rpc --max-connection-per-server 16 --min-split-size 1M --pause=true");
+                //TODO:create preferences dialog to set max-connection-per-server 
+                //and min-split-size (and almost everything)
+                GLib.Process.spawn_command_line_async ("aria2c --enable-rpc 
+                    --max-connection-per-server 16 
+                    --min-split-size 1M --pause=true 
+                    --enable-dht 
+                    --dht-entry-point=dht.transmissionbt.com:6881 
+                    --dht-listen-port=6881 
+                    --disable-ipv6 ");
                 is_listened = true;
             } catch (GLib.SpawnError error)
             {
@@ -89,17 +153,17 @@ namespace Arrive.Model {
             }
         }
         public void pause(string gid){
-            Soup.Message msg = XMLRPC.request_new (aria2.aria_uri, "aria2.pause",
+            Soup.Message msg = XMLRPC.request_new (aria_uri, "aria2.pause",
                                                    typeof(string), gid);
             send_message (msg);
         }
         public void unpause(string gid){
-            Soup.Message msg = XMLRPC.request_new (aria2.aria_uri, "aria2.unpause",
+            Soup.Message msg = XMLRPC.request_new (aria_uri, "aria2.unpause",
                                                    typeof(string), gid);
             send_message (msg);
         }
         public void remove(string gid){
-            Soup.Message msg = XMLRPC.request_new (aria2.aria_uri, "aria2.remove",
+            Soup.Message msg = XMLRPC.request_new (aria_uri, "aria2.remove",
                                                    typeof(string), gid);
             send_message (msg);
         }
@@ -112,13 +176,13 @@ namespace Arrive.Model {
             download_list.item_refreshed ();
         }
         private void refresh_active(bool add_new_to_list=false){
-            Soup.Message msg = Soup.XMLRPC.request_new (aria2.aria_uri
+            Soup.Message msg = Soup.XMLRPC.request_new (aria_uri
                                                         , "aria2.tellActive");
             string data = send_message (msg);
             put_data_to_list (data);
         }
         private void refresh_waiting(bool add_new_to_list=false){
-            Soup.Message msg = Soup.XMLRPC.request_new (aria2.aria_uri
+            Soup.Message msg = Soup.XMLRPC.request_new (aria_uri
                                                         , "aria2.tellWaiting"
                                                         , typeof(int), 0,
                                                         typeof(int), 1000);
@@ -126,7 +190,7 @@ namespace Arrive.Model {
             put_data_to_list (data);
         }
         private void refresh_stopped(bool add_new_to_list=false){
-            Soup.Message msg = Soup.XMLRPC.request_new (aria2.aria_uri
+            Soup.Message msg = Soup.XMLRPC.request_new (aria_uri
                                                         , "aria2.tellStopped"
                                                         , typeof(int), 0
                                                         , typeof(int), 1000);
@@ -148,13 +212,32 @@ namespace Arrive.Model {
                             val = ht.get ("gid");
                             var gid = val.get_string ();
                             
-                            var d_item = aria2.download_list.get_by_gid (gid);
+                            var d_item = download_list.get_by_gid (gid);
                             if ( d_item == null){
-                                //TODO:viter that arent exist in download_list should be added to download_list
+                                //TODO:item that arent exist in download_list should be added to download_list
+                                var aria_magnet = new Model.AriaMagnet ();
+                                aria_magnet.update_by_ht (ht);
+                                if (aria_magnet.info_hash != null && aria_magnet.info_hash != ""){
+                                    //find the magnet that causing this download and merge
+                                    foreach (Model.IDownloadItem dw_item in download_list.files){
+                                        if (dw_item is AriaMagnet 
+                                            && (dw_item as AriaMagnet).info_hash == aria_magnet.info_hash){
+                                            (dw_item as Model.AriaMagnet).change_gid (aria_magnet.gid);
+                                        }
+                                    }
+                                    //download_list.add_file (aria_magnet);
+                                }else{
+                                    var aria_http = new Model.AriaHttp ();
+                                    aria_http.update_by_ht (ht);
+                                    if (aria_http.status != "complete")
+                                        download_list.add_file (aria_http);
+                                }
                             }else{
                                 //just update the content
                                 if (d_item is AriaHttp)
                                     (d_item as AriaHttp).update_by_ht (ht);
+                                else if (d_item is AriaMagnet)
+                                    (d_item as AriaMagnet).update_by_ht (ht);
                             }
                         }
                     }
@@ -164,11 +247,13 @@ namespace Arrive.Model {
             }
         }
         private void clean_finished (){
-            List<IDownloadItem> finished_items = aria2.download_list.get_by_status ("complete");
+            List<IDownloadItem> finished_items = download_list.get_by_status ("complete");
             foreach (IDownloadItem finished_item in finished_items){
-                new Notify.Notification (finished_item.filename,"Download completed", App.instance.app_icon).show ();
+                new Notify.Notification (finished_item.filename,
+                                        "Download completed", 
+                                        App.instance.app_icon).show ();
                 finished_list.append (finished_item);
-                aria2.download_list.remove (finished_item);
+                download_list.remove (finished_item);
             }
         }
         //TODO:Parse getGlobalOption response
@@ -206,7 +291,7 @@ namespace Arrive.Model {
                 debug ("Error while processing tellStatus response");
             }
         }
-        private string get_version () {
+        public string get_version () {
             string version = "";
             Soup.Message msg = XMLRPC.request_new (aria_uri,"aria2.getVersion");
             string data = send_message (msg);
@@ -238,11 +323,18 @@ namespace Arrive.Model {
         private void system_multicall () {
         }
         private string send_message (Soup.Message message) {
-            var session = new SessionSync ();
-            session.send_message (message);
+            string data = "";
+            if (is_listened){
+                var session = new SessionSync ();
+                session.send_message (message);
 
-            string data = (string) message.response_body.flatten ().data;
-            if (data == null) debug ("send_message return null");
+                data = (string) message.response_body.flatten ().data;
+                
+                if (data == null){
+                    is_listened = false;
+                    debug ("send_message return null");
+                }
+            }
             return data;
         }
     }

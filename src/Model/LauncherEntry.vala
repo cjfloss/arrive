@@ -4,9 +4,7 @@ namespace Arrive.Model {
         private Unity.LauncherEntry le;
         public LauncherEntry (){
             le = Unity.LauncherEntry.get_for_desktop_id(Arrive.App.instance.app_launcher);
-            //~         aria2.download_list._list.notify("length").connect(()=>{
-            //~             set_progress();
-            //~         });
+            
             var refresh_timer = new TimeoutSource (REFRESH_TIME);
             refresh_timer.set_callback (()=>{
                                             set_progress (calculate_progress ());

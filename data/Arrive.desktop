@@ -2,7 +2,7 @@
 Type=Application
 Version=0.1
 Name=Arrive
-Comment=DownloadManager that Support http and ftp
+Comment=Simple and practical download manager
 GenericName=download manager
 Exec=arrive
 Icon=arrive

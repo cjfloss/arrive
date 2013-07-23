@@ -46,10 +46,10 @@ namespace Arrive.Model {
             return (int) _files.length ();
         }
         public void add_file (Model.IDownloadItem download_item){
+            debug ("add_file:"+download_item.filename);
             _files.append (download_item);
             file_added (download_item);
             save_list (save_file);
-            debug ("file added :");
         }
         public void remove_file (Model.IDownloadItem download_item){
             download_item.remove ();
@@ -93,10 +93,11 @@ namespace Arrive.Model {
                                     var aria_http = new Model.AriaHttp.with_ht (ht);
                                     add_file (aria_http);
                                 break;
+                                case "AriaMagnet" :
+                                    var aria_magnet = new Model.AriaMagnet.with_ht (ht);
+                                    add_file (aria_magnet);
+                                break;
                             }
-                            //var finished_item=new FinishedItem (null);
-                            //finished_item.xml_value=viter; //set xml_value to be processed by FinishedItem
-                            //list.append (finished_item);
                         }
                     }
                 }
@@ -104,7 +105,5 @@ namespace Arrive.Model {
                 error ("cant loadlist : %s", e.message);
             }
         }
-        //public signal void file_added(Model.IDownloadItem download_item);
-        //public signal void file_removed(Model.IDownloadItem file);
     }
 }

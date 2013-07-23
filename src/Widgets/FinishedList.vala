@@ -3,9 +3,11 @@ namespace Arrive.Widgets {
         public Gtk.ScrolledWindow widget;
         private Gtk.TreeView tree_view;
         private Gtk.TreeStore tree_store;
-        public Gtk.TreeModelFilter tree_filter;
-        private string filter_string;
-        public FinishedList () {
+        private Gtk.TreeModelFilter tree_filter;
+        private string filter_string = "";
+        private Model.FinishedList finished_list;
+        public FinishedList (Model.FinishedList finished_list) {
+            this.finished_list = finished_list;
             tree_store = new Gtk.TreeStore (3, typeof(string), typeof(string), typeof(Model.FinishedItem));
             tree_filter = new Gtk.TreeModelFilter (tree_store, null);
             tree_filter.set_visible_func (visible_func);
@@ -15,13 +17,25 @@ namespace Arrive.Widgets {
             tree_view.get_selection ().set_mode (Gtk.SelectionMode.MULTIPLE);
             
 
-            Gtk.TreeViewColumn column = new Gtk.TreeViewColumn.with_attributes (_("filename"), new Gtk.CellRendererText (), "text", 0, null);
+            Gtk.TreeViewColumn column = 
+                new Gtk.TreeViewColumn.with_attributes (
+                    _("filename"), 
+                    new Gtk.CellRendererText (), 
+                    "text", 
+                    0, 
+                    null);
             column.set_sizing (Gtk.TreeViewColumnSizing.FIXED);
             column.set_expand (true);
             column.set_resizable (true);
             tree_view.insert_column (column, -1);
             
-            Gtk.TreeViewColumn column_s = new Gtk.TreeViewColumn.with_attributes (_("size"), new Gtk.CellRendererText (), "text", 1, null);
+            Gtk.TreeViewColumn column_s = 
+                new Gtk.TreeViewColumn.with_attributes (
+                    _("size"), 
+                    new Gtk.CellRendererText (), 
+                    "text", 
+                    1, 
+                    null);
             column_s.set_fixed_width (50);
             tree_view.insert_column (column_s, -1);
             
@@ -29,7 +43,7 @@ namespace Arrive.Widgets {
             widget = new Gtk.ScrolledWindow (null, null);
             widget.add (tree_view);
         
-            Model.aria2.finished_list.list_changed.connect (setup_list);
+            finished_list.list_changed.connect (setup_list);
             tree_view.button_release_event.connect ((event)=>{
                                                         switch (event.button) {
                                                         /*case 1:
@@ -70,15 +84,17 @@ namespace Arrive.Widgets {
         }
         private void setup_list(){
             tree_store.clear ();
-            foreach(Arrive.Model.FinishedItem finished_item in Model.aria2.finished_list.list) {
+            foreach(Arrive.Model.FinishedItem finished_item in finished_list.list) {
                 var item = Gtk.TreeIter ();
-                var iter = get_iter_from_date (finished_item.get_date_localized ());
+                var iter = get_iter_with_string (0, finished_item.get_date_localized ());
                 if(iter == null) { //if the date hasnt been added then add new date item
                     tree_store.prepend (out iter, null);
                     tree_store.set (iter, 0, finished_item.get_date_localized ());
                 }
                 tree_store.prepend (out item, iter); //adding item in the proper date
-                tree_store.set (item, 0, finished_item.filename, 1, format_size (finished_item.total_length), 2, finished_item, -1);
+                tree_store.set (item, 0, finished_item.filename, 
+                                       1, format_size (finished_item.total_length), 
+                                       2, finished_item, -1);
             }
             tree_view.expand_all ();
         }
@@ -108,7 +124,9 @@ namespace Arrive.Widgets {
                     get_selected_files ().nth_data (0).open_folder ();
             });
             move_to.activate.connect (()=>{
-                var file_chooser = new Gtk.FileChooserDialog (_("Choose Destination Folder"), App.main_window as Gtk.Window,
+                var file_chooser = new Gtk.FileChooserDialog (
+                                          _("Choose Destination Folder"), 
+                                          App.instance.main_window as Gtk.Window,
                                           Gtk.FileChooserAction.SELECT_FOLDER,
                                           Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
                                           _("Select"), Gtk.ResponseType.ACCEPT);
@@ -120,19 +138,22 @@ namespace Arrive.Widgets {
             copy.activate.connect (()=>{});
             forget.activate.connect (()=>{
                 foreach(Model.FinishedItem f_item in get_selected_files ()){
-                    Model.aria2.finished_list.forget (f_item);
+                    finished_list.forget (f_item);
                 }
             });
             move_to_trash.activate.connect (()=>{
                 foreach(Model.FinishedItem f_item in get_selected_files ()){
-                    Model.aria2.finished_list.trash (f_item);
+                    finished_list.trash (f_item);
                 }
             });
             properties.activate.connect (()=>{});
             
-            if (get_selected_files ().length () == 1) menu.add (open_file);
-            if (get_selected_files ().length () == 1) menu.add (open_folder);
-            if (get_selected_files ().length () == 1) menu.add (new Gtk.SeparatorMenuItem ());
+            //only at item if one file selected
+            if (get_selected_files ().length () == 1){
+                menu.add (open_file);
+                menu.add (open_folder);
+                menu.add (new Gtk.SeparatorMenuItem ());
+            }
             
             menu.add (move_to);
             menu.add (copy);
@@ -144,13 +165,14 @@ namespace Arrive.Widgets {
             menu.show_all ();
             menu.popup (null, null, null, event.button, event.time);
         }
-        private Gtk.TreeIter ? get_iter_from_date (string date){ //search for item with date string
+        //search for item with date string
+        private Gtk.TreeIter ? get_iter_with_string (int column, string text){
             Gtk.TreeIter ? iter=null;
             Gtk.TreeIter comparator; //used for comparison
             for (bool next = tree_store.get_iter_first (out comparator); next; next = tree_store.iter_next (ref comparator)) {
-                Value val1, val2;
-                tree_store.get_value (comparator, 0, out val1);
-                if(date == (string) val1) { //iter found, breaking
+                Value val1;
+                tree_store.get_value (comparator, column, out val1);
+                if(text == (string) val1) { //iter found, breaking
                     iter=comparator;
                     break;
                 }

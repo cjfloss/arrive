@@ -33,6 +33,7 @@ vala_precompile(VALA_C
     Model/Aria2.vala
     Model/AriaHttp.vala
     Model/AriaTorrent.vala
+    Model/AriaMagnet.vala
     Model/DownloadItem.vala
     Model/IDownloadList.vala
     Model/DownloadList.vala
@@ -44,7 +45,9 @@ vala_precompile(VALA_C
     #Widgets/AddFilePopOver.vala
     Widgets/CellRenderer.vala
     Widgets/DownloadingList.vala
+    Widgets/DownloadListWelcome.vala
     Widgets/FinishedList.vala
+    Widgets/FinishedListWelcome.vala
     Widgets/MainWindow.vala
 PACKAGES
     ${ARRIVE_DEPS}

@@ -28,7 +28,10 @@ namespace Arrive.Widgets {
                     download_progress_renderer.value = (int)(100 * _file.completed_length / _file.total_length);
                 download_progress_renderer.text = "%s of %s".printf (format_size (_file.completed_length),
                                                                   format_size (_file.total_length));
-                status_renderer.text = _("status:%s connections:%s").printf (_file.status,_file.gid);
+                //if (_file is Model.AriaHttp)
+                    status_renderer.text = _("status:%s connections:%s").printf (_file.status,_file.gid);
+                //if (_file is Model.AriaMagnet)
+                //    status_renderer.text = _("status:%s file:%s").printf (_file.status,(_file as Model.AriaMagnet).path_files.length ());
                 
                 download_renderer.text = format_size (_file.download_speed)+"ps";
                 upload_renderer.text = format_size (_file.upload_speed)+"ps";
