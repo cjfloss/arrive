@@ -1,3 +1,15 @@
+[DBus (name = "org.freedesktop.UPower")]
+public interface UPower : GLib.Object {
+    public abstract void Hibernate () throws GLib.IOError;
+    public abstract bool HibernateAllowed () throws GLib.IOError;
+    public abstract void Suspend () throws GLib.IOError;
+    public abstract bool SuspendAllowed () throws GLib.IOError;
+}
+[DBus (name = "org.gnome.SessionManager")]
+public interface GnomeSessionManager : GLib.Object {
+    public abstract void Shutdown () throws GLib.IOError;
+    public abstract bool CanShutdown () throws GLib.IOError;
+}
 public class Utils{
     public static bool save_string (string path, string data){
         try {

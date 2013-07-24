@@ -39,13 +39,18 @@ namespace Arrive.Widgets {
             static_notebook.page = saved_state.notebook_state;
             
             download_list_model.item_refreshed.connect (refresh_status);
+            download_list_model.file_removed.connect (()=>{
+                if (download_list_model.files.length () == 0)
+                    on_all_finished ();
+            });
+            
             destroy.connect (()=> {
                 hide ();
                 download_list_model.destroy ();
                 Model.aria2.shutdown ();
                 Gtk.main_quit ();
              });
-                        
+
             Notify.init(get_title ());
         }
         private void refresh_status(){
@@ -162,14 +167,42 @@ namespace Arrive.Widgets {
                 new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _("Hibernate"));
             var shutdown_menu = 
                 new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _("Shutdown"));
+            
+            nothing_menu.activate.connect (()=>{
+                App.instance.settings.finished_action = Model.FinishedAction.NOTHING;
+            });
+            suspend_menu.activate.connect (()=>{
+                App.instance.settings.finished_action = Model.FinishedAction.SUSPEND;
+            });
+            hibernate_menu.activate.connect (()=>{
+                App.instance.settings.finished_action = Model.FinishedAction.HIBERNATE;
+            });
+            shutdown_menu.activate.connect (()=>{
+                App.instance.settings.finished_action = Model.FinishedAction.SHUTDOWN;
+            });
+            App.instance.settings.notify["finished-action"].connect (()=>{
+                switch (App.instance.settings.finished_action){
+                    case Model.FinishedAction.NOTHING:
+                        nothing_menu.set_active (true);
+                        break;
+                    case Model.FinishedAction.SUSPEND:
+                        suspend_menu.set_active (true);
+                        break;
+                    case Model.FinishedAction.HIBERNATE:
+                        hibernate_menu.set_active (true);
+                        break;
+                    case Model.FinishedAction.SHUTDOWN:
+                        shutdown_menu.set_active (true);
+                        break;
+                }
+            });
             power_menu.append (nothing_menu);
             power_menu.append (suspend_menu);
             //power_menu.append (hibernate_menu);
             power_menu.append (shutdown_menu);
-            //disble for now
-            suspend_menu.sensitive = false;
+            
             hibernate_menu.sensitive = false;
-            shutdown_menu.sensitive = false;
+            
             var submenu = new Gtk.MenuItem.with_label (_("When all finished..."));
             submenu.set_submenu (power_menu);
             menu.append (submenu);
@@ -216,6 +249,48 @@ namespace Arrive.Widgets {
             vbox.pack_start (static_notebook, true, true);
             vbox.pack_start (status_bar, false, false);
             add (vbox);
+        }
+        private void hibernate (){
+            suspend (true);
+        }
+        private void suspend (bool to_disk = false){
+            try {
+                UPower upower = Bus.get_proxy_sync (BusType.SYSTEM,
+                    "org.freedesktop.UPower", "/org/freedesktop/UPower");
+                if (to_disk){
+                    //hibernate
+                    if (upower.HibernateAllowed ())
+                        upower.Hibernate ();
+                }else{
+                    //suspend
+                    if (upower.SuspendAllowed ())
+                        upower.Suspend ();
+                }
+            } catch (Error e) { warning (e.message); }   
+        }
+        private void shutdown (){
+            try {
+                GnomeSessionManager session_manager = Bus.get_proxy_sync (BusType.SESSION,
+                    "org.gnome.SessionManager", "/org/gnome/SessionManager");
+                if (session_manager.CanShutdown ())
+                    session_manager.Shutdown ();
+            }catch (Error e){warning (e.message);}
+        }
+        private void on_all_finished (){
+            switch (App.instance.settings.finished_action){
+                case Model.FinishedAction.SUSPEND:
+                    App.instance.settings.finished_action = Model.FinishedAction.NOTHING;
+                    suspend ();
+                    break;
+                case Model.FinishedAction.HIBERNATE:
+                    App.instance.settings.finished_action = Model.FinishedAction.NOTHING;
+                    hibernate ();
+                    break;
+                case Model.FinishedAction.SHUTDOWN:
+                    App.instance.settings.finished_action = Model.FinishedAction.NOTHING;
+                    shutdown ();
+                    break;
+            }
         }
     }
 }
