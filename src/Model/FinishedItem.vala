@@ -8,8 +8,6 @@ namespace Arrive.Model {
         public unowned string path {
             get{
                 _path = dir+"/"+filename;
-                if (_path==null)
-                    return "";
                 return _path;
             }
             protected set{
@@ -63,7 +61,25 @@ namespace Arrive.Model {
         public void open_folder (){
             Utils.open_file(dir);
         }
-        public void move_to (){
+        public void move_to (string destination){
+            if (copy_to (destination)){
+                trash_file ();
+                dir = destination;
+            }
+        }
+        private bool copy_to (string destination){
+            try{
+                File file = File.new_for_path (path);
+                File dest = File.new_for_path (destination+"/"+filename);
+                message ("move "+file.get_path ()+" to "+dest.get_path ());
+                if (file!=null && dest!=null && !dest.query_exists())
+                    return file.copy (dest, FileCopyFlags.NONE);
+                else 
+                    debug ("do not copy");
+            }catch(Error e){
+                error (e.message);
+            }
+            return false;
         }
         //FIXME: file copy doesnt work
         public void copy (){

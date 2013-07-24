@@ -7,6 +7,11 @@ namespace Arrive.Widgets {
         private Gtk.ScrolledWindow scrolled;
         private string filter_string = "";
         private Model.FinishedList finished_list;
+        private string _status;
+        public string status{
+            get{return _status;}
+            private set {_status = value;}
+        }
         public FinishedList (Model.FinishedList finished_list) {
             this.finished_list = finished_list;
             filter_string = "";            
@@ -46,6 +51,7 @@ namespace Arrive.Widgets {
             tree_view.insert_column (column_s, -1);
             
             setup_list ();
+            
             scrolled = new Gtk.ScrolledWindow (null, null);
             scrolled.add (tree_view);
             append_page(scrolled);
@@ -152,6 +158,11 @@ namespace Arrive.Widgets {
                                           _("Select"), Gtk.ResponseType.ACCEPT);
                 if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
                     var dest = file_chooser.get_filename();
+                    status = "moving file";
+                    foreach (Model.FinishedItem f_item in get_selected_files ()){
+                        f_item.move_to (dest);
+                    }
+                    status = "";
                 }
                 file_chooser.destroy ();
             });

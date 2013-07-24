@@ -14,6 +14,7 @@ namespace Arrive.Widgets {
         public Widgets.FinishedList finished_list;
         private Granite.Widgets.StatusBar status_bar;
         public Gtk.Label download_speed_label;
+        public Gtk.Label status_label;
         private Box vbox;
         private Model.SavedState saved_state;
         private Model.DownloadList download_list_model;
@@ -188,6 +189,9 @@ namespace Arrive.Widgets {
 
             //finished list
             finished_list =new Arrive.Widgets.FinishedList (finished_list_model);
+            finished_list.notify["status"].connect ((s, p)=>{
+                status_label.set_text(finished_list.status);
+            });
             
             search_bar.text_changed_pause.connect (()=>{
                 downloading_list.filter (search_bar.text);
@@ -203,7 +207,9 @@ namespace Arrive.Widgets {
             //status bar
             status_bar = new Granite.Widgets.StatusBar ();
             download_speed_label = new Label (_("download idle"));
-            status_bar.insert_widget (download_speed_label);
+            status_bar.insert_widget (download_speed_label, false);
+            status_label = new Label ("");
+            status_bar.insert_widget (status_label, true);
 
             vbox = new Box (Gtk.Orientation.VERTICAL, 0);
             vbox.pack_start (toolbar, false, false);
