@@ -67,11 +67,10 @@ namespace Arrive.Model {
                 dir = destination;
             }
         }
-        private bool copy_to (string destination){
+        public bool copy_to (string destination){
             try{
                 File file = File.new_for_path (path);
                 File dest = File.new_for_path (destination+"/"+filename);
-                message ("move "+file.get_path ()+" to "+dest.get_path ());
                 if (file!=null && dest!=null && !dest.query_exists())
                     return file.copy (dest, FileCopyFlags.NONE);
                 else 

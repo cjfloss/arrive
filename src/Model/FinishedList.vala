@@ -24,6 +24,14 @@ namespace Arrive.Model {
             f_item.trash_file ();
             forget (f_item);
         }
+        public void copy_to (FinishedItem f_item, string destination){
+            f_item.copy_to (destination);
+            list_changed ();
+        }
+        public void move_to (FinishedItem f_item, string destination){
+            f_item.move_to (destination);
+            list_changed ();
+        }
         private void save_list_to_file(){
             debug ("saving finishedlist file");
             //create ValueArray of all DownloadItem in list

@@ -135,8 +135,8 @@ namespace Arrive.Widgets {
             var menu = new Gtk.Menu ();
             var open_file = new Gtk.MenuItem.with_label (_("Open File"));
             var open_folder = new Gtk.MenuItem.with_label (_("Open Folder"));
-            var move_to = new Gtk.MenuItem.with_label (_("Move to.."));
-            var copy = new Gtk.MenuItem.with_label (_("Copy"));
+            var move_to = new Gtk.MenuItem.with_label (_("Move to..."));
+            var copy = new Gtk.MenuItem.with_label (_("Copy to..."));
             var forget = new Gtk.MenuItem.with_label (_("Forget"));
             var move_to_trash = new Gtk.MenuItem.with_label (_("Move to Trash"));
             var properties = new Gtk.MenuItem.with_label (_("Properties"));
@@ -160,13 +160,29 @@ namespace Arrive.Widgets {
                     var dest = file_chooser.get_filename();
                     status = "moving file";
                     foreach (Model.FinishedItem f_item in get_selected_files ()){
-                        f_item.move_to (dest);
+                        finished_list.move_to (f_item, dest);
                     }
                     status = "";
                 }
                 file_chooser.destroy ();
             });
-            copy.activate.connect (()=>{});
+            copy.activate.connect (()=>{
+                var file_chooser = new Gtk.FileChooserDialog (
+                                          _("Choose Destination Folder"), 
+                                          App.instance.main_window as Gtk.Window,
+                                          Gtk.FileChooserAction.SELECT_FOLDER,
+                                          Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
+                                          _("Select"), Gtk.ResponseType.ACCEPT);
+                if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
+                    var dest = file_chooser.get_filename();
+                    status = "copying file";
+                    foreach (Model.FinishedItem f_item in get_selected_files ()){
+                        finished_list.copy_to (f_item, dest);
+                    }
+                    status = "";
+                }
+                file_chooser.destroy ();
+            });
             forget.activate.connect (()=>{
                 foreach(Model.FinishedItem f_item in get_selected_files ()){
                     finished_list.forget (f_item);
