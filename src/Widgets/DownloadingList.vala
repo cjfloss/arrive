@@ -99,8 +99,28 @@ namespace Arrive.Widgets {
                     d_item.pause ();
             });
             remove.activate.connect (()=>{
-                 foreach(Arrive.Model.IDownloadItem d_item in selected_files)
-                     download_list.remove_file (d_item);
+                string text;
+                if (selected_files.length () ==1){
+                    text = 
+                        _("Are You sure you want to delete %s ?").printf(selected_files.nth_data(0).filename);
+                }else{
+                    text = 
+                        _("Are You sure you want to delete %d downloads?").printf((int)selected_files.length ());
+                }
+                Gtk.MessageDialog msg = new Gtk.MessageDialog (App.instance.main_window, 
+                                                            Gtk.DialogFlags.MODAL, 
+                                                            Gtk.MessageType.WARNING,
+                                                            Gtk.ButtonsType.YES_NO,
+                                                            text);
+                msg.set_title (_("Delete Download"));
+                msg.response.connect((response_id)=>{
+                     if (response_id == Gtk.ResponseType.YES){
+                         foreach(Arrive.Model.IDownloadItem d_item in selected_files)
+                             download_list.remove_file (d_item);
+                     }
+                     msg.destroy ();
+                });
+                msg.show ();
              });
             //~         properties.connect();
 
