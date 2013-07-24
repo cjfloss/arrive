@@ -71,49 +71,15 @@ namespace Arrive.Model {
             return "";
         }
         public string add_torrent (string torrent_path){
-            // open the uri and base64 encode it
-            /*
-            var f = File.new_for_uri (torrent_path);
-            if (f == null)
-                return "";
-            FileInputStream input;
-            try{
-                input = f.read ();
-            }catch(Error e){
-                message (e.message );
-                return "";
-            }
-
-            int chunk_size = 128*1024;
-            uint8[] buffer = new uint8[chunk_size];
-            char[] encode_buffer = new char[(chunk_size / 3 + 1) * 4 + 4];
-            size_t read_bytes;
-            int state = 0;
-            int save = 0;
-            var encoded = new StringBuilder ();
-
-            read_bytes = input.read (buffer);
-            while (read_bytes != 0) {
-                buffer.length = (int) read_bytes;
-                size_t enc_len = Base64.encode_step ((uchar[]) buffer, 
-                                                    false, 
-                                                    encode_buffer, 
-                                                    ref state, 
-                                                    ref save);
-                encoded.append_len ((string) encode_buffer, (ssize_t) enc_len);
-                read_bytes = input.read (buffer);
-            }
-
-            size_t enc_close = Base64.encode_close (false, encode_buffer, ref state, ref save);
-            encoded.append_len ((string) encode_buffer, (ssize_t) enc_close);
-            message ((string) encoded.data);
-            */
-            /*
+            string encoded = encode64 (torrent_path);
+            message (encoded);
+            var byte = new GLib.ByteArray.take (encoded.data);
             Soup.Message msg = Soup.XMLRPC.request_new (Model.aria2.aria_uri,
                                                          "aria2.addTorrent",
-                                                         typeof(ByteArray), encoded
+                                                         typeof(GLib.ByteArray), byte
                                                          );
-            
+            if (msg==null)
+                return "";
             var data = send_message (msg);
             try {
                 Value v;
@@ -124,8 +90,24 @@ namespace Arrive.Model {
                 }
             }catch(Error e){
                 error ("error while add_uri "+e.message);
-            }*/
+            }
+            
             return "";
+        }
+        public string encode64 (string torrent_path){
+            string data = "";
+            File save_file = File.new_for_path (torrent_path);
+            if(save_file.query_exists ()) { //check file exist
+                try {
+                    var data_stream = new DataInputStream (save_file.read ());
+                    data = data_stream.read_until ("", null);
+                    data = Base64.encode (data.data);
+                } catch (Error e){
+                    error ("cant load string: %s", e.message);
+                }
+            }else
+                message ("can't load string");
+            return data;
         }
         private void start_aria2c (){
             try {
@@ -326,13 +308,17 @@ namespace Arrive.Model {
             string data = "";
             if (is_listened){
                 var session = new SessionSync ();
-                session.send_message (message);
+                try{
+                    session.send_message (message);
 
-                data = (string) message.response_body.flatten ().data;
-                
-                if (data == null){
-                    is_listened = false;
-                    debug ("send_message return null");
+                    data = (string) message.response_body.flatten ().data;
+                    
+                    if (data == null){
+                        is_listened = false;
+                        debug ("send_message return null");
+                    }
+                }catch(Error e){
+                    debug (e.message);
                 }
             }
             return data;

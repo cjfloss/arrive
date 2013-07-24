@@ -120,11 +120,11 @@ namespace Arrive.Widgets {
             
             var add_button = new Gtk.Button.with_label (_("Queue and start"));
             add_button.clicked.connect (()=>{
-                                            //add_torrent (file_chooser.get_uris ().nth_data(0).replace ("file://",""));
+                                            Model.aria2.add_torrent (file_chooser.get_uris ().nth_data(0).replace ("file://",""));
                                             message (file_chooser.get_uris ().nth_data(0));
                                             this.destroy ();
                                          });
-            grid.attach (add_button, 5, 2, 1, 1);
+            grid.attach (add_button, 1, 1, 1, 1);
             
             //return grid;
             return new Gtk.Label("torrent file");
