@@ -44,7 +44,8 @@ public class Utils{
     public static bool remove_file (string path){
         message ("remove "+path);
         File file = File.new_for_path (path);
-        if (file.query_exists ()){
+        if (file.query_exists ()
+            && file.query_file_type (0) != FileType.DIRECTORY){
             try{
                 return file.delete ();
             }catch(Error e){

@@ -63,7 +63,7 @@ namespace Arrive.Model {
         }
         public void move_to (string destination){
             if (copy_to (destination)){
-                trash_file ();
+                remove_file ();
                 dir = destination;
             }
         }
