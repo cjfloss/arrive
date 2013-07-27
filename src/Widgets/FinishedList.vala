@@ -121,7 +121,7 @@ namespace Arrive.Widgets {
             var row_length = length ();
             //simple logic for showing welcome screen and search not found
             if (row_length == 0){
-                if (filter_string == "")
+                if (this.filter_string == "")
                     set_current_page (1);
                 else 
                     set_current_page (2);

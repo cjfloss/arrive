@@ -27,7 +27,7 @@ namespace Arrive.Widgets {
             append_page (scrolled);
             
             var welcome = new Granite.Widgets.Welcome (_("No Download Yet"), _("But you can add it"));
-            welcome.append (Gtk.Stock.ADD, "Add Download", "Any http, ftp, or magnet link");
+            welcome.append (Gtk.Stock.ADD, _("Add Download"), _("Any http, ftp, magnet link or torrent file"));
             welcome.activated.connect ((index)=>{
                 switch (index){
                     case 0:
@@ -193,7 +193,7 @@ namespace Arrive.Widgets {
             var row_length = length ();
             //simple logic for showing welcome screen and search not found
             if (row_length == 0){
-                if (filter_string == "")
+                if (this.filter_string == "")
                     set_current_page (1);
                 else 
                     set_current_page (2);
