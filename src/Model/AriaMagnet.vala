@@ -166,6 +166,13 @@ namespace Arrive.Model {
         }
         public void set_value (Value value){
         }
+        public void set_uri (string uris){
+            debug (uris);
+            this.uris = uris;
+        }
+        public void set_name (string name){
+            this.filename = name;
+        }
         public void change_gid (string gid){
             this.gid = gid;
             message (this.gid);

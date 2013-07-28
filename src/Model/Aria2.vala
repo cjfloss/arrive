@@ -200,14 +200,8 @@ namespace Arrive.Model {
                                 var aria_magnet = new Model.AriaMagnet ();
                                 aria_magnet.update_by_ht (ht);
                                 if (aria_magnet.info_hash != null && aria_magnet.info_hash != ""){
-                                    //find the magnet that causing this download and merge
-                                    foreach (Model.IDownloadItem dw_item in download_list.files){
-                                        if (dw_item is AriaMagnet 
-                                            && (dw_item as AriaMagnet).info_hash == aria_magnet.info_hash){
-                                            (dw_item as Model.AriaMagnet).change_gid (aria_magnet.gid);
-                                        }
-                                    }
-                                    //download_list.add_file (aria_magnet);
+                                    if (aria_magnet.status!="complete")
+                                        download_list.add_file (aria_magnet);
                                 }else{
                                     var aria_http = new Model.AriaHttp ();
                                     aria_http.update_by_ht (ht);
@@ -234,8 +228,24 @@ namespace Arrive.Model {
                 new Notify.Notification (finished_item.filename,
                                         "Download completed", 
                                         App.instance.app_icon).show ();
-                finished_list.append (finished_item);
-                download_list.remove (finished_item);
+                if (finished_item is AriaHttp){
+                    finished_list.append (finished_item);
+                    download_list.remove (finished_item);
+                }else{
+                    //find the magnet that causing this download and merge
+                    foreach (Model.IDownloadItem dw_item in download_list.files){
+                        if (dw_item is AriaMagnet 
+                            && (dw_item as AriaMagnet).info_hash == (finished_item as AriaMagnet).info_hash){
+                            (dw_item as AriaMagnet).set_uri ((finished_item as AriaMagnet).uris);
+                            debug ("uris :"+(finished_item as AriaMagnet).uris);
+                            (dw_item as AriaMagnet).set_name (finished_item.filename);
+                            (dw_item as Model.AriaMagnet).change_gid (finished_item.gid);
+                            finished_list.append (finished_item);
+                            download_list.remove (finished_item);
+                        }
+                    }
+                    
+                }
             }
         }
         //TODO:Parse getGlobalOption response

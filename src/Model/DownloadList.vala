@@ -69,6 +69,11 @@ namespace Arrive.Model {
                     var val = Value (typeof(HashTable));
                     val = (d_item as Model.AriaHttp).get_ht ();
                     va.append (val);
+                }else{
+                    var val = Value (typeof(HashTable));
+                    val = (d_item as AriaMagnet).get_ht ();
+                    debug ("uris "+(d_item as AriaMagnet).uris);
+                    va.append (val);
                 }
             
             var data = Soup.XMLRPC.build_method_response (va);
