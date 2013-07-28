@@ -20,9 +20,8 @@ namespace Arrive.Widgets {
             var uri_entry1 = new Granite.Widgets.HintedEntry ("");
             if (uri == "") {
                 Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ((clipboard, cbtext)=>{
-                                                                              //TODO:must verify that text are valid URI
-                                                                              if (cbtext != null && true) {
-                                                                                  string text=cbtext.strip ();
+                                                                              var text = cbtext.split (" ")[0];
+                                                                              if (is_valid_http(text)) {
                                                                                   uri_entry1.text = text;
 
                                                                               }else
@@ -69,12 +68,11 @@ namespace Arrive.Widgets {
             var uri_entry1 = new Granite.Widgets.HintedEntry ("");
             if (magnet == "") {
                 Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ((clipboard, cbtext)=>{
-                                                                              //TODO:must verify that text are valid URI
-                                                                              if (cbtext != null && cbtext.has_prefix("magnet")) {
-                                                                                  string text=cbtext.strip ();
+                                                                              var text = cbtext.split (" ")[0];
+                                                                              if (is_valid_magnet(text)) {
                                                                                   uri_entry1.text = text;
                                                                               }else
-                                                                                  uri_entry1.text = "";
+                                                                                  uri_entry1.text = "magnet:";
                                                                           }
                                                                           );
             }else
@@ -88,7 +86,7 @@ namespace Arrive.Widgets {
 
             var add_button1 = new Gtk.Button.with_label (_("Queue and start"));
             add_button1.clicked.connect (()=>{
-                                             if (uri_entry1.text.has_prefix ("magnet")) {
+                                             if (is_valid_magnet(uri_entry1.text)) {
                                                  var aria_magnet = new Model.AriaMagnet.with_attribute (uri_entry1.text, 
                                                                         file_chooser1.get_uris().nth_data(0).replace("file://", "") 
                                                                         );
@@ -128,6 +126,24 @@ namespace Arrive.Widgets {
             
             //return grid;
             return new Gtk.Label("torrent file");
+        }
+        private bool is_valid_http (string uri){
+            string no_space = uri.down ();
+            int space = no_space.index_of (" ");
+            no_space = no_space.substring (0, space);
+            bool valid = true;
+            if (!uri.has_prefix ("http://")&&!uri.has_prefix("ftp://"))
+                valid = false;
+            return valid;
+        }
+        private bool is_valid_magnet (string uri){
+            string no_space = uri.down ();
+            int space = no_space.index_of (" ");
+            no_space = no_space.substring (0, space);
+            bool valid = true;
+            if (!uri.has_prefix ("magnet:"))
+                valid = false;
+            return valid;
         }
     }
 }
