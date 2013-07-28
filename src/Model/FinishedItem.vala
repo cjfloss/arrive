@@ -71,9 +71,10 @@ namespace Arrive.Model {
             try{
                 File file = File.new_for_path (path);
                 File dest = File.new_for_path (destination+"/"+filename);
-                if (file!=null && dest!=null && !dest.query_exists())
-                    return file.copy (dest, FileCopyFlags.NONE);
-                else 
+                if (file!=null && dest!=null && !dest.query_exists()){
+                    file.copy_async (dest, FileCopyFlags.NONE);
+                    return true;
+                }else 
                     debug ("do not copy");
             }catch(Error e){
                 error (e.message);
