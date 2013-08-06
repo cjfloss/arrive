@@ -20,16 +20,10 @@ namespace Arrive.Widgets {
             var uri_entry1 = new Granite.Widgets.HintedEntry ("");
             if (uri == "") {
                 Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ((clipboard, cbtext)=>{
-                                                                              var text = cbtext.split (" ")[0];
-                                                                              if (is_valid_http(text)) {
-                                                                                  uri_entry1.text = text;
-
-                                                                              }else
-                                                                                  uri_entry1.text = "http://";
-                                                                          }
-                                                                          );
+                                                                              uri_entry1.text = valid_http (cbtext)??"http://";
+                                                                          });
             }else
-                uri_entry1.text=uri;
+                uri_entry1.text=valid_http (uri)??"http://";
 
             grid1.attach (uri_entry1, 1, 0, 6, 1);
             grid1.attach (new Gtk.Label (_("Save to :")), 0, 1, 1, 1);
@@ -68,15 +62,10 @@ namespace Arrive.Widgets {
             var uri_entry1 = new Granite.Widgets.HintedEntry ("");
             if (magnet == "") {
                 Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ((clipboard, cbtext)=>{
-                                                                              var text = cbtext.split (" ")[0];
-                                                                              if (is_valid_magnet(text)) {
-                                                                                  uri_entry1.text = text;
-                                                                              }else
-                                                                                  uri_entry1.text = "magnet:";
-                                                                          }
-                                                                          );
+                    uri_entry1.text = valid_magnet (cbtext)??"magnet:";
+                                                                          });
             }else
-                uri_entry1.text=magnet;
+                uri_entry1.text =  valid_magnet (magnet)??"magnet:";
 
             grid.attach (uri_entry1, 1, 0, 2, 1);
             grid.attach (new Gtk.Label (_("Save to :")), 0, 1, 1, 1);
@@ -127,22 +116,26 @@ namespace Arrive.Widgets {
             //return grid;
             return new Gtk.Label("torrent file");
         }
-        private bool is_valid_http (string uri){
-            string no_space = uri.down ();
-            int space = no_space.index_of (" ");
-            no_space = no_space.substring (0, space);
-            bool valid = true;
-            if (!uri.has_prefix ("http://")&&!uri.has_prefix("ftp://"))
-                valid = false;
+        private bool is_valid_http (string? uri){
+            return valid_http (uri)!=null;
+        }
+        private string? valid_http (string? uri){
+            string valid = null;
+            if (uri!=null&&uri.has_prefix ("http://")||uri.has_prefix ("ftp://")){
+                valid = uri.down ();
+                valid = valid.split (" ")[0];
+            }
             return valid;
         }
         private bool is_valid_magnet (string uri){
-            string no_space = uri.down ();
-            int space = no_space.index_of (" ");
-            no_space = no_space.substring (0, space);
-            bool valid = true;
-            if (!uri.has_prefix ("magnet:"))
-                valid = false;
+            return valid_magnet (uri)!=null;
+        }
+        private string? valid_magnet (string? uri){
+            string valid = null;
+            if (uri!=null&&uri.has_prefix ("magnet")){
+                valid = uri.down ();
+                valid = valid.split (" ")[0];
+            }
             return valid;
         }
     }
