@@ -129,8 +129,7 @@ namespace Arrive.Widgets {
             
             var add_button = new ToolButton.from_stock (Gtk.Stock.ADD);
             add_button.clicked.connect (()=>{
-                 var add_file_dialog = new AddFileDialog ("");
-                 add_file_dialog.show_all ();
+                create_add_dialog ();
             });
             start_all = new Gtk.ToolButton.from_stock (Gtk.Stock.MEDIA_PLAY);
             start_all.clicked.connect (()=>{
@@ -249,6 +248,10 @@ namespace Arrive.Widgets {
             vbox.pack_start (static_notebook, true, true);
             vbox.pack_start (status_bar, false, false);
             add (vbox);
+        }
+        public void create_add_dialog (string uri="", string dir="", int num_segment=0){            
+             var add_file_dialog = new AddFileDialog (uri);
+             add_file_dialog.show_all ();
         }
         private void hibernate (){
             suspend (true);

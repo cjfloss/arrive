@@ -4,6 +4,8 @@ namespace Arrive {
         public Model.IDownloadList download_list;
         public Model.FinishedList finished_list;
         public Model.Settings settings;
+        private static string? uri;
+        public static bool quiet;
         private static App _instance;
         public static App instance {
             get{
@@ -13,7 +15,7 @@ namespace Arrive {
             }
         }
         construct {
-
+            message ("construct");
             build_data_dir = Build.DATADIR;
             build_pkg_data_dir = Build.PKG_DATADIR;
             build_release_name = Build.RELEASE_NAME;
@@ -41,7 +43,7 @@ namespace Arrive {
             about_translators = "Launchpad Translators";
 
             about_license_type = Gtk.License.GPL_3_0;
-            _instance = this;
+            //_instance = this;
         }
         protected override void activate () {
             if (DEBUG)
@@ -49,6 +51,7 @@ namespace Arrive {
             else
                 Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
             
+            message ("activate "+uri.to_string ());
             
             if (Model.aria2 == null){
                 settings = new Model.Settings ();             
@@ -59,17 +62,43 @@ namespace Arrive {
                 (download_list as Model.DownloadList).start ();
             }
             
-            if (main_window == null) 
+            if (main_window == null)
                 main_window = new Widgets.MainWindow (download_list, finished_list);
+            
             main_window.set_application (this);
-            main_window.present ();
+            
+            if (quiet)
+                message ("download "+uri);
+            else if (uri != null)
+                main_window.create_add_dialog (uri);
+            else
+                main_window.present ();
             
             var launcher_entry = new Arrive.Model.LauncherEntry();
         }
+        public static const OptionEntry[] entries = {
+                { "add", 'a', 0, OptionArg.STRING, ref uri, "Show Add Download dialog.", null },
+                { "quiet", 'q', 0, OptionArg.NONE, ref quiet, "Start downloading the url.", null },
+                { null }
+            };
+        public static int main (string[] args) {
+            Gtk.init (ref args);
+            message ("main");
+            
+            var context = new OptionContext ("");
+            context.add_main_entries (entries, "arrive");
+            context.add_group (Gtk.get_option_group (true));
+            
+            try {
+                context.parse(ref args);
+            }
+            catch(Error e) {
+                print(e.message);
+            }
+            
+            instance.run (args);
+            
+            return 0;
+        }
     }
-}
-public static int main (string[] args) {
-    Gtk.init (ref args);
-    var arrive = Arrive.App.instance.run (args);
-    return 0;
 }
