@@ -14,4 +14,4 @@ Standards-Version: 3.9.3
 Package: arrive-download-manager
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}, aria2c
-Front end of aria2c with ElementaryOS HIG
+Description: Front end of aria2c with ElementaryOS HIG
