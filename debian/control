@@ -8,6 +8,8 @@ Build-Depends: cmake (>= 2.8),
                libgranite-dev (>=0.2.0),
                libgtk-3-dev,
                libsoup2.4-dev (>=2.38.0),
+               libunity-dev,
+               libnority-dev,
                pkg-config
 Standards-Version: 3.9.3
 
