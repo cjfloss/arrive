@@ -1,11 +1,16 @@
 [Desktop Entry]
 Type=Application
-Version=0.1
+Version=1.0
 Name=Arrive
 Comment=Simple and practical download manager
 GenericName=download manager
 Exec=arrive
 Icon=arrive
 Terminal=false
-Categories=GNOME;Utility;
+Categories=Network;GTK;
 StartupNotify=true
+Actions=AboutDialog;
+
+[Desktop Action AboutDialog]
+Exec=arrive --about
+Name=About Arrive

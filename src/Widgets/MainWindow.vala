@@ -123,7 +123,7 @@ namespace Arrive.Widgets {
         }
         void build_gui () {
             header_bar = new HeaderBar ();
-            /* header_bar.set_title ("Arrive"); */
+            header_bar.set_title ("Arrive");
             header_bar.set_show_close_button (true);
             set_titlebar (header_bar);
 
@@ -156,8 +156,6 @@ namespace Arrive.Widgets {
             var search_bar_toolitem = new Gtk.ToolItem ();
             search_bar_toolitem.add (search_bar);
 
-            //creating cogl menu
-            var menu = new Gtk.Menu ();
 
             var power_menu = new Gtk.Menu();
             var nothing_menu = new Gtk.RadioMenuItem.with_label (null, _("Nothing"));
@@ -203,19 +201,18 @@ namespace Arrive.Widgets {
 
             hibernate_menu.sensitive = false;
 
-            var submenu = new Gtk.MenuItem.with_label (_("When all finished..."));
-            submenu.set_submenu (power_menu);
-            menu.append (submenu);
+            /* var submenu = new Gtk.MenuItem.with_label (_("When all finished...")); */
+            /* submenu.set_submenu (power_menu); */
+            /* menu.append (submenu); */
 
-            menu.append (new Gtk.SeparatorMenuItem ());
-
-            Gtk.MenuItem about_item = new Gtk.MenuItem.with_label ("About");
-            about_item.activate.connect (()=>{Arrive.App.instance.show_about (this); });
-            menu.append (about_item);
-
-            app_menu = new Granite.Widgets.AppMenu (menu);
-            header_bar.pack_end (app_menu);
+            app_menu = new Granite.Widgets.AppMenu (power_menu);
+            app_menu.set_tooltip_text ("when download finished...");
             header_bar.pack_end (search_bar_toolitem);
+            //finish menu
+            /* var finish_menu = new Gtk.MenuButton(); */
+            /* finish_menu.set_popup (power_menu); */
+            /* finish_menu.set_direction (ArrowType.UP); */
+            /* finish_menu.set_icon_name ("object-select-symbolic"); */
 
             //downloading list
             downloading_list = new Arrive.Widgets.DownloadingList (download_list_model);
@@ -245,6 +242,7 @@ namespace Arrive.Widgets {
             action_bar = new Gtk.ActionBar ();
             download_speed_label = new Label (_("download idle"));
             status_label = new Label ("");
+            action_bar.pack_start (app_menu);
             action_bar.pack_end (download_speed_label);
             action_bar.pack_end (status_label);
 
