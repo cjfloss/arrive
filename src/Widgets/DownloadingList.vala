@@ -24,7 +24,7 @@ namespace Arrive.Widgets {
             add_named (scrolled, "scrolled");
 
             var welcome = new Granite.Widgets.Welcome (_("No Download Yet"), _("But you can add it"));
-            welcome.append (Gtk.Stock.ADD, _("Add Download"), _("Any http, ftp, magnet link or torrent file"));
+            welcome.append ("list-add", _("Add Download"), _("Any http, ftp, magnet link or torrent file"));
             welcome.activated.connect ((index)=>{
                 switch (index){
                     case 0:

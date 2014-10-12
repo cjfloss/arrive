@@ -37,12 +37,12 @@ namespace Arrive.Widgets {
             column.set_resizable (true);
             tree_view.insert_column (column, -1);
 
-            Gtk.TreeViewColumn column_s = 
+            Gtk.TreeViewColumn column_s =
                 new Gtk.TreeViewColumn.with_attributes (
-                    _("size"), 
-                    new Gtk.CellRendererText (), 
-                    "text", 
-                    1, 
+                    _("size"),
+                    new Gtk.CellRendererText (),
+                    "text",
+                    1,
                     null);
             column_s.set_fixed_width (50);
             tree_view.insert_column (column_s, -1);
@@ -53,9 +53,15 @@ namespace Arrive.Widgets {
             scrolled.add (tree_view);
             add_named (scrolled, "scrolled");
 
-            add_named (new Granite.Widgets.Welcome (_("You Haven't Finished \n a Download"), _("Your finished download \n will be listed here")), "welcome");
+            add_named (new Granite.Widgets.Welcome (
+                        "",
+                        _("finished download\nwill be listed here")),
+                    "welcome");
 
-            add_named (new Granite.Widgets.Welcome ("", _("Search Not Found")), "not found");
+            add_named (new Granite.Widgets.Welcome (
+                        "",
+                        _("Search Not Found")),
+                    "not found");
 
             finished_list.list_changed.connect (setup_list);
             tree_view.button_release_event.connect ((event)=>{

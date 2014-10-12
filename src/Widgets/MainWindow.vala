@@ -15,6 +15,7 @@ namespace Arrive.Widgets {
         public Widgets.DownloadingList downloading_list;
         public Widgets.FinishedList finished_list;
         private Granite.Widgets.StatusBar status_bar;
+        private Gtk.ActionBar action_bar;
         public Gtk.Label download_speed_label;
         public Gtk.Label status_label;
         private Gtk.Grid grid;
@@ -30,8 +31,7 @@ namespace Arrive.Widgets {
 
             saved_state = new Model.SavedState ();
 
-            //get_style_context ().add_class ("content-view-window");
-            //resizable = true;
+            /* get_style_context ().add_class ("content-view-window"); */
             build_gui ();
             restore_window_state ();
             set_position (Gtk.WindowPosition.CENTER);
@@ -124,20 +124,24 @@ namespace Arrive.Widgets {
         }
         void build_gui () {
             header_bar = new HeaderBar ();
-            header_bar.set_title ("Arrive");
+            /* header_bar.set_title ("Arrive"); */
             header_bar.set_show_close_button (true);
             set_titlebar (header_bar);
 
-            var add_button = new ToolButton.from_stock (Gtk.Stock.ADD);
+            var add_button = new ToolButton (null, null);
+            add_button.set_tooltip_text (_("Add download"));
+            add_button.set_icon_name ("list-add");
             add_button.clicked.connect (()=>{
                 create_add_dialog ();
             });
-            start_all = new Gtk.ToolButton.from_stock (Gtk.Stock.MEDIA_PLAY);
+            start_all = new Gtk.ToolButton (null, null);
+            start_all.set_icon_name ("media-playback-start");
             start_all.clicked.connect (()=>{
                    foreach(Arrive.Model.IDownloadItem ditem in download_list_model.files)
                        ditem.unpause ();
                });
-            pause_all = new Gtk.ToolButton.from_stock (Gtk.Stock.MEDIA_PAUSE);
+            pause_all = new Gtk.ToolButton (null, null);
+            pause_all.set_icon_name ("media-playback-pause");
             pause_all.clicked.connect (()=>{
                    foreach(Arrive.Model.IDownloadItem ditem in download_list_model.files)
                        ditem.pause ();
@@ -238,19 +242,18 @@ namespace Arrive.Widgets {
             stack_switcher.set_halign (Align.CENTER);
             stack_switcher.set_stack (stack);
 
-            //status bar
-            status_bar = new Granite.Widgets.StatusBar ();
+            //action bar
+            action_bar = new Gtk.ActionBar ();
             download_speed_label = new Label (_("download idle"));
-            status_bar.insert_widget (download_speed_label, false);
             status_label = new Label ("");
-            status_bar.insert_widget (status_label, true);
-            status_bar.set_vexpand (false);
+            action_bar.pack_end (download_speed_label);
+            action_bar.pack_end (status_label);
 
             // Main Grid
             grid = new Gtk.Grid ();
             grid.attach (stack_switcher, 0, 0, 1, 1);
             grid.attach (stack, 0, 1, 1, 1);
-            grid.attach (status_bar, 0, 2, 1, 1);
+            grid.attach (action_bar, 0, 2, 1, 1);
             add (grid);
         }
         public void create_add_dialog (string uri="", string dir="", int num_segment=0){            
