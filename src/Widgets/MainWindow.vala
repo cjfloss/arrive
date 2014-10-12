@@ -5,6 +5,7 @@ using Gdk;
 namespace Arrive.Widgets {
     //public static MainWindow main_window;
     public class MainWindow : Gtk.Window {
+        private Gtk.HeaderBar header_bar;
         private Gtk.ToolButton start_all;
         private Gtk.ToolButton pause_all;
         public Gtk.SearchEntry search_bar;
@@ -23,12 +24,12 @@ namespace Arrive.Widgets {
         //private Arrive.Widgets.AddFileDialog add_file_dialog;
 
         public MainWindow (Model.IDownloadList d_list, Model.FinishedList f_list) {
+
             download_list_model = d_list as Model.DownloadList;
             finished_list_model = f_list;
 
             saved_state = new Model.SavedState ();
 
-            set_title ("Arrive");
             //get_style_context ().add_class ("content-view-window");
             //resizable = true;
             build_gui ();
@@ -122,11 +123,10 @@ namespace Arrive.Widgets {
             return false;
         }
         void build_gui () {
-            //toolbar left button
-            var toolbar = new Toolbar ();
-            toolbar.set_vexpand (false);
-            toolbar.set_hexpand (true);
-            toolbar.get_style_context ().add_class ("primary-toolbar");
+            header_bar = new HeaderBar ();
+            header_bar.set_title ("Arrive");
+            header_bar.set_show_close_button (true);
+            set_titlebar (header_bar);
 
             var add_button = new ToolButton.from_stock (Gtk.Stock.ADD);
             add_button.clicked.connect (()=>{
@@ -143,13 +143,9 @@ namespace Arrive.Widgets {
                        ditem.pause ();
                });
 
-            toolbar.insert (add_button, -1);
-            toolbar.insert (start_all, -1);
-            toolbar.insert (pause_all, -1);
-
-            var spacer = new Gtk.ToolItem ();
-            spacer.set_expand (true);
-            toolbar.insert (spacer, -1);
+            header_bar.pack_start (add_button);
+            header_bar.pack_start (start_all);
+            header_bar.pack_start (pause_all);
 
             //toolbar right item
             search_bar = new Gtk.SearchEntry ();
@@ -215,8 +211,8 @@ namespace Arrive.Widgets {
             menu.append (about_item);
 
             app_menu = new Granite.Widgets.AppMenu (menu);
-            toolbar.insert (search_bar_toolitem, -1);
-            toolbar.insert (app_menu, -1);
+            header_bar.pack_end (app_menu);
+            header_bar.pack_end (search_bar_toolitem);
 
             //downloading list
             downloading_list = new Arrive.Widgets.DownloadingList (download_list_model);
@@ -252,10 +248,9 @@ namespace Arrive.Widgets {
 
             // Main Grid
             grid = new Gtk.Grid ();
-            grid.attach (toolbar, 0, 0, 1, 1);
-            grid.attach (stack_switcher, 0, 1, 1, 1);
-            grid.attach (stack, 0, 2, 1, 1);
-            grid.attach (status_bar, 0, 3, 1, 1);
+            grid.attach (stack_switcher, 0, 0, 1, 1);
+            grid.attach (stack, 0, 1, 1, 1);
+            grid.attach (status_bar, 0, 2, 1, 1);
             add (grid);
         }
         public void create_add_dialog (string uri="", string dir="", int num_segment=0){            
