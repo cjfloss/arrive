@@ -1,5 +1,5 @@
 namespace Arrive.Widgets {
-    public class FinishedList : Gtk.Notebook {
+    public class FinishedList : Gtk.Stack {
         public Gtk.ScrolledWindow widget;
         private Gtk.TreeView tree_view;
         private Gtk.TreeStore tree_store;
@@ -14,11 +14,8 @@ namespace Arrive.Widgets {
         }
         public FinishedList (Model.FinishedList finished_list) {
             this.finished_list = finished_list;
-            filter_string = "";            
-            
-            set_show_tabs (false);
-            set_show_border (false);
-            
+            filter_string = "";
+
             tree_store = new Gtk.TreeStore (3, typeof(string), typeof(string), typeof(Model.FinishedItem));
             tree_filter = new Gtk.TreeModelFilter (tree_store, null);
             tree_filter.set_visible_func (visible_func);
@@ -26,20 +23,20 @@ namespace Arrive.Widgets {
             tree_view.set_model (tree_filter);
             tree_view.set_headers_visible (false);
             tree_view.get_selection ().set_mode (Gtk.SelectionMode.MULTIPLE);
-            
 
-            Gtk.TreeViewColumn column = 
+
+            Gtk.TreeViewColumn column =
                 new Gtk.TreeViewColumn.with_attributes (
-                    _("filename"), 
-                    new Gtk.CellRendererText (), 
-                    "text", 
-                    0, 
+                    _("filename"),
+                    new Gtk.CellRendererText (),
+                    "text",
+                    0,
                     null);
             column.set_sizing (Gtk.TreeViewColumnSizing.FIXED);
             column.set_expand (true);
             column.set_resizable (true);
             tree_view.insert_column (column, -1);
-            
+
             Gtk.TreeViewColumn column_s = 
                 new Gtk.TreeViewColumn.with_attributes (
                     _("size"), 
@@ -49,17 +46,17 @@ namespace Arrive.Widgets {
                     null);
             column_s.set_fixed_width (50);
             tree_view.insert_column (column_s, -1);
-            
+
             setup_list ();
-            
+
             scrolled = new Gtk.ScrolledWindow (null, null);
             scrolled.add (tree_view);
-            append_page(scrolled);
-            
-            append_page(new Granite.Widgets.Welcome (_("You Haven't Finished \n a Download"), _("Your finished download \n will be listed here")));
-            
-            append_page(new Granite.Widgets.Welcome ("", _("Search Not Found")));
-        
+            add_named (scrolled, "scrolled");
+
+            add_named (new Granite.Widgets.Welcome (_("You Haven't Finished \n a Download"), _("Your finished download \n will be listed here")), "welcome");
+
+            add_named (new Granite.Widgets.Welcome ("", _("Search Not Found")), "not found");
+
             finished_list.list_changed.connect (setup_list);
             tree_view.button_release_event.connect ((event)=>{
                                                         switch (event.button) {
@@ -122,11 +119,11 @@ namespace Arrive.Widgets {
             //simple logic for showing welcome screen and search not found
             if (row_length == 0){
                 if (this.filter_string == "")
-                    set_current_page (1);
+                    set_visible_child_name ("welcome");
                 else 
-                    set_current_page (2);
+                    set_visible_child_name ("not found");
             }else
-                set_current_page (0);
+                set_visible_child_name ("scrolled");
             tree_view.expand_all ();
         }
         private void show_popup_menu (Gdk.EventButton event){
@@ -140,7 +137,7 @@ namespace Arrive.Widgets {
             var forget = new Gtk.MenuItem.with_label (_("Forget"));
             var move_to_trash = new Gtk.MenuItem.with_label (_("Move to Trash"));
             var properties = new Gtk.MenuItem.with_label (_("Properties"));
-            
+
             open_file.activate.connect (()=>{
                 if (get_selected_files ().length () == 1)
                     get_selected_files ().nth_data (0).open_file ();
@@ -194,20 +191,20 @@ namespace Arrive.Widgets {
                 }
             });
             properties.activate.connect (()=>{});
-            
+
             //only at item if one file selected
             if (get_selected_files ().length () == 1){
                 menu.add (open_file);
                 menu.add (open_folder);
                 menu.add (new Gtk.SeparatorMenuItem ());
             }
-            
+
             menu.add (move_to);
             menu.add (copy);
             menu.add (new Gtk.SeparatorMenuItem ());
             menu.add (forget);
             menu.add (move_to_trash);
-            
+
             menu.attach_to_widget (tree_view, null);
             menu.show_all ();
             menu.popup (null, null, null, event.button, event.time);

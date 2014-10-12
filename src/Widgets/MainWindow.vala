@@ -9,13 +9,14 @@ namespace Arrive.Widgets {
         private Gtk.ToolButton pause_all;
         public Gtk.SearchEntry search_bar;
         private Granite.Widgets.AppMenu app_menu;
-        private Granite.Widgets.StaticNotebook static_notebook;
+        private Gtk.StackSwitcher stack_switcher;
+        private Gtk.Stack stack;
         public Widgets.DownloadingList downloading_list;
         public Widgets.FinishedList finished_list;
         private Granite.Widgets.StatusBar status_bar;
         public Gtk.Label download_speed_label;
         public Gtk.Label status_label;
-        private Box vbox;
+        private Gtk.Grid grid;
         private Model.SavedState saved_state;
         private Model.DownloadList download_list_model;
         private Model.FinishedList finished_list_model;
@@ -36,7 +37,7 @@ namespace Arrive.Widgets {
             show_all ();
             downloading_list.filter (search_bar.text);
             finished_list.filter (search_bar.text);
-            static_notebook.page = saved_state.notebook_state;
+            stack.set_visible_child_name (saved_state.notebook_state);
 
             download_list_model.item_refreshed.connect (refresh_status);
             download_list_model.file_removed.connect (()=>{
@@ -101,7 +102,7 @@ namespace Arrive.Widgets {
                 saved_state.window_width = width;
                 saved_state.window_height = height;
             }
-            saved_state.notebook_state = static_notebook.page;
+            saved_state.notebook_state = stack.get_visible_child_name ();
             saved_state.search_string = search_bar.text;
         }
         private void restore_window_state (){
@@ -219,6 +220,7 @@ namespace Arrive.Widgets {
 
             //downloading list
             downloading_list = new Arrive.Widgets.DownloadingList (download_list_model);
+            downloading_list.set_vexpand (true);
 
             //finished list
             finished_list =new Arrive.Widgets.FinishedList (finished_list_model);
@@ -231,11 +233,14 @@ namespace Arrive.Widgets {
                 finished_list.filter (search_bar.text);
             });
 
-            //static notebook
-            static_notebook = new Granite.Widgets.StaticNotebook ();
-            static_notebook.get_style_context ().add_class (Granite.StyleClass.CONTENT_VIEW);
-            static_notebook.append_page (downloading_list, new Gtk.Label (_ ("Downloading")));
-            static_notebook.append_page (finished_list, new Gtk.Label (_ ("Finished")));
+            // Stack
+            stack = new Gtk.Stack ();
+            stack.add_titled (downloading_list, "downloading_list", _("Downloading"));
+            stack.add_titled (finished_list, "finished_list", _("Finished"));
+            stack_switcher = new Gtk.StackSwitcher ();
+            stack_switcher.set_hexpand (true);
+            stack_switcher.set_halign (Align.CENTER);
+            stack_switcher.set_stack (stack);
 
             //status bar
             status_bar = new Granite.Widgets.StatusBar ();
@@ -243,12 +248,15 @@ namespace Arrive.Widgets {
             status_bar.insert_widget (download_speed_label, false);
             status_label = new Label ("");
             status_bar.insert_widget (status_label, true);
+            status_bar.set_vexpand (false);
 
-            vbox = new Box (Gtk.Orientation.VERTICAL, 0);
-            vbox.pack_start (toolbar, false, false);
-            vbox.pack_start (static_notebook, true, true);
-            vbox.pack_start (status_bar, false, false);
-            add (vbox);
+            // Main Grid
+            grid = new Gtk.Grid ();
+            grid.attach (toolbar, 0, 0, 1, 1);
+            grid.attach (stack_switcher, 0, 1, 1, 1);
+            grid.attach (stack, 0, 2, 1, 1);
+            grid.attach (status_bar, 0, 3, 1, 1);
+            add (grid);
         }
         public void create_add_dialog (string uri="", string dir="", int num_segment=0){            
              var add_file_dialog = new AddFileDialog (uri);

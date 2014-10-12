@@ -39,8 +39,8 @@
 			<summary>The saved state of the window.</summary>
 			<description>The saved state of the window.</description>
 		</key>
-		<key name="notebook-state" type="i">
-			<default>0</default>
+		<key name="notebook-state" type="s">
+			<default>"downloading_list"</default>
 			<summary>Static notebook State</summary>
 			<description>the saved state of static notebook.</description>
 		</key><key name="search-string" type="s">
