@@ -67,9 +67,14 @@ public class Utils{
     }
     public static bool open_file (string path){
         var file = File.new_for_path (path);
-        var handler = file.query_default_handler (null);
-        var list = new List<File> ();
-        list.append (file);
-        return handler.launch (list, null);
+        try {
+            var handler = file.query_default_handler (null);
+            var list = new List<File> ();
+            list.append (file);
+            return handler.launch (list, null);
+        } catch (Error e) {
+            debug (e.message);
+        }
+        return false;
     }
 }

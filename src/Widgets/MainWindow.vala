@@ -7,7 +7,7 @@ namespace Arrive.Widgets {
     public class MainWindow : Gtk.Window {
         private Gtk.ToolButton start_all;
         private Gtk.ToolButton pause_all;
-        public Granite.Widgets.SearchBar search_bar;
+        public Gtk.SearchEntry search_bar;
         private Granite.Widgets.AppMenu app_menu;
         private Granite.Widgets.StaticNotebook static_notebook;
         public Widgets.DownloadingList downloading_list;
@@ -20,13 +20,13 @@ namespace Arrive.Widgets {
         private Model.DownloadList download_list_model;
         private Model.FinishedList finished_list_model;
         //private Arrive.Widgets.AddFileDialog add_file_dialog;
-        
+
         public MainWindow (Model.IDownloadList d_list, Model.FinishedList f_list) {
             download_list_model = d_list as Model.DownloadList;
             finished_list_model = f_list;
-            
+
             saved_state = new Model.SavedState ();
-            
+
             set_title ("Arrive");
             //get_style_context ().add_class ("content-view-window");
             //resizable = true;
@@ -37,13 +37,13 @@ namespace Arrive.Widgets {
             downloading_list.filter (search_bar.text);
             finished_list.filter (search_bar.text);
             static_notebook.page = saved_state.notebook_state;
-            
+
             download_list_model.item_refreshed.connect (refresh_status);
             download_list_model.file_removed.connect (()=>{
                 if (download_list_model.files.length () == 0)
                     on_all_finished ();
             });
-            
+
             destroy.connect (()=> {
                 hide ();
                 download_list_model.destroy ();
@@ -67,7 +67,7 @@ namespace Arrive.Widgets {
             foreach(Model.IDownloadItem d_item in download_list_model.files){
                 total_speed += d_item.download_speed;
             }
-            return total_speed;            
+            return total_speed;
         }
         private uint64 total_upload_speed (){
             uint64 total_upload = 0;
@@ -94,7 +94,7 @@ namespace Arrive.Widgets {
                 saved_state.window_state = Model.WindowState.MAXIMIZED;
             else
                 saved_state.window_state = Model.WindowState.NORMAL;
-            
+
             if (saved_state.window_state == Model.WindowState.NORMAL){
                 int width, height;
                 get_size (out width, out height);
@@ -126,7 +126,7 @@ namespace Arrive.Widgets {
             toolbar.set_vexpand (false);
             toolbar.set_hexpand (true);
             toolbar.get_style_context ().add_class ("primary-toolbar");
-            
+
             var add_button = new ToolButton.from_stock (Gtk.Stock.ADD);
             add_button.clicked.connect (()=>{
                 create_add_dialog ();
@@ -149,24 +149,25 @@ namespace Arrive.Widgets {
             var spacer = new Gtk.ToolItem ();
             spacer.set_expand (true);
             toolbar.insert (spacer, -1);
-            
+
             //toolbar right item
-            search_bar = new Granite.Widgets.SearchBar (_ ("Search"));
+            search_bar = new Gtk.SearchEntry ();
+            search_bar.set_placeholder_text (_("Search"));
             var search_bar_toolitem = new Gtk.ToolItem ();
             search_bar_toolitem.add (search_bar);
 
             //creating cogl menu
             var menu = new Gtk.Menu ();
-            
+
             var power_menu = new Gtk.Menu();
             var nothing_menu = new Gtk.RadioMenuItem.with_label (null, _("Nothing"));
-            var suspend_menu = 
+            var suspend_menu =
                 new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _("Suspend"));
-            var hibernate_menu = 
+            var hibernate_menu =
                 new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _("Hibernate"));
-            var shutdown_menu = 
+            var shutdown_menu =
                 new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _("Shutdown"));
-            
+
             nothing_menu.activate.connect (()=>{
                 App.instance.settings.finished_action = Model.FinishedAction.NOTHING;
             });
@@ -199,23 +200,23 @@ namespace Arrive.Widgets {
             power_menu.append (suspend_menu);
             //power_menu.append (hibernate_menu);
             power_menu.append (shutdown_menu);
-            
+
             hibernate_menu.sensitive = false;
-            
+
             var submenu = new Gtk.MenuItem.with_label (_("When all finished..."));
             submenu.set_submenu (power_menu);
             menu.append (submenu);
-            
+
             menu.append (new Gtk.SeparatorMenuItem ());
-            
+
             Gtk.MenuItem about_item = new Gtk.MenuItem.with_label ("About");
             about_item.activate.connect (()=>{Arrive.App.instance.show_about (this); });
             menu.append (about_item);
-            
+
             app_menu = new Granite.Widgets.AppMenu (menu);
             toolbar.insert (search_bar_toolitem, -1);
             toolbar.insert (app_menu, -1);
-            
+
             //downloading list
             downloading_list = new Arrive.Widgets.DownloadingList (download_list_model);
 
@@ -224,12 +225,12 @@ namespace Arrive.Widgets {
             finished_list.notify["status"].connect ((s, p)=>{
                 status_label.set_text(finished_list.status);
             });
-            
-            search_bar.text_changed_pause.connect (()=>{
+
+            search_bar.search_changed.connect (()=>{
                 downloading_list.filter (search_bar.text);
                 finished_list.filter (search_bar.text);
             });
-            
+
             //static notebook
             static_notebook = new Granite.Widgets.StaticNotebook ();
             static_notebook.get_style_context ().add_class (Granite.StyleClass.CONTENT_VIEW);
@@ -269,7 +270,7 @@ namespace Arrive.Widgets {
                     if (upower.SuspendAllowed ())
                         upower.Suspend ();
                 }
-            } catch (Error e) { warning (e.message); }   
+            } catch (Error e) { warning (e.message); }
         }
         private void shutdown (){
             try {
