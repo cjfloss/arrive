@@ -14,7 +14,6 @@ namespace Arrive.Widgets {
         private Gtk.Stack stack;
         public Widgets.DownloadingList downloading_list;
         public Widgets.FinishedList finished_list;
-        private Granite.Widgets.StatusBar status_bar;
         private Gtk.ActionBar action_bar;
         public Gtk.Label download_speed_label;
         public Gtk.Label status_label;
