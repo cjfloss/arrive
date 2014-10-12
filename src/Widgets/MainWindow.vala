@@ -9,7 +9,6 @@ namespace Arrive.Widgets {
         private Gtk.ToolButton start_all;
         private Gtk.ToolButton pause_all;
         public Gtk.SearchEntry search_bar;
-        private Granite.Widgets.AppMenu app_menu;
         private Gtk.StackSwitcher stack_switcher;
         private Gtk.Stack stack;
         public Widgets.DownloadingList downloading_list;
@@ -125,6 +124,7 @@ namespace Arrive.Widgets {
             header_bar = new HeaderBar ();
             header_bar.set_title ("Arrive");
             header_bar.set_show_close_button (true);
+            /* header_bar.set_has_subtitle (false); */
             set_titlebar (header_bar);
 
             var add_button = new ToolButton (null, null);
@@ -155,6 +155,8 @@ namespace Arrive.Widgets {
             search_bar.set_placeholder_text (_("Search"));
             var search_bar_toolitem = new Gtk.ToolItem ();
             search_bar_toolitem.add (search_bar);
+
+            header_bar.pack_end (search_bar_toolitem);
 
 
             var power_menu = new Gtk.Menu();
@@ -198,21 +200,16 @@ namespace Arrive.Widgets {
             power_menu.append (suspend_menu);
             //power_menu.append (hibernate_menu);
             power_menu.append (shutdown_menu);
+            power_menu.show_all ();
 
             hibernate_menu.sensitive = false;
 
-            /* var submenu = new Gtk.MenuItem.with_label (_("When all finished...")); */
-            /* submenu.set_submenu (power_menu); */
-            /* menu.append (submenu); */
-
-            app_menu = new Granite.Widgets.AppMenu (power_menu);
-            app_menu.set_tooltip_text ("when download finished...");
-            header_bar.pack_end (search_bar_toolitem);
             //finish menu
-            /* var finish_menu = new Gtk.MenuButton(); */
-            /* finish_menu.set_popup (power_menu); */
-            /* finish_menu.set_direction (ArrowType.UP); */
-            /* finish_menu.set_icon_name ("object-select-symbolic"); */
+            var finish_button = new Gtk.MenuButton();
+            finish_button.set_popup (power_menu);
+            finish_button.set_direction (ArrowType.UP);
+            finish_button.set_tooltip_text (_("When download finished..."));
+            finish_button.image = new Gtk.Image.from_icon_name ("object-select-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 
             //downloading list
             downloading_list = new Arrive.Widgets.DownloadingList (download_list_model);
@@ -242,7 +239,7 @@ namespace Arrive.Widgets {
             action_bar = new Gtk.ActionBar ();
             download_speed_label = new Label (_("download idle"));
             status_label = new Label ("");
-            action_bar.pack_start (app_menu);
+            action_bar.pack_start (finish_button);
             action_bar.pack_end (download_speed_label);
             action_bar.pack_end (status_label);
 
