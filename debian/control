@@ -5,6 +5,7 @@ Maintainer: Viko Adi Rahmawan <vikoadi@gmail.com>
 Build-Depends: cmake (>= 2.8),
                debhelper (>= 8.0.0),
                valac-0.16 | valac (>= 0.16),
+               libgee-0.8-dev (>=0.14)
                libgranite-dev (>=0.2.0),
                libgtk-3-dev,
                libsoup2.4-dev (>=2.38.0),
