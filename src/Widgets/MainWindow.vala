@@ -48,7 +48,7 @@ namespace Arrive.Widgets {
                 hide ();
                 download_list_model.destroy ();
                 Model.aria2.shutdown ();
-                Gtk.main_quit ();
+                /* Gtk.main_quit (); */
              });
 
             Notify.init(get_title ());

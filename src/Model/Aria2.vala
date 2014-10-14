@@ -15,7 +15,7 @@ namespace Arrive.Model {
         public bool is_listened;
         public DownloadList download_list;
         public FinishedList finished_list;
-        
+
         public Aria2 (IDownloadList d_list, FinishedList f_list) {
             num_active = 0;
             num_waiting = 0;
@@ -29,7 +29,7 @@ namespace Arrive.Model {
             download_list = d_list as DownloadList;
             finished_list = f_list;
             get_global_option ();
-            
+
             var refresh_timer = new TimeoutSource (REFRESH_TIME);
             refresh_timer.set_callback (()=>{
                 refresh_status ();
@@ -114,17 +114,56 @@ namespace Arrive.Model {
                 //max connection and split size are hardcoded for now
                 //TODO:create preferences dialog to set max-connection-per-server 
                 //and min-split-size (and almost everything)
-                GLib.Process.spawn_command_line_async ("aria2c --enable-rpc 
-                    --max-connection-per-server 16 
-                    --min-split-size 1M --pause=true 
-                    --enable-dht 
-                    --dht-entry-point=dht.transmissionbt.com:6881 
-                    --dht-listen-port=6881 
-                    --disable-ipv6 ");
+                string[] spawn_args = {
+                    "aria2c",
+                    "--enable-rpc",
+                    "--max-connection-per-server=16",
+                    "--min-split-size=1M",
+                    "--pause=true",
+                    "--enable-dht",
+                    "--dht-entry-point=dht.transmissionbt.com:6881",
+                    "--dht-listen-port=6881",
+                    "--disable-ipv6"
+                };
+                string[] spawn_env = Environ.get ();
+                Pid child_pid;
+                int standard_input;
+                int standard_output;
+                int standard_error;
+
+                bool ret = Process.spawn_async_with_pipes (
+                    null,
+                    spawn_args,
+                    spawn_env,
+                    SpawnFlags.SEARCH_PATH|SpawnFlags.DO_NOT_REAP_CHILD,
+                    null,
+                    out child_pid,
+                    out standard_input,
+                    out standard_output,
+                    out standard_error
+                );
+                // stdout:
+                IOChannel output = new IOChannel.unix_new (standard_output);
+                output.add_watch (IOCondition.IN | IOCondition.HUP, (channel, condition) => {
+                        return process_line (channel, condition, "stdout");
+                        });
+
+                // stderr:
+                IOChannel error = new IOChannel.unix_new (standard_error);
+                error.add_watch (IOCondition.IN | IOCondition.HUP, (channel, condition) => {
+                        return process_line (channel, condition, "stderr");
+                        });
+
+                /* if (!ret) */
+                /*     return; */
+                ChildWatch.add (child_pid, (pid,status)=>{
+                        Process.close_pid (pid);
+                        Gtk.main_quit ();
+                        });
                 is_listened = true;
             } catch (GLib.SpawnError error)
             {
-                critical ("cant start aria2c");
+                critical ("cant start aria2c %s", error.message);
             }
             //need to wait for aria to load
             Thread.usleep (500000);
@@ -133,6 +172,26 @@ namespace Arrive.Model {
                 is_listened = false;
                 shutdown ();
             }
+        }
+        private static bool process_line (IOChannel channel, IOCondition condition, string stream_name) {
+            if (condition == IOCondition.HUP) {
+                message ("%s: The fd has been closed.\n", stream_name);
+                return false;
+            }
+
+            try {
+                string line;
+                channel.read_line (out line, null, null);
+                message ("%s: %s", stream_name, line);
+            } catch (IOChannelError e) {
+                error ("%s: IOChannelError: %s\n", stream_name, e.message);
+                return false;
+            } catch (ConvertError e) {
+                error ("%s: ConvertError: %s\n", stream_name, e.message);
+                return false;
+            }
+
+            return true;
         }
         public void pause(string gid){
             Soup.Message msg = XMLRPC.request_new (aria_uri, "aria2.pause",
