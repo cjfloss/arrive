@@ -11,15 +11,15 @@ namespace Arrive.Widgets {
         private Gtk.CellRendererText download_renderer;
         private Gtk.CellRendererText upload_renderer;
         private Gtk.CellRendererText time_renderer;
-        
+
         private Arrive.Model.IDownloadItem _file;
         public Arrive.Model.IDownloadItem file {
             get { return _file;}
             set {
                 _file = value;
-                
+
                 icon_renderer.pixbuf=get_icon_for_file();
-                
+
                 //file_name_renderer.text=_file.filename;//parse file from path
                 file_name_renderer.markup = Markup.printf_escaped ( "<span weight='bold' size='larger'>%s</span>",
                 _file.filename);
@@ -32,7 +32,7 @@ namespace Arrive.Widgets {
                     status_renderer.text = _("status:%s connections:%s").printf (_file.status,_file.gid);
                 //if (_file is Model.AriaMagnet)
                 //    status_renderer.text = _("status:%s file:%s").printf (_file.status,(_file as Model.AriaMagnet).path_files.length ());
-                
+
                 download_renderer.text = format_size (_file.download_speed)+"ps";
                 upload_renderer.text = format_size (_file.upload_speed)+"ps";
                 time_renderer.text = get_remaining_time ();
@@ -99,8 +99,8 @@ namespace Arrive.Widgets {
             file_name_renderer.get_preferred_height (widget, null, out file_name_renderer_height);
             status_renderer.get_preferred_height (widget, null, out status_renderer_height);
             download_progress_renderer.get_preferred_height (widget, null, out download_progress_renderer_height);
-    //~         width=width;
-            height = 2 * PADDING + file_name_renderer_height 
+            icon_renderer.get_size(widget, null, out x_offset, out y_offset, out width, out height);
+            height = 2 * PADDING + file_name_renderer_height
 				     + download_progress_renderer_height + status_renderer_height;
         }
         public override void render (Cairo.Context ctx, Gtk.Widget widget,
@@ -144,7 +144,7 @@ namespace Arrive.Widgets {
             file_name_renderer.render (ctx, widget, file_name_rect, file_name_rect, flags);
             download_progress_renderer.render (ctx, widget, download_progress_rect, download_progress_rect, flags);
             status_renderer.render (ctx, widget, status_renderer_rect, status_renderer_rect, flags);
-            
+
             //render download, upload and remaining time
             int download_renderer_height;
             int upload_renderer_height;
@@ -152,9 +152,9 @@ namespace Arrive.Widgets {
             download_renderer.get_preferred_height (widget,null, out download_renderer_height);
             upload_renderer.get_preferred_height (widget,null, out upload_renderer_height);
             time_renderer.get_preferred_height (widget,null, out time_renderer_height);
-            
+
             Gdk.Rectangle download_renderer_rect = Gdk.Rectangle(){
-               
+
                 x = cell_area.x+cell_area.width-RIGHT_COLUMN_WIDTH+download_renderer_height,
                 y = cell_area.y+PADDING,
                 height = download_renderer_height,
@@ -172,11 +172,11 @@ namespace Arrive.Widgets {
                 height = time_renderer_height,
                 width = RIGHT_COLUMN_WIDTH-2*PADDING
             };
-            
+
             download_renderer.render (ctx, widget, download_renderer_rect, download_renderer_rect, flags);
             upload_renderer.render (ctx, widget, upload_renderer_rect, upload_renderer_rect, flags);
             time_renderer.render (ctx, widget, time_renderer_rect, time_renderer_rect, flags);
-            
+
             //render icon for download, upload and remaining
             var ri_renderer = new Gtk.CellRendererPixbuf();
             var ri_renderer_rect = Gdk.Rectangle(){
@@ -191,7 +191,7 @@ namespace Arrive.Widgets {
                 debug("error code %d",e.code);
             }
             ri_renderer.render(ctx, widget, ri_renderer_rect, ri_renderer_rect, flags);//download icon
-            
+
             ri_renderer_rect = Gdk.Rectangle(){
                 x = cell_area.x+cell_area.width-RIGHT_COLUMN_WIDTH,
                 y = upload_renderer_rect.y,
@@ -204,7 +204,7 @@ namespace Arrive.Widgets {
                 debug("error code %d",e.code);
             }
             ri_renderer.render(ctx, widget, ri_renderer_rect, ri_renderer_rect, flags);//upload icon
-            
+
             ri_renderer_rect = Gdk.Rectangle(){
                 x = cell_area.x+cell_area.width-RIGHT_COLUMN_WIDTH,
                 y = time_renderer_rect.y,
@@ -223,7 +223,7 @@ namespace Arrive.Widgets {
             if(_file.download_speed==0)return _("unknown");
             if(_file.total_length < _file.completed_length)return _("few seconds");
             uint64 seconds = (_file.total_length-_file.completed_length)/_file.download_speed;
-            
+
             string remaining="";
             uint64 div;
             //divided by one week
@@ -253,20 +253,20 @@ namespace Arrive.Widgets {
             //adding seconds left
             remaining += _("%llds").printf (seconds);
             return remaining;
-            
+
         }
         private Gdk.Pixbuf? get_icon_for_file (){
             string icon_name;
             Gdk.Pixbuf pixbuf = null;
-            
+
             string content_type = ContentType.guess (_file.filename,null,null);
             Icon icon = ContentType.get_icon (content_type);
-            
+
             if (icon is ThemedIcon)
                 icon_name = (icon as ThemedIcon).names[0];
             else
                 icon_name = "text-x-generic";
-            
+
             if (icon_name == null)
                 return null;
             try{
