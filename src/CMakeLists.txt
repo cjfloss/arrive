@@ -57,7 +57,7 @@ OPTIONS
     -g
 )
 
-add_executable (arrive ${VALA_C})
-target_link_libraries (arrive ${NORMAL_LIBRARIES})
+add_executable (../arrive ${VALA_C})
+target_link_libraries (../arrive ${NORMAL_LIBRARIES})
 
-install(TARGETS arrive RUNTIME DESTINATION bin)
+install(TARGETS ../arrive RUNTIME DESTINATION bin)
