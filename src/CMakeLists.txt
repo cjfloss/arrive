@@ -25,7 +25,7 @@ set(NORMAL_LIBRARIES ${DEPS_LIBRARIES} ${LIBSOURCE_LIBRARIES} ${GCONF_LIBRARIES}
 add_definitions (${DEPS_CFLAGS} ${LIBSOURCE_CFLAGS} ${GCONF_CFLAGS} ${NOTIFY_CFLAGS})
 link_libraries (${DEPS_LIBRARIES} ${LIBSOURCE_LIBRARIES} ${GCONF_LIBRARIES} ${GTHREAD_LIBRARIES} ${NOTIFY_LIBRARIES})
 link_directories (${DEPS_LIBRARY_DIRS} ${LIBSOURCE_LIBRARY_DIRS} ${GCONF_LIBRARY_DIRS})
-vala_precompile(VALA_C
+vala_precompile(VALA_C ../arrive
     Arrive.vala
     config.vala
     Utils.vala
@@ -57,7 +57,7 @@ OPTIONS
     -g
 )
 
-add_executable (arrive ${VALA_C})
-target_link_libraries (arrive ${NORMAL_LIBRARIES})
+add_executable (../arrive ${VALA_C})
+target_link_libraries (../arrive ${NORMAL_LIBRARIES})
 
-install(TARGETS arrive RUNTIME DESTINATION bin)
+install(TARGETS ../arrive RUNTIME DESTINATION bin)
