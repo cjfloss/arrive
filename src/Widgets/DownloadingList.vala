@@ -1,5 +1,5 @@
 namespace Arrive.Widgets {
-    public class DownloadingList : Gtk.Notebook {
+    public class DownloadingList : Gtk.Stack {
         private static int REFRESH_TIME=1000;
         public Gtk.ScrolledWindow widget;
         private Gtk.ScrolledWindow scrolled;
@@ -11,11 +11,8 @@ namespace Arrive.Widgets {
 
         public DownloadingList (Model.DownloadList download_list) {
             this.download_list = download_list;
-            filter_string = "";            
-            
-            set_show_tabs (false);
-            set_show_border (false);
-            
+            filter_string = "";
+
             list_store = new Gtk.ListStore (1, typeof(Arrive.Model.IDownloadItem));
             tree_filter = new Gtk.TreeModelFilter (list_store, null);
             tree_filter.set_visible_func (visible_func);
@@ -24,22 +21,22 @@ namespace Arrive.Widgets {
             tree_view.get_selection ().set_mode (Gtk.SelectionMode.MULTIPLE);
             scrolled = new Gtk.ScrolledWindow (null, null);
             scrolled.add (tree_view);
-            append_page (scrolled);
-            
+            add_named (scrolled, "scrolled");
+
             var welcome = new Granite.Widgets.Welcome (_("No Download Yet"), _("But you can add it"));
-            welcome.append (Gtk.Stock.ADD, _("Add Download"), _("Any http, ftp, magnet link or torrent file"));
+            welcome.append ("list-add", _("Add Download"), _("Any http, ftp, magnet link or torrent file"));
             welcome.activated.connect ((index)=>{
                 switch (index){
                     case 0:
                         var add_file_dialog = new AddFileDialog ("");
                         add_file_dialog.show_all ();
                         break;
-                        
+
                 }
             });
-            append_page (welcome);
-            
-            append_page (new Granite.Widgets.Welcome ("", _("Search Not Found")));
+            add_named (welcome, "welcome");
+
+            add_named (new Granite.Widgets.Welcome ("", _("Search Not Found")), "not found");
 
             tree_view.button_release_event.connect ((event)=>{
                                                       if(event.button == 3)
@@ -189,16 +186,16 @@ namespace Arrive.Widgets {
         }
         public void filter (string filter_string){
             this.filter_string = filter_string;
-            tree_filter.refilter (); 
+            tree_filter.refilter ();
             var row_length = length ();
             //simple logic for showing welcome screen and search not found
             if (row_length == 0){
                 if (this.filter_string == "")
-                    set_current_page (1);
-                else 
-                    set_current_page (2);
+                    this.set_visible_child_name ("welcome");
+                else
+                    this.set_visible_child_name ("not found");
             }else
-                set_current_page (0);
+               this.set_visible_child_name ("scrolled");
         }
         private int length (){
             int length = 0;

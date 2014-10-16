@@ -6,11 +6,11 @@ namespace Arrive.Model{
     }
     public class SavedState : Granite.Services.Settings {
         public int window_width {get; set;}
-        public int window_height {get; set;}        
+        public int window_height {get; set;}
         public WindowState window_state {get; set;}
-        public int notebook_state {get; set;}
+        public string notebook_state {get; set;}
         public string search_string {get; set;}
-        
+
         public SavedState (){
             base ("org.pantheon.arrive.saved-state");
         }

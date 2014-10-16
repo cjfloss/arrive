@@ -5,45 +5,45 @@ using Gdk;
 namespace Arrive.Widgets {
     //public static MainWindow main_window;
     public class MainWindow : Gtk.Window {
+        private Gtk.HeaderBar header_bar;
         private Gtk.ToolButton start_all;
         private Gtk.ToolButton pause_all;
-        public Granite.Widgets.SearchBar search_bar;
-        private Granite.Widgets.AppMenu app_menu;
-        private Granite.Widgets.StaticNotebook static_notebook;
+        public Gtk.SearchEntry search_bar;
+        private Gtk.StackSwitcher stack_switcher;
+        private Gtk.Stack stack;
         public Widgets.DownloadingList downloading_list;
         public Widgets.FinishedList finished_list;
-        private Granite.Widgets.StatusBar status_bar;
+        private Gtk.ActionBar action_bar;
         public Gtk.Label download_speed_label;
         public Gtk.Label status_label;
-        private Box vbox;
+        private Gtk.Grid grid;
         private Model.SavedState saved_state;
         private Model.DownloadList download_list_model;
         private Model.FinishedList finished_list_model;
         //private Arrive.Widgets.AddFileDialog add_file_dialog;
-        
+
         public MainWindow (Model.IDownloadList d_list, Model.FinishedList f_list) {
+
             download_list_model = d_list as Model.DownloadList;
             finished_list_model = f_list;
-            
+
             saved_state = new Model.SavedState ();
-            
-            set_title ("Arrive");
-            //get_style_context ().add_class ("content-view-window");
-            //resizable = true;
+
+            /* get_style_context ().add_class ("content-view-window"); */
             build_gui ();
             restore_window_state ();
             set_position (Gtk.WindowPosition.CENTER);
             show_all ();
             downloading_list.filter (search_bar.text);
             finished_list.filter (search_bar.text);
-            static_notebook.page = saved_state.notebook_state;
-            
+            stack.set_visible_child_name (saved_state.notebook_state);
+
             download_list_model.item_refreshed.connect (refresh_status);
             download_list_model.file_removed.connect (()=>{
                 if (download_list_model.files.length () == 0)
                     on_all_finished ();
             });
-            
+
             destroy.connect (()=> {
                 hide ();
                 download_list_model.destroy ();
@@ -67,7 +67,7 @@ namespace Arrive.Widgets {
             foreach(Model.IDownloadItem d_item in download_list_model.files){
                 total_speed += d_item.download_speed;
             }
-            return total_speed;            
+            return total_speed;
         }
         private uint64 total_upload_speed (){
             uint64 total_upload = 0;
@@ -94,14 +94,14 @@ namespace Arrive.Widgets {
                 saved_state.window_state = Model.WindowState.MAXIMIZED;
             else
                 saved_state.window_state = Model.WindowState.NORMAL;
-            
+
             if (saved_state.window_state == Model.WindowState.NORMAL){
                 int width, height;
                 get_size (out width, out height);
                 saved_state.window_width = width;
                 saved_state.window_height = height;
             }
-            saved_state.notebook_state = static_notebook.page;
+            saved_state.notebook_state = stack.get_visible_child_name ();
             saved_state.search_string = search_bar.text;
         }
         private void restore_window_state (){
@@ -121,52 +121,53 @@ namespace Arrive.Widgets {
             return false;
         }
         void build_gui () {
-            //toolbar left button
-            var toolbar = new Toolbar ();
-            toolbar.set_vexpand (false);
-            toolbar.set_hexpand (true);
-            toolbar.get_style_context ().add_class ("primary-toolbar");
-            
-            var add_button = new ToolButton.from_stock (Gtk.Stock.ADD);
+            header_bar = new HeaderBar ();
+            header_bar.set_title ("Arrive");
+            header_bar.set_show_close_button (true);
+            /* header_bar.set_has_subtitle (false); */
+            set_titlebar (header_bar);
+
+            var add_button = new ToolButton (null, null);
+            add_button.set_tooltip_text (_("Add download"));
+            add_button.set_icon_name ("list-add");
             add_button.clicked.connect (()=>{
                 create_add_dialog ();
             });
-            start_all = new Gtk.ToolButton.from_stock (Gtk.Stock.MEDIA_PLAY);
+            start_all = new Gtk.ToolButton (null, null);
+            start_all.set_icon_name ("media-playback-start");
             start_all.clicked.connect (()=>{
                    foreach(Arrive.Model.IDownloadItem ditem in download_list_model.files)
                        ditem.unpause ();
                });
-            pause_all = new Gtk.ToolButton.from_stock (Gtk.Stock.MEDIA_PAUSE);
+            pause_all = new Gtk.ToolButton (null, null);
+            pause_all.set_icon_name ("media-playback-pause");
             pause_all.clicked.connect (()=>{
                    foreach(Arrive.Model.IDownloadItem ditem in download_list_model.files)
                        ditem.pause ();
                });
 
-            toolbar.insert (add_button, -1);
-            toolbar.insert (start_all, -1);
-            toolbar.insert (pause_all, -1);
+            header_bar.pack_start (add_button);
+            header_bar.pack_start (start_all);
+            header_bar.pack_start (pause_all);
 
-            var spacer = new Gtk.ToolItem ();
-            spacer.set_expand (true);
-            toolbar.insert (spacer, -1);
-            
             //toolbar right item
-            search_bar = new Granite.Widgets.SearchBar (_ ("Search"));
+            search_bar = new Gtk.SearchEntry ();
+            search_bar.set_placeholder_text (_("Search"));
             var search_bar_toolitem = new Gtk.ToolItem ();
             search_bar_toolitem.add (search_bar);
 
-            //creating cogl menu
-            var menu = new Gtk.Menu ();
-            
+            header_bar.pack_end (search_bar_toolitem);
+
+
             var power_menu = new Gtk.Menu();
             var nothing_menu = new Gtk.RadioMenuItem.with_label (null, _("Nothing"));
-            var suspend_menu = 
+            var suspend_menu =
                 new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _("Suspend"));
-            var hibernate_menu = 
+            var hibernate_menu =
                 new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _("Hibernate"));
-            var shutdown_menu = 
+            var shutdown_menu =
                 new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _("Shutdown"));
-            
+
             nothing_menu.activate.connect (()=>{
                 App.instance.settings.finished_action = Model.FinishedAction.NOTHING;
             });
@@ -199,55 +200,61 @@ namespace Arrive.Widgets {
             power_menu.append (suspend_menu);
             //power_menu.append (hibernate_menu);
             power_menu.append (shutdown_menu);
-            
+            power_menu.show_all ();
+
             hibernate_menu.sensitive = false;
-            
-            var submenu = new Gtk.MenuItem.with_label (_("When all finished..."));
-            submenu.set_submenu (power_menu);
-            menu.append (submenu);
-            
-            menu.append (new Gtk.SeparatorMenuItem ());
-            
-            Gtk.MenuItem about_item = new Gtk.MenuItem.with_label ("About");
-            about_item.activate.connect (()=>{Arrive.App.instance.show_about (this); });
-            menu.append (about_item);
-            
-            app_menu = new Granite.Widgets.AppMenu (menu);
-            toolbar.insert (search_bar_toolitem, -1);
-            toolbar.insert (app_menu, -1);
-            
+
+            //finish menu
+            var finish_button = new Gtk.MenuButton();
+            finish_button.set_popup (power_menu);
+            finish_button.set_direction (ArrowType.UP);
+            finish_button.set_tooltip_text (_("When download finished..."));
+            finish_button.image = new Gtk.Image.from_icon_name ("object-select-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+
             //downloading list
             downloading_list = new Arrive.Widgets.DownloadingList (download_list_model);
+            downloading_list.set_vexpand (true);
 
             //finished list
             finished_list =new Arrive.Widgets.FinishedList (finished_list_model);
             finished_list.notify["status"].connect ((s, p)=>{
                 status_label.set_text(finished_list.status);
             });
-            
-            search_bar.text_changed_pause.connect (()=>{
+
+            search_bar.search_changed.connect (()=>{
                 downloading_list.filter (search_bar.text);
                 finished_list.filter (search_bar.text);
             });
-            
-            //static notebook
-            static_notebook = new Granite.Widgets.StaticNotebook ();
-            static_notebook.get_style_context ().add_class (Granite.StyleClass.CONTENT_VIEW);
-            static_notebook.append_page (downloading_list, new Gtk.Label (_ ("Downloading")));
-            static_notebook.append_page (finished_list, new Gtk.Label (_ ("Finished")));
 
-            //status bar
-            status_bar = new Granite.Widgets.StatusBar ();
+            // Stack
+            stack = new Gtk.Stack ();
+            stack.add_titled (downloading_list, "downloading_list", _("Downloading"));
+            stack.add_titled (finished_list, "finished_list", _("Finished"));
+            stack_switcher = new Gtk.StackSwitcher ();
+            stack_switcher.set_hexpand (true);
+            stack_switcher.set_margin_top (10);
+            stack_switcher.set_halign (Align.CENTER);
+            stack_switcher.set_stack (stack);
+
+            //action bar
+            action_bar = new Gtk.ActionBar ();
             download_speed_label = new Label (_("download idle"));
-            status_bar.insert_widget (download_speed_label, false);
             status_label = new Label ("");
-            status_bar.insert_widget (status_label, true);
+            action_bar.pack_start (finish_button);
+            action_bar.pack_end (download_speed_label);
+            action_bar.pack_end (status_label);
 
-            vbox = new Box (Gtk.Orientation.VERTICAL, 0);
-            vbox.pack_start (toolbar, false, false);
-            vbox.pack_start (static_notebook, true, true);
-            vbox.pack_start (status_bar, false, false);
-            add (vbox);
+            // Main Grid
+            grid = new Gtk.Grid ();
+            grid.attach (stack_switcher, 0, 0, 1, 1);
+            grid.attach (stack, 0, 1, 1, 1);
+            grid.attach (action_bar, 0, 2, 1, 1);
+            add (grid);
+
+            // steal welcome background color for stack switcher
+            var welcome = new Granite.Widgets.Welcome ("","");
+            var bg_color = welcome.get_style_context ().get_background_color (Gtk.StateFlags.NORMAL);
+            grid.override_background_color (Gtk.StateFlags.NORMAL, bg_color);
         }
         public void create_add_dialog (string uri="", string dir="", int num_segment=0){            
              var add_file_dialog = new AddFileDialog (uri);
@@ -269,7 +276,7 @@ namespace Arrive.Widgets {
                     if (upower.SuspendAllowed ())
                         upower.Suspend ();
                 }
-            } catch (Error e) { warning (e.message); }   
+            } catch (Error e) { warning (e.message); }
         }
         private void shutdown (){
             try {
