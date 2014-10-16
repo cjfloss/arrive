@@ -1,6 +1,7 @@
 using Granite.Services;
 namespace Arrive.Widgets {
     public class AddFileDialog : Gtk.Dialog {
+        private Gtk.Button queue_start_button;
         public AddFileDialog (string uri){
             this.window_position=Gtk.WindowPosition.CENTER;
             this.set_resizable (false);
@@ -20,13 +21,21 @@ namespace Arrive.Widgets {
             get_content_area ().pack_start (grid);
 
         }
+        private Gtk.Label create_right_align (string text) {
+            var label = new Gtk.Label (text);
+            label.set_alignment (1.0f, 0.5f);
+            return label;
+        }
         private Gtk.Widget create_page_1 (string uri){
             var grid1=new Gtk.Grid ();
             grid1.set_column_homogeneous (false);
             grid1.set_row_homogeneous (true);
+            grid1.set_column_spacing (5);
+            grid1.set_row_spacing (5);
+            grid1.margin=15;
             grid1.set_vexpand (true);
 
-            grid1.attach (new Gtk.Label (_("Uri :")), 0, 0, 1, 1);
+            grid1.attach (create_right_align (_("Uri :")), 0, 0, 1, 1);
             var uri_entry1 = new Gtk.Entry ();
             uri_entry1.set_placeholder_text ("http://");
             if (uri == "") {
@@ -37,12 +46,12 @@ namespace Arrive.Widgets {
                 uri_entry1.text=valid_http (uri)??"";
 
             grid1.attach (uri_entry1, 1, 0, 6, 1);
-            grid1.attach (new Gtk.Label (_("Save to :")), 0, 1, 1, 1);
+            grid1.attach (create_right_align(_("Save to :")), 0, 1, 1, 1);
             var file_chooser1 = new Gtk.FileChooserButton (_("Save to"),
                     Gtk.FileChooserAction.SELECT_FOLDER);
             grid1.attach (file_chooser1, 1, 1, 3, 1);
 
-            grid1.attach (new Gtk.Label (_("Segment :")), 4, 1, 1, 1);
+            grid1.attach (create_right_align(_("Segment :")), 4, 1, 1, 1);
             var segment_spin1 = new Gtk.SpinButton.with_range (1, 16, 1);
             segment_spin1.set_value ((double) App.instance.settings.default_segment_num);
             grid1.attach (segment_spin1, 5, 1, 1, 1);
@@ -59,8 +68,6 @@ namespace Arrive.Widgets {
                     this.destroy ();
                     });
             grid1.attach (add_button1, 5, 2, 1, 1);
-            grid1.margin=12;
-            grid1.margin_top = 0;
 
             return grid1;
         }
@@ -68,11 +75,14 @@ namespace Arrive.Widgets {
             var grid=new Gtk.Grid ();
             grid.set_column_homogeneous (false);
             grid.set_row_homogeneous (true);
+            grid.set_row_spacing (5);
             grid.set_vexpand (true);
+            grid.margin=12;
 
-            grid.attach (new Gtk.Label (_("Magnet Link :")), 0, 0, 1, 1);
+            grid.attach (create_right_align(_("Magnet Link :")), 0, 0, 1, 1);
             var uri_entry1 = new Gtk.Entry ();
             uri_entry1.set_placeholder_text ("magnet:");
+            uri_entry1.set_vexpand (true);
             if (magnet == "") {
                 Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ((clipboard, cbtext)=>{
                         uri_entry1.text = valid_magnet (cbtext)??"";
@@ -81,9 +91,10 @@ namespace Arrive.Widgets {
                 uri_entry1.text =  valid_magnet (magnet)??"";
 
             grid.attach (uri_entry1, 1, 0, 2, 1);
-            grid.attach (new Gtk.Label (_("Save to :")), 0, 1, 1, 1);
+            grid.attach (create_right_align(_("Save to :")), 0, 1, 1, 1);
             var file_chooser1 = new Gtk.FileChooserButton (_("Save to"),
                     Gtk.FileChooserAction.SELECT_FOLDER);
+            file_chooser1.set_vexpand (true);
             grid.attach (file_chooser1, 1, 1, 2, 1);
 
             var add_button1 = new Gtk.Button.with_label (_("Queue and start"));
@@ -97,9 +108,7 @@ namespace Arrive.Widgets {
                     }
                     this.destroy ();
                     });
-            grid.attach (add_button1, 2, 2, 1, 1);
-            grid.margin=12;
-            grid.margin_top = 0;
+            grid.attach (add_button1, 1, 2, 1, 1);
 
             return grid;
         }
@@ -110,7 +119,7 @@ namespace Arrive.Widgets {
             grid.margin = 12;
             grid.margin_top = 0;
 
-            grid.attach (new Gtk.Label (_("Torrent file :")), 0, 0, 1, 1);
+            grid.attach (create_right_align(_("Torrent file :")), 0, 0, 1, 1);
             var file_chooser = new Gtk.FileChooserButton (_("Select .torrent file"),
                     Gtk.FileChooserAction.OPEN);
             var filter = new Gtk.FileFilter ();
