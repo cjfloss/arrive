@@ -249,6 +249,11 @@ namespace Arrive.Widgets {
             grid.attach (stack, 0, 1, 1, 1);
             grid.attach (action_bar, 0, 2, 1, 1);
             add (grid);
+
+            // steal welcome background color for stack switcher
+            var welcome = new Granite.Widgets.Welcome ("","");
+            var bg_color = welcome.get_style_context ().get_background_color (Gtk.StateFlags.NORMAL);
+            grid.override_background_color (Gtk.StateFlags.NORMAL, bg_color);
         }
         public void create_add_dialog (string uri="", string dir="", int num_segment=0){            
              var add_file_dialog = new AddFileDialog (uri);
