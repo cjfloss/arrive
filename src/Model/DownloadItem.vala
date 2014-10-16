@@ -97,7 +97,7 @@ namespace Arrive.Model {
             return "";
         }
         private string send_message(Soup.Message msg) {
-            var session = new Soup.SessionSync ();
+            var session = new Soup.Session ();
             session.send_message (msg);
             string data = (string) msg.response_body.flatten ().data;
             return data;

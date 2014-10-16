@@ -157,7 +157,7 @@ namespace Arrive.Widgets {
                                           _("Choose Destination Folder"), 
                                           App.instance.main_window as Gtk.Window,
                                           Gtk.FileChooserAction.SELECT_FOLDER,
-                                          Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
+                                          _("Cancel"), Gtk.ResponseType.CANCEL,
                                           _("Select"), Gtk.ResponseType.ACCEPT);
                 if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
                     var dest = file_chooser.get_filename();
@@ -174,7 +174,7 @@ namespace Arrive.Widgets {
                                           _("Choose Destination Folder"), 
                                           App.instance.main_window as Gtk.Window,
                                           Gtk.FileChooserAction.SELECT_FOLDER,
-                                          Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
+                                          _("Cancel"), Gtk.ResponseType.CANCEL,
                                           _("Select"), Gtk.ResponseType.ACCEPT);
                 if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
                     var dest = file_chooser.get_filename();

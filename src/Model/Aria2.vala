@@ -183,10 +183,7 @@ namespace Arrive.Model {
                 string line;
                 channel.read_line (out line, null, null);
                 message ("%s: %s", stream_name, line);
-            } catch (IOChannelError e) {
-                error ("%s: IOChannelError: %s\n", stream_name, e.message);
-                return false;
-            } catch (ConvertError e) {
+            } catch (Error e) {
                 error ("%s: ConvertError: %s\n", stream_name, e.message);
                 return false;
             }
@@ -284,9 +281,14 @@ namespace Arrive.Model {
         private void clean_finished (){
             List<IDownloadItem> finished_items = download_list.get_by_status ("complete");
             foreach (IDownloadItem finished_item in finished_items){
+                try {
                 new Notify.Notification (finished_item.filename,
                                         "Download completed", 
                                         App.instance.app_icon).show ();
+                } catch (Error e) {
+                    debug (e.message);
+                }
+
                 if (finished_item is AriaHttp){
                     finished_list.append (finished_item);
                     download_list.remove (finished_item);
@@ -376,18 +378,14 @@ namespace Arrive.Model {
         private string send_message (Soup.Message message) {
             string data = "";
             if (is_listened){
-                var session = new SessionSync ();
-                try{
-                    session.send_message (message);
+                var session = new Session ();
+                session.send_message (message);
 
-                    data = (string) message.response_body.flatten ().data;
-                    
-                    if (data == null){
-                        is_listened = false;
-                        debug ("send_message return null");
-                    }
-                }catch(Error e){
-                    debug (e.message);
+                data = (string) message.response_body.flatten ().data;
+
+                if (data == null){
+                    is_listened = false;
+                    debug ("send_message return null");
                 }
             }
             return data;
