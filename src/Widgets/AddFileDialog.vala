@@ -40,6 +40,7 @@ namespace Arrive.Widgets {
             uri_entry1.set_placeholder_text ("http://");
             if (uri == "") {
                 Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ((clipboard, cbtext)=>{
+                    message (cbtext);
                         uri_entry1.text = valid_http (cbtext)??"";
                         });
             }else
@@ -49,6 +50,7 @@ namespace Arrive.Widgets {
             grid1.attach (create_right_align(_("Save to :")), 0, 1, 1, 1);
             var file_chooser1 = new Gtk.FileChooserButton (_("Save to"),
                     Gtk.FileChooserAction.SELECT_FOLDER);
+            file_chooser1.set_current_folder (Environment.get_user_special_dir (UserDirectory.DOWNLOAD));
             grid1.attach (file_chooser1, 1, 1, 3, 1);
 
             grid1.attach (create_right_align(_("Segment :")), 4, 1, 1, 1);
@@ -94,6 +96,7 @@ namespace Arrive.Widgets {
             grid.attach (create_right_align(_("Save to :")), 0, 1, 1, 1);
             var file_chooser1 = new Gtk.FileChooserButton (_("Save to"),
                     Gtk.FileChooserAction.SELECT_FOLDER);
+            file_chooser1.set_current_folder (Environment.get_user_special_dir (UserDirectory.DOWNLOAD));
             file_chooser1.set_vexpand (true);
             grid.attach (file_chooser1, 1, 1, 2, 1);
 
@@ -122,6 +125,7 @@ namespace Arrive.Widgets {
             grid.attach (create_right_align(_("Torrent file :")), 0, 0, 1, 1);
             var file_chooser = new Gtk.FileChooserButton (_("Select .torrent file"),
                     Gtk.FileChooserAction.OPEN);
+            file_chooser.set_current_folder (Environment.get_user_special_dir (UserDirectory.DOWNLOAD));
             var filter = new Gtk.FileFilter ();
             filter.add_mime_type ("application/x-bittorrent");
             file_chooser.set_filter (filter);
@@ -135,7 +139,7 @@ namespace Arrive.Widgets {
                     });
             grid.attach (add_button, 1, 1, 1, 1);
 
-            //return grid;
+            /* return grid; */
             return new Gtk.Label("torrent file");
         }
         private bool is_valid_http (string? uri){
