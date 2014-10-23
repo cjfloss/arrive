@@ -8,7 +8,7 @@ namespace Arrive {
         public static bool quiet;
         private static App _instance;
         public static App instance {
-            get {
+            get{
                 if (_instance == null)
                     _instance = new App ();
                 return _instance;
@@ -43,6 +43,7 @@ namespace Arrive {
             about_translators = "Launchpad Translators";
 
             about_license_type = Gtk.License.GPL_3_0;
+            //_instance = this;
         }
         protected override void activate () {
             if (DEBUG)
@@ -50,9 +51,9 @@ namespace Arrive {
             else
                 Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
 
-            debug ("activate " + uri);
+            debug ("activate "+uri);
 
-            if (Model.aria2 == null) {
+            if (Model.aria2 == null){
                 settings = new Model.Settings ();
                 download_list = new Model.DownloadList ();
                 finished_list = new Model.FinishedList ();
@@ -92,7 +93,7 @@ namespace Arrive {
                 context.parse (ref args);
             }
             catch(Error e) {
-                print (e.message);
+                error (e.message);
             }
 
             instance.run (args);
