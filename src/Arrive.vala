@@ -25,8 +25,8 @@ namespace Arrive {
             program_name = "Arrive";
             exec_name = "arrive";
 
-            app_copyright = "2013";
-            app_years = "2013";
+            app_copyright = "2013-2014";
+            app_years = "2013-2014";
             app_icon = "arrive";
             app_launcher = "Arrive.desktop";
             application_id = "org.pantheon.arrive";
@@ -43,7 +43,6 @@ namespace Arrive {
             about_translators = "Launchpad Translators";
 
             about_license_type = Gtk.License.GPL_3_0;
-            //_instance = this;
         }
         protected override void activate () {
             if (DEBUG)
