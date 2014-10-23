@@ -1,5 +1,4 @@
 using Soup;
-using Granite.Services;
 namespace Arrive.Model {
     public static Aria2 aria2;
     public class Aria2 : Object {
@@ -168,7 +167,7 @@ namespace Arrive.Model {
             //need to wait for aria to load
             Thread.usleep (500000);
             if (get_version() == ""){
-                critical ("cant start or bind port, try to restart");
+                critical ("cant start or bind port, please restart and wait a few second before reruning Arrive");
                 is_listened = false;
                 shutdown ();
             }

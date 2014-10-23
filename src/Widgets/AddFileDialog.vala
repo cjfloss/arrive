@@ -1,4 +1,3 @@
-using Granite.Services;
 namespace Arrive.Widgets {
     public class AddFileDialog : Gtk.Dialog {
         private Gtk.Button queue_start_button;

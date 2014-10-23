@@ -1,4 +1,3 @@
-using Granite.Services;
 using Soup;
 namespace Arrive.Model {
     public class DownloadItem : Object {
