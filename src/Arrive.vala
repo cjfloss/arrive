@@ -91,9 +91,8 @@ namespace Arrive {
 
             try {
                 context.parse (ref args);
-            }
-            catch(Error e) {
-                error (e.message);
+            } catch (Error e) {
+                debug (e.message);
             }
 
             instance.run (args);

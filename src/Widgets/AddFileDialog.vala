@@ -39,10 +39,10 @@ namespace Arrive.Widgets {
             uri_entry1.set_placeholder_text ("http://");
             if (uri == "") {
                 Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ((clipboard, cbtext)=>{
-                    message (cbtext);
-                        uri_entry1.text = valid_http (cbtext)??"";
-                        });
-            }else
+                    if (cbtext != null)
+                        uri_entry1.text = valid_http (cbtext) ?? "";
+                });
+            } else
                 uri_entry1.text=valid_http (uri)??"";
 
             grid1.attach (uri_entry1, 1, 0, 6, 1);
@@ -52,21 +52,22 @@ namespace Arrive.Widgets {
             file_chooser1.set_current_folder (Environment.get_user_special_dir (UserDirectory.DOWNLOAD));
             grid1.attach (file_chooser1, 1, 1, 3, 1);
 
-            grid1.attach (create_right_align(_("Segment :")), 4, 1, 1, 1);
+            grid1.attach (create_right_align (_("Segment :")), 4, 1, 1, 1);
             var segment_spin1 = new Gtk.SpinButton.with_range (1, 16, 1);
             segment_spin1.set_value ((double) App.instance.settings.default_segment_num);
             grid1.attach (segment_spin1, 5, 1, 1, 1);
 
             var add_button1 = new Gtk.Button.with_label (_("Queue and start"));
-            add_button1.clicked.connect (()=>{
-                    if (uri_entry1.text != "http://") {
-                    var aria_http = new Model.AriaHttp.with_attribute (uri_entry1.text, 
-                        file_chooser1.get_uris().nth_data(0).replace("file://", "") , 
-                        segment_spin1.get_value_as_int ());
-                    aria_http.start ();
-                    App.instance.download_list.add_file(aria_http);
-                    }
-                    this.destroy ();
+            add_button1.clicked.connect (() => {
+                        if (uri_entry1.text != "http://") {
+                            var aria_http = new Model.AriaHttp.with_attribute (
+                                uri_entry1.text,
+                                file_chooser1.get_uris ().nth_data (0).replace ("file://", ""),
+                                segment_spin1.get_value_as_int ());
+                            aria_http.start ();
+                            App.instance.download_list.add_file (aria_http);
+                        }
+                        this.destroy ();
                     });
             grid1.attach (add_button1, 5, 2, 1, 1);
 
@@ -85,11 +86,12 @@ namespace Arrive.Widgets {
             uri_entry1.set_placeholder_text ("magnet:");
             uri_entry1.set_vexpand (true);
             if (magnet == "") {
-                Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ((clipboard, cbtext)=>{
-                        uri_entry1.text = valid_magnet (cbtext)??"";
+                Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ((clipboard, cbtext) => {
+                        if (cbtext != null)
+                            uri_entry1.text = valid_magnet (cbtext) ?? "";
                         });
             }else
-                uri_entry1.text =  valid_magnet (magnet)??"";
+                uri_entry1.text =  valid_magnet (magnet) ?? "";
 
             grid.attach (uri_entry1, 1, 0, 2, 1);
             grid.attach (create_right_align(_("Save to :")), 0, 1, 1, 1);
