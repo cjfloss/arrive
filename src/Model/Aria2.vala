@@ -36,7 +36,7 @@ namespace Arrive.Model {
                 return true;
             });
             refresh_timer.attach (null);
-            message ("version = %s",get_version());
+            debug ("using aria2 version = %s",get_version());
         }
         ~Aria2 (){
             shutdown ();
@@ -91,7 +91,7 @@ namespace Arrive.Model {
             }catch(Error e){
                 error ("error while add_uri "+e.message);
             }
-            
+
             return "";
         }
         public string encode64 (string torrent_path){
@@ -106,7 +106,7 @@ namespace Arrive.Model {
                     error ("cant load string: %s", e.message);
                 }
             }else
-                message ("can't load string");
+                error ("can't load string");
             return data;
         }
         private void start_aria2c (){
@@ -175,14 +175,14 @@ namespace Arrive.Model {
         }
         private static bool process_line (IOChannel channel, IOCondition condition, string stream_name) {
             if (condition == IOCondition.HUP) {
-                message ("%s: The fd has been closed.\n", stream_name);
+                debug ("%s: The fd has been closed.\n", stream_name);
                 return false;
             }
 
             try {
                 string line;
                 channel.read_line (out line, null, null);
-                message ("%s: %s", stream_name, line);
+                debug ("%s: %s", stream_name, line);
             } catch (Error e) {
                 error ("%s: ConvertError: %s\n", stream_name, e.message);
                 return false;
@@ -209,7 +209,7 @@ namespace Arrive.Model {
             refresh_active ();
             refresh_waiting ();
             refresh_stopped ();
-            
+
             clean_finished ();
             download_list.item_refreshed ();
         }
@@ -245,11 +245,11 @@ namespace Arrive.Model {
                         if(viter.holds (typeof(HashTable))) {//viter will hold download list xml
                             HashTable<string, Value?> ht;
                             Value val;
-                            
+
                             ht = (HashTable<string, Value ?>) viter;
                             val = ht.get ("gid");
                             var gid = val.get_string ();
-                            
+
                             var d_item = download_list.get_by_gid (gid);
                             if ( d_item == null){
                                 //TODO:item that arent exist in download_list should be added to download_list
@@ -305,7 +305,7 @@ namespace Arrive.Model {
                             download_list.remove (finished_item);
                         }
                     }
-                    
+
                 }
             }
         }
@@ -322,21 +322,21 @@ namespace Arrive.Model {
                 if (Soup.XMLRPC.parse_method_response (data, -1, out v)) {
                     HashTable<string,Value?> ht;
                     Value val;
-                    
+
                     ht = (HashTable<string,Value?>) v;
-                    
+
                     val = ht.get ("numStopped");
                     num_stopped = int.parse (val.get_string ());
-                    
+
                     val = ht.get ("numWaiting");
                     num_waiting = int.parse (val.get_string ());
-                    
+
                     val = ht.get ("numActive");
                     num_active = int.parse (val.get_string ());
-                    
+
                     val = ht.get ("downloadSpeed");
                     download_speed = int.parse (val.get_string ());
-                    
+
                     val = ht.get ("uploadSpeed");
                     upload_speed = int.parse (val.get_string ());
                 }
@@ -353,9 +353,9 @@ namespace Arrive.Model {
                 if (Soup.XMLRPC.parse_method_response (data,-1,out v)){
                     HashTable<string,Value?> ht;
                     Value val;
-                    
+
                     ht = (HashTable<string,Value?>) v;
-                    
+
                     val = ht.get("version");
                     version = val.get_string();
                 }

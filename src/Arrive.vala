@@ -15,7 +15,7 @@ namespace Arrive {
             }
         }
         construct {
-            message ("construct");
+            debug ("construct");
             build_data_dir = Build.DATADIR;
             build_pkg_data_dir = Build.PKG_DATADIR;
             build_release_name = Build.RELEASE_NAME;
@@ -50,30 +50,30 @@ namespace Arrive {
                 Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.DEBUG;
             else
                 Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
-            
-            message ("activate "+uri.to_string ());
-            
+
+            debug ("activate "+uri);
+
             if (Model.aria2 == null){
-                settings = new Model.Settings ();             
+                settings = new Model.Settings ();
                 download_list = new Model.DownloadList ();
                 finished_list = new Model.FinishedList ();
                 Model.aria2 = new Model.Aria2 (download_list, finished_list);
                 //bad bad code
                 (download_list as Model.DownloadList).start ();
             }
-            
+
             if (main_window == null)
                 main_window = new Widgets.MainWindow (download_list, finished_list);
-            
+
             main_window.set_application (this);
-            
+
             if (quiet)
                 message ("download "+uri);
             else if (uri != null)
                 main_window.create_add_dialog (uri);
             else
                 main_window.present ();
-            
+
             var launcher_entry = new Arrive.Model.LauncherEntry();
         }
         public static const OptionEntry[] entries = {
@@ -83,21 +83,21 @@ namespace Arrive {
             };
         public static int main (string[] args) {
             Gtk.init (ref args);
-            message ("main");
-            
+            debug ("main");
+
             var context = new OptionContext ("");
             context.add_main_entries (entries, "arrive");
             context.add_group (Gtk.get_option_group (true));
-            
+
             try {
                 context.parse(ref args);
             }
             catch(Error e) {
                 print(e.message);
             }
-            
+
             instance.run (args);
-            
+
             return 0;
         }
     }

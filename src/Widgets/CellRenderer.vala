@@ -22,14 +22,14 @@ namespace Arrive.Widgets {
 
                 //file_name_renderer.text=_file.filename;//parse file from path
                 file_name_renderer.markup = Markup.printf_escaped ( "<span weight='bold' size='larger'>%s</span>",
-                _file.filename);
+                        _file.filename);
 
                 if (_file.total_length != 0)
                     download_progress_renderer.value = (int)(100 * _file.completed_length / _file.total_length);
                 download_progress_renderer.text = "%s of %s".printf (format_size (_file.completed_length),
-                                                                  format_size (_file.total_length));
+                        format_size (_file.total_length));
                 //if (_file is Model.AriaHttp)
-                    status_renderer.text = _("status:%s connections:%s").printf (_file.status,_file.gid);
+                status_renderer.text = _("status:%s connections:%s").printf (_file.status,_file.gid);
                 //if (_file is Model.AriaMagnet)
                 //    status_renderer.text = _("status:%s file:%s").printf (_file.status,(_file as Model.AriaMagnet).path_files.length ());
 
@@ -38,33 +38,35 @@ namespace Arrive.Widgets {
                 time_renderer.text = get_remaining_time ();
 
 
-    //~             switch(_file.status){
-    //~                 case IDownloadItem.Status.ACTIVE:
-    //~                     status_renderer.text="Downloading";
-    //~                     break;
-    //~                 case IDownloadItem.Status.WAITING:
-    //~                     status_renderer.text="Waiting";
-    //~                     break;
-    //~                 case IDownloadItem.Status.PAUSED:
-    //~                     status_renderer.text="Paused";
-    //~                     break;
-    //~                 case IDownloadItem.Status.ERROR:
-    //~                     status_renderer.text="Error";
-    //~                     break;
-    //~                 case IDownloadItem.Status.COMPLETE:
-    //~                     status_renderer.text="Download Completed";
-    //~                     break;
-    //~                 case IDownloadItem.Status.REMOVED:
-    //~                     status_renderer.text="Completed";
-    //~                     break;
-    //~                 default:
-    //~                     status_renderer.text="status unknown";
-    //~                     break;
-    //~             }
+                /* 
+                 switch(_file.status){
+                     case IDownloadItem.Status.ACTIVE:
+                         status_renderer.text="Downloading";
+                         break;
+                     case IDownloadItem.Status.WAITING:
+                         status_renderer.text="Waiting";
+                         break;
+                     case IDownloadItem.Status.PAUSED:
+                         status_renderer.text="Paused";
+                         break;
+                     case IDownloadItem.Status.ERROR:
+                         status_renderer.text="Error";
+                         break;
+                     case IDownloadItem.Status.COMPLETE:
+                         status_renderer.text="Download Completed";
+                         break;
+                     case IDownloadItem.Status.REMOVED:
+                         status_renderer.text="Completed";
+                         break;
+                     default:
+                         status_renderer.text="status unknown";
+                         break;
+                 }
+                 */
             }
         }
-    //~     public DownloadType tipe{get;set;}
-    //~     public Status status{get;set;}
+        //~     public DownloadType tipe{get;set;}
+        //~     public Status status{get;set;}
         public string gid{get;set;}
         public string filename{get;set;}
         private string _dir;
@@ -90,8 +92,8 @@ namespace Arrive.Widgets {
             time_renderer = new Gtk.CellRendererText ();
         }
         public override void get_size (Gtk.Widget widget, Gdk.Rectangle? cell_area,
-                                       out int x_offset, out int y_offset,
-                                       out int width, out int height) {
+                out int x_offset, out int y_offset,
+                out int width, out int height) {
             int file_name_renderer_height;
             int status_renderer_height;
             int download_progress_renderer_height;
@@ -101,12 +103,12 @@ namespace Arrive.Widgets {
             download_progress_renderer.get_preferred_height (widget, null, out download_progress_renderer_height);
             icon_renderer.get_size(widget, null, out x_offset, out y_offset, out width, out height);
             height = 2 * PADDING + file_name_renderer_height
-				     + download_progress_renderer_height + status_renderer_height;
+                + download_progress_renderer_height + status_renderer_height;
         }
         public override void render (Cairo.Context ctx, Gtk.Widget widget,
-                                     Gdk.Rectangle background_area,
-                                     Gdk.Rectangle cell_area,
-                                     Gtk.CellRendererState flags) {
+                Gdk.Rectangle background_area,
+                Gdk.Rectangle cell_area,
+                Gtk.CellRendererState flags) {
             //render for icon, filename, download,progress and status
             int file_name_renderer_height;
             int status_renderer_height;
@@ -117,27 +119,27 @@ namespace Arrive.Widgets {
 
             Gdk.Rectangle icon_rect = Gdk.Rectangle () {
                 x = cell_area.x,
-                y = cell_area.y+PADDING,
-                width = ICON_SIZE,
-                height = ICON_SIZE
+                  y = cell_area.y+PADDING,
+                  width = ICON_SIZE,
+                  height = ICON_SIZE
             };
             Gdk.Rectangle file_name_rect = Gdk.Rectangle () {
                 x = cell_area.x+ICON_SIZE+PADDING,
-                y = cell_area.y+PADDING,
-                width = cell_area.width-(ICON_SIZE+RIGHT_COLUMN_WIDTH+2*PADDING),
-                height = file_name_renderer_height
+                  y = cell_area.y+PADDING,
+                  width = cell_area.width-(ICON_SIZE+RIGHT_COLUMN_WIDTH+2*PADDING),
+                  height = file_name_renderer_height
             };
             Gdk.Rectangle download_progress_rect = Gdk.Rectangle () {
                 x= cell_area.x+ICON_SIZE+PADDING,
-                y= cell_area.y+file_name_renderer_height+PADDING,
-                width= cell_area.width-(ICON_SIZE+RIGHT_COLUMN_WIDTH+2*PADDING),
-                height = download_progress_renderer_height
+                    y= cell_area.y+file_name_renderer_height+PADDING,
+                    width= cell_area.width-(ICON_SIZE+RIGHT_COLUMN_WIDTH+2*PADDING),
+                    height = download_progress_renderer_height
             };
             Gdk.Rectangle status_renderer_rect = Gdk.Rectangle () {
                 x = cell_area.x+ICON_SIZE+PADDING,
-                y = cell_area.y+file_name_renderer_height+download_progress_renderer_height+PADDING,
-                height = status_renderer_height,
-                width = cell_area.width-(ICON_SIZE+RIGHT_COLUMN_WIDTH+2*PADDING)
+                  y = cell_area.y+file_name_renderer_height+download_progress_renderer_height+PADDING,
+                  height = status_renderer_height,
+                  width = cell_area.width-(ICON_SIZE+RIGHT_COLUMN_WIDTH+2*PADDING)
             };
 
             icon_renderer.render (ctx, widget, icon_rect, icon_rect, flags);
@@ -156,21 +158,21 @@ namespace Arrive.Widgets {
             Gdk.Rectangle download_renderer_rect = Gdk.Rectangle(){
 
                 x = cell_area.x+cell_area.width-RIGHT_COLUMN_WIDTH+download_renderer_height,
-                y = cell_area.y+PADDING,
-                height = download_renderer_height,
-                width = RIGHT_COLUMN_WIDTH-2*PADDING
+                  y = cell_area.y+PADDING,
+                  height = download_renderer_height,
+                  width = RIGHT_COLUMN_WIDTH-2*PADDING
             };
             Gdk.Rectangle upload_renderer_rect = Gdk.Rectangle(){
                 x = cell_area.x+cell_area.width-RIGHT_COLUMN_WIDTH+upload_renderer_height,
-                y = cell_area.y+download_renderer_height+PADDING,
-                height = upload_renderer_height,
-                width = RIGHT_COLUMN_WIDTH-2*PADDING
+                  y = cell_area.y+download_renderer_height+PADDING,
+                  height = upload_renderer_height,
+                  width = RIGHT_COLUMN_WIDTH-2*PADDING
             };
             Gdk.Rectangle time_renderer_rect = Gdk.Rectangle(){
                 x = cell_area.x+cell_area.width-RIGHT_COLUMN_WIDTH+time_renderer_height,
-                y = cell_area.y+download_renderer_height+upload_renderer_height+PADDING,
-                height = time_renderer_height,
-                width = RIGHT_COLUMN_WIDTH-2*PADDING
+                  y = cell_area.y+download_renderer_height+upload_renderer_height+PADDING,
+                  height = time_renderer_height,
+                  width = RIGHT_COLUMN_WIDTH-2*PADDING
             };
 
             download_renderer.render (ctx, widget, download_renderer_rect, download_renderer_rect, flags);
@@ -181,9 +183,9 @@ namespace Arrive.Widgets {
             var ri_renderer = new Gtk.CellRendererPixbuf();
             var ri_renderer_rect = Gdk.Rectangle(){
                 x = cell_area.x+cell_area.width-RIGHT_COLUMN_WIDTH,
-                y =download_renderer_rect.y,
-                height = download_renderer_height,
-                width = download_renderer_height
+                  y =download_renderer_rect.y,
+                  height = download_renderer_height,
+                  width = download_renderer_height
             };
             try{
                 ri_renderer.pixbuf = Gtk.IconTheme.get_default().load_icon("go-down", download_renderer_height-6,0);
@@ -194,9 +196,9 @@ namespace Arrive.Widgets {
 
             ri_renderer_rect = Gdk.Rectangle(){
                 x = cell_area.x+cell_area.width-RIGHT_COLUMN_WIDTH,
-                y = upload_renderer_rect.y,
-                height = upload_renderer_height,
-                width = upload_renderer_height
+                  y = upload_renderer_rect.y,
+                  height = upload_renderer_height,
+                  width = upload_renderer_height
             };
             try{
                 ri_renderer.pixbuf = Gtk.IconTheme.get_default().load_icon("go-up", upload_renderer_height-6,0);
@@ -207,13 +209,13 @@ namespace Arrive.Widgets {
 
             ri_renderer_rect = Gdk.Rectangle(){
                 x = cell_area.x+cell_area.width-RIGHT_COLUMN_WIDTH,
-                y = time_renderer_rect.y,
-                height = time_renderer_height,
-                width = time_renderer_height
+                  y = time_renderer_rect.y,
+                  height = time_renderer_height,
+                  width = time_renderer_height
             };
             try{
                 ri_renderer.pixbuf = Gtk.IconTheme.get_default().load_icon("preferences-system-time", 
-																		    time_renderer_height-6,0);
+                        time_renderer_height-6,0);
             }catch(Error e){
                 debug("error code %d",e.code);
             }
