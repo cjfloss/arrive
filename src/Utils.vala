@@ -26,6 +26,7 @@ public class Utils {
         } catch (Error e) {
             warning ("cant save :"+ path + e.message);
         }
+        return false;
     }
     public static string load_string (string path) {
         string data = "";
