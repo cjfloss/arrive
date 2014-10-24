@@ -1,7 +1,7 @@
 namespace Arrive.Model {
     public class DownloadList : Object, Model.IDownloadList {
         private List<Model.IDownloadItem> _files;
-        private string save_file = Environment.get_user_data_dir () + "/" 
+        private string save_file = Environment.get_user_data_dir () + "/"
                                     + App.instance.program_name + "/aria.xml";
         public List<Model.IDownloadItem> files {
             get {return _files;}
@@ -60,7 +60,6 @@ namespace Arrive.Model {
             file_removed (download_item);
             save_list (save_file);
             debug ("file removed, length "+get_length ().to_string ());
-            
         }
         private void save_list (string filename){
             ValueArray va = new ValueArray (0);
@@ -75,9 +74,9 @@ namespace Arrive.Model {
                     debug ("uris "+(d_item as AriaMagnet).uris);
                     va.append (val);
                 }
-            
+
             var data = Soup.XMLRPC.build_method_response (va);
-            
+
             Utils.save_string (save_file, data);
             debug ("list saved as :"+filename);
         }
@@ -107,7 +106,7 @@ namespace Arrive.Model {
                     }
                 }
             } catch (Error e){
-                error ("cant loadlist : %s", e.message);
+                warning ("cant loadlist : %s", e.message);
             }
         }
     }

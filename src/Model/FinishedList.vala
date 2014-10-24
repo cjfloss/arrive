@@ -67,7 +67,7 @@ namespace Arrive.Model {
                 }
                 list_changed ();
             } catch (Error e){
-                error ("cant parse finishedlist : %s", e.message);
+                warning ("cant parse finishedlist : %s", e.message);
             }
             debug ("finished list loaded, list lenght %u", list.length ());
         }

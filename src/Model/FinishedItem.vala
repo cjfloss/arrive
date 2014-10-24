@@ -77,7 +77,7 @@ namespace Arrive.Model {
                 }else
                     debug ("do not copy");
             } catch (Error e) {
-                error (e.message);
+                warning (e.message);
             }
             return false;
         }

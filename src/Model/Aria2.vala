@@ -62,10 +62,10 @@ namespace Arrive.Model {
                 if (Soup.XMLRPC.parse_method_response (data,-1,out v)) {
                     return v.get_string (); // return gid
                 } else {
-                    error ("error while add_uri2");
+                    warning ("error while add_uri2");
                 }
             } catch (Error e) {
-                error ("error while add_uri " + e.message);
+                warning ("error while add_uri " + e.message);
             }
             return "";
         }
@@ -85,10 +85,10 @@ namespace Arrive.Model {
                 if (Soup.XMLRPC.parse_method_response (data,-1,out v)){
                     return v.get_string();//return gid
                 } else {
-                    error ("error while add_torrent2");
+                    warning ("error while add_torrent2");
                 }
             }catch(Error e){
-                error ("error while add_uri "+e.message);
+                warning ("error while add_uri "+e.message);
             }
 
             return "";
@@ -102,10 +102,10 @@ namespace Arrive.Model {
                     data = data_stream.read_until ("", null);
                     data = Base64.encode (data.data);
                 } catch (Error e) {
-                    error ("cant load string: %s", e.message);
+                    warning ("cant load string: %s", e.message);
                 }
             }else
-                error ("can't load string");
+                warning ("can't load string");
             return data;
         }
         private void start_aria2c () {
@@ -182,7 +182,7 @@ namespace Arrive.Model {
                 channel.read_line (out line, null, null);
                 debug ("%s: %s", stream_name, line);
             } catch (Error e) {
-                error ("%s: ConvertError: %s\n", stream_name, e.message);
+                warning ("%s: ConvertError: %s\n", stream_name, e.message);
                 return false;
             }
 
@@ -273,7 +273,7 @@ namespace Arrive.Model {
                     }
                 }
             } catch (Error e) {
-                error ("error parsing method response");
+                warning ("error parsing method response");
             }
         }
         private void clean_finished () {
@@ -284,7 +284,7 @@ namespace Arrive.Model {
                                         "Download completed",
                                         App.instance.app_icon).show ();
                 } catch (Error e) {
-                    error (e.message);
+                    warning (e.message);
                 }
 
                 if (finished_item is AriaHttp) {
@@ -339,7 +339,7 @@ namespace Arrive.Model {
                     upload_speed = int.parse (val.get_string ());
                 }
             } catch (Error e) {
-                error ("Error while processing tellStatus response");
+                warning ("Error while processing tellStatus response");
             }
         }
         public string get_version () {
@@ -358,7 +358,7 @@ namespace Arrive.Model {
                     version = val.get_string ();
                 }
             } catch (Error e){
-                error ("Error while processing getVersion response");
+                warning ("Error while processing getVersion response");
             }
             return version;
         }
