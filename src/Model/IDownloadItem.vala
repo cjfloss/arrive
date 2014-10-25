@@ -24,7 +24,7 @@ namespace Arrive.Model {
         public abstract void unpause ();
         public abstract void remove ();
         public abstract void cancel ();
-        
+
         public signal void refreshed ();
     }
 }
