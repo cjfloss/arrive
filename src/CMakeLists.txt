@@ -11,7 +11,7 @@ add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 
 set (ARRIVE_DEPS "gtk+-3.0;granite;libsoup-2.4;gee-0.8;gio-2.0;unity;libnotify")
 find_package (PkgConfig)
-pkg_check_modules (GTK+ REQUIRED "gtk+-3.0 >= 3.4")
+pkg_check_modules (GTK+ REQUIRED "gtk+-3.0 >= 3.10")
 pkg_check_modules (LIBGRANITE REQUIRED "granite")
 pkg_check_modules (LIBSOUP REQUIRED "libsoup-2.4")
 pkg_check_modules (GEE REQUIRED "gee-0.8")
