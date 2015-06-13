@@ -104,6 +104,7 @@ namespace Arrive.Widgets {
             icon_renderer.get_size(widget, null, out x_offset, out y_offset, out width, out height);
             height = 2 * PADDING + file_name_renderer_height
                 + download_progress_renderer_height + status_renderer_height;
+            width = 100;
         }
         public override void render (Cairo.Context ctx, Gtk.Widget widget,
                 Gdk.Rectangle background_area,
