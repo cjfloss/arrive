@@ -28,11 +28,11 @@ namespace Arrive.Widgets {
             Gtk.TreeViewColumn column =
                 new Gtk.TreeViewColumn.with_attributes (
                     _("filename"),
-                    new Gtk.CellRendererText (),
+                    new Gtk.CellRendererText (){ellipsize=Pango.EllipsizeMode.END},
                     "text",
                     0,
                     null);
-            column.set_sizing (Gtk.TreeViewColumnSizing.FIXED);
+            column.set_sizing (Gtk.TreeViewColumnSizing.AUTOSIZE);
             column.set_expand (true);
             column.set_resizable (true);
             tree_view.insert_column (column, -1);
@@ -40,11 +40,11 @@ namespace Arrive.Widgets {
             Gtk.TreeViewColumn column_s =
                 new Gtk.TreeViewColumn.with_attributes (
                     _("size"),
-                    new Gtk.CellRendererText (),
+                    new Gtk.CellRendererText (){xalign=1.0f},
                     "text",
                     1,
                     null);
-            column_s.set_fixed_width (50);
+            column.set_sizing (Gtk.TreeViewColumnSizing.GROW_ONLY);
             tree_view.insert_column (column_s, -1);
 
             setup_list ();
