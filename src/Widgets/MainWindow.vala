@@ -240,7 +240,8 @@ namespace Arrive.Widgets {
             stack.add_titled (finished_list, "finished_list", _("Finished"));
             stack_switcher = new Gtk.StackSwitcher ();
             stack_switcher.set_hexpand (true);
-            stack_switcher.set_margin_top (10);
+            stack_switcher.set_margin_top (2);
+            stack_switcher.set_margin_bottom (2);
             stack_switcher.set_halign (Align.CENTER);
             stack_switcher.set_stack (stack);
 
