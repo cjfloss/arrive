@@ -4,7 +4,7 @@ namespace Arrive.Model{
         NORMAL = 0,
         MAXIMIZED
     }
-    /* public class SavedState : Granite.Services.Settings { */
+
     public class SavedState {
         private GLib.Settings schema;
         public int window_width {
@@ -36,6 +36,7 @@ namespace Arrive.Model{
             schema = new GLib.Settings ("org.pantheon.arrive.saved-state");
         }
     }
+
     public enum FinishedAction{
         NOTHING = 0,
         SUSPEND,
@@ -44,7 +45,6 @@ namespace Arrive.Model{
     }
     public class Settings : Object {
         private GLib.Settings schema;
-    /* public class Settings : Granite.Services.Settings { */
         public int default_segment_num {
             get {return schema.get_int ("default-segment-num");}
             set {schema.set_int ("default-segment-num", value);}
