@@ -1,5 +1,5 @@
 namespace Arrive {
-    public class App : Granite.Application {
+    public class App : Gtk.Application {
         public Widgets.MainWindow main_window;
         public Model.IDownloadList download_list;
         public Model.FinishedList finished_list;
@@ -14,47 +14,52 @@ namespace Arrive {
                 return _instance;
             }
         }
-        construct {
-            debug ("construct");
-            build_data_dir = Build.DATADIR;
-            build_pkg_data_dir = Build.PKG_DATADIR;
-            build_release_name = Build.RELEASE_NAME;
-            build_version = Build.VERSION;
-            build_version_info = Build.VERSION_INFO;
-
-            program_name = "Arrive";
-            exec_name = "arrive";
-
-            app_copyright = "2013-2014";
-            app_years = "2013-2014";
-            app_icon = "arrive";
-            app_launcher = "Arrive.desktop";
-            application_id = "org.pantheon.arrive";
-
-            main_url = "https://launchpad.net/arrive";
-            bug_url = "https://bugs.launchpad.net/arrive";
-            help_url = "https://answers.launchpad.net/arrive";
-            translate_url = "https://translations.launchpad.net/arrive";
-
-            about_authors = {"Viko Adi Rahmawan <vikoadi@gmail.com>", null };
-            about_comments = _("Simple and practical download manager");
-            about_documenters = {};
-            about_artists = {};
-            about_translators = "Launchpad Translators";
-
-            about_license_type = Gtk.License.GPL_3_0;
+        public App () {
+            Object (application_id: "org.vikoadi.arrive");
         }
-        protected override void activate () {
-            if (DEBUG)
-                Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.DEBUG;
-            else
-                Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
+        /* construct { */
+        /*     message ("construct"); */
+        /*     build_data_dir = Build.DATADIR; */
+        /*     build_pkg_data_dir = Build.PKG_DATADIR; */
+        /*     build_release_name = Build.RELEASE_NAME; */
+        /*     build_version = Build.VERSION; */
+        /*     build_version_info = Build.VERSION_INFO; */
 
-            debug ("activate "+uri);
+        /*     program_name = "Arrive"; */
+        /*     exec_name = "arrive"; */
+
+        /*     app_copyright = "2013-2014"; */
+        /*     app_years = "2013-2014"; */
+        /*     app_icon = "arrive"; */
+        /*     app_launcher = "Arrive.desktop"; */
+        /*     application_id = "org.pantheon.arrive"; */
+
+        /*     main_url = "https://launchpad.net/arrive"; */
+        /*     bug_url = "https://bugs.launchpad.net/arrive"; */
+        /*     help_url = "https://answers.launchpad.net/arrive"; */
+        /*     translate_url = "https://translations.launchpad.net/arrive"; */
+
+        /*     about_authors = {"Viko Adi Rahmawan <vikoadi@gmail.com>", null }; */
+        /*     about_comments = _("Simple and practical download manager"); */
+        /*     about_documenters = {}; */
+        /*     about_artists = {}; */
+        /*     about_translators = "Launchpad Translators"; */
+
+        /*     about_license_type = Gtk.License.GPL_3_0; */
+        /* } */
+        protected override void activate () {
+            /* if (DEBUG) */
+            /*     Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.DEBUG; */
+            /* else */
+            /*     Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO; */
+
+            message ("activate "+uri);
 
             if (Model.aria2 == null){
                 settings = new Model.Settings ();
-                download_list = new Model.DownloadList ();
+                string save_file = Environment.get_user_data_dir () + "/"
+                                    + "aria" + "/aria.xml";
+                download_list = new Model.DownloadList (save_file);
                 finished_list = new Model.FinishedList ();
                 Model.aria2 = new Model.Aria2 (download_list, finished_list);
                 //bad bad code
@@ -62,7 +67,7 @@ namespace Arrive {
             }
 
             if (main_window == null)
-                main_window = new Widgets.MainWindow (download_list, finished_list);
+                main_window = new Widgets.MainWindow (download_list, finished_list, settings);
 
             main_window.set_application (this);
 
@@ -82,7 +87,7 @@ namespace Arrive {
             };
         public static int main (string[] args) {
             Gtk.init (ref args);
-            debug ("main");
+            message ("main");
 
             var context = new OptionContext ("");
             context.add_main_entries (entries, "arrive");
@@ -91,7 +96,7 @@ namespace Arrive {
             try {
                 context.parse (ref args);
             } catch (Error e) {
-                debug (e.message);
+                warning (e.message);
             }
 
             instance.run (args);

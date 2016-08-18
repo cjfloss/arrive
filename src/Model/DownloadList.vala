@@ -1,20 +1,21 @@
 namespace Arrive.Model {
     public class DownloadList : Object, Model.IDownloadList {
         private List<Model.IDownloadItem> _files;
-        private string save_file = Environment.get_user_data_dir () + "/"
-                                    + App.instance.program_name + "/aria.xml";
+        private string _save_file = Environment.get_user_data_dir () + "/"
+                                    + "aria" + "/aria.xml";
         public List<Model.IDownloadItem> files {
             get {return _files;}
         }
-        public DownloadList (){
+        public DownloadList (string save_file){
+            _save_file = save_file;
             _files = new List<Model.IDownloadItem>();
         }
         public void destroy (){
             debug ("download list destructed");
-            save_list (save_file);
+            save_list (_save_file);
         }
         public void start (){
-            load_list (save_file);
+            load_list (_save_file);
         }
         public Model.IDownloadItem nth_data (int nth){
             return _files.nth_data (0);
@@ -49,7 +50,7 @@ namespace Arrive.Model {
             debug ("add_file:"+download_item.filename);
             _files.append (download_item);
             file_added (download_item);
-            save_list (save_file);
+            save_list (_save_file);
         }
         public void remove_file (Model.IDownloadItem download_item){
             download_item.remove ();
@@ -58,7 +59,7 @@ namespace Arrive.Model {
         public void remove (Model.IDownloadItem download_item){
             _files.remove (download_item);
             file_removed (download_item);
-            save_list (save_file);
+            save_list (_save_file);
             debug ("file removed, length "+get_length ().to_string ());
         }
         private void save_list (string filename){
@@ -77,12 +78,12 @@ namespace Arrive.Model {
 
             var data = Soup.XMLRPC.build_method_response (va);
 
-            Utils.save_string (save_file, data);
+            Utils.save_string (_save_file, data);
             debug ("list saved as :"+filename);
         }
         private void load_list (string filename){
             debug ("load list from :"+filename);
-            var data = Utils.load_string (save_file);
+            var data = Utils.load_string (_save_file);
             try {
                 Value v;
                 if(Soup.XMLRPC.parse_method_response (data, -1, out v)

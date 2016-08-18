@@ -20,12 +20,14 @@ namespace Arrive.Widgets {
         private Model.SavedState saved_state;
         private Model.DownloadList download_list_model;
         private Model.FinishedList finished_list_model;
+        private Model.Settings settings;
         //private Arrive.Widgets.AddFileDialog add_file_dialog;
 
-        public MainWindow (Model.IDownloadList d_list, Model.FinishedList f_list) {
+        public MainWindow (Model.IDownloadList d_list, Model.FinishedList f_list, Model.Settings _settings) {
 
             download_list_model = d_list as Model.DownloadList;
             finished_list_model = f_list;
+            settings = _settings;
 
             saved_state = new Model.SavedState ();
 
@@ -177,19 +179,19 @@ namespace Arrive.Widgets {
                 new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _("Shutdown"));
 
             nothing_menu.activate.connect (()=>{
-                App.instance.settings.finished_action = Model.FinishedAction.NOTHING;
+                settings.finished_action = Model.FinishedAction.NOTHING;
             });
             suspend_menu.activate.connect (()=>{
-                App.instance.settings.finished_action = Model.FinishedAction.SUSPEND;
+                settings.finished_action = Model.FinishedAction.SUSPEND;
             });
             hibernate_menu.activate.connect (()=>{
-                App.instance.settings.finished_action = Model.FinishedAction.HIBERNATE;
+                settings.finished_action = Model.FinishedAction.HIBERNATE;
             });
             shutdown_menu.activate.connect (()=>{
-                App.instance.settings.finished_action = Model.FinishedAction.SHUTDOWN;
+                settings.finished_action = Model.FinishedAction.SHUTDOWN;
             });
-            App.instance.settings.notify["finished-action"].connect (()=>{
-                switch (App.instance.settings.finished_action){
+            settings.notify["finished-action"].connect (()=>{
+                switch (settings.finished_action){
                     case Model.FinishedAction.NOTHING:
                         nothing_menu.set_active (true);
                         break;
@@ -293,26 +295,26 @@ namespace Arrive.Widgets {
             }catch (Error e){warning (e.message);}
         }
         private void on_all_finished (){
-            switch (App.instance.settings.finished_action){
+            switch (settings.finished_action){
                 case Model.FinishedAction.SUSPEND:
-                    App.instance.settings.finished_action = Model.FinishedAction.NOTHING;
+                    settings.finished_action = Model.FinishedAction.NOTHING;
                     suspend ();
                     break;
                 case Model.FinishedAction.HIBERNATE:
-                    App.instance.settings.finished_action = Model.FinishedAction.NOTHING;
+                    settings.finished_action = Model.FinishedAction.NOTHING;
                     hibernate ();
                     break;
                 case Model.FinishedAction.SHUTDOWN:
-                    App.instance.settings.finished_action = Model.FinishedAction.NOTHING;
+                    settings.finished_action = Model.FinishedAction.NOTHING;
                     shutdown ();
                     break;
             }
         }
         private void colorize_stack_switcher () {
             // steal welcome background color for stack switcher
-            var welcome = new Granite.Widgets.Welcome ("","");
-            var bg_color = welcome.get_style_context ().get_background_color (Gtk.StateFlags.NORMAL);
-            grid.override_background_color (Gtk.StateFlags.NORMAL, bg_color);
+            /* var welcome = new Granite.Widgets.Welcome ("",""); */
+            /* var bg_color = welcome.get_style_context ().get_background_color (Gtk.StateFlags.NORMAL); */
+            /* grid.override_background_color (Gtk.StateFlags.NORMAL, bg_color); */
         }
     }
 }

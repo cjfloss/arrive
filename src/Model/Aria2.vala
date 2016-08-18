@@ -282,7 +282,7 @@ namespace Arrive.Model {
                 try {
                 new Notify.Notification (finished_item.filename,
                                         "Download completed",
-                                        App.instance.app_icon).show ();
+                                        "arrive.svg").show ();
                 } catch (Error e) {
                     warning (e.message);
                 }
