@@ -312,9 +312,9 @@ namespace Arrive.Widgets {
         }
         private void colorize_stack_switcher () {
             // steal welcome background color for stack switcher
-            /* var welcome = new Granite.Widgets.Welcome ("",""); */
-            /* var bg_color = welcome.get_style_context ().get_background_color (Gtk.StateFlags.NORMAL); */
-            /* grid.override_background_color (Gtk.StateFlags.NORMAL, bg_color); */
+            var welcome = new Gtk.TreeView ();
+            var bg_color = welcome.get_style_context ().get_background_color (Gtk.StateFlags.NORMAL);
+            grid.override_background_color (Gtk.StateFlags.NORMAL, bg_color);
         }
     }
 }
