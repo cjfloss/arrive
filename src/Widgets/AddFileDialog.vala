@@ -1,7 +1,11 @@
 namespace Arrive.Widgets {
     public class AddFileDialog : Gtk.Dialog {
         private Gtk.Button queue_start_button;
-        public AddFileDialog (string uri){
+        private Model.Settings _settings;
+        private Model.DownloadList _download_list;
+        public AddFileDialog (Model.DownloadList download_list, Model.Settings settings, string uri){
+            _download_list = download_list;
+            _settings = settings;
             this.window_position=Gtk.WindowPosition.CENTER;
             this.set_resizable (false);
 
@@ -54,7 +58,7 @@ namespace Arrive.Widgets {
 
             grid1.attach (create_right_align (_("Segment :")), 4, 1, 1, 1);
             var segment_spin1 = new Gtk.SpinButton.with_range (1, 16, 1);
-            segment_spin1.set_value ((double) App.instance.settings.default_segment_num);
+            segment_spin1.set_value ((double) _settings.default_segment_num);
             grid1.attach (segment_spin1, 5, 1, 1, 1);
 
             var add_button1 = new Gtk.Button.with_label (_("Queue and start"));
@@ -65,7 +69,7 @@ namespace Arrive.Widgets {
                                 file_chooser1.get_uris ().nth_data (0).replace ("file://", ""),
                                 segment_spin1.get_value_as_int ());
                             aria_http.start ();
-                            App.instance.download_list.add_file (aria_http);
+                            _download_list.add_file (aria_http);
                         }
                         this.destroy ();
                     });
@@ -108,7 +112,7 @@ namespace Arrive.Widgets {
                         file_chooser1.get_uris().nth_data(0).replace("file://", "") 
                         );
                     aria_magnet.start ();
-                    App.instance.download_list.add_file(aria_magnet);
+                    _download_list.add_file(aria_magnet);
                     }
                     this.destroy ();
                     });

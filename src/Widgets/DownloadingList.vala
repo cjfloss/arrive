@@ -104,7 +104,7 @@ namespace Arrive.Widgets {
                     text =
                         _("Are You sure you want to delete %d downloads?").printf ((int)selected_files.length ());
                 }
-                Gtk.MessageDialog msg = new Gtk.MessageDialog (App.instance.main_window,
+                Gtk.MessageDialog msg = new Gtk.MessageDialog (null,
                                                             Gtk.DialogFlags.MODAL,
                                                             Gtk.MessageType.WARNING,
                                                             Gtk.ButtonsType.YES_NO,

@@ -155,7 +155,7 @@ namespace Arrive.Widgets {
             move_to.activate.connect (() => {
                 var file_chooser = new Gtk.FileChooserDialog (
                                           _("Choose Destination Folder"),
-                                          App.instance.main_window as Gtk.Window,
+                                          null,
                                           Gtk.FileChooserAction.SELECT_FOLDER,
                                           _("Cancel"), Gtk.ResponseType.CANCEL,
                                           _("Select"), Gtk.ResponseType.ACCEPT);
@@ -172,7 +172,7 @@ namespace Arrive.Widgets {
             copy.activate.connect (() => {
                 var file_chooser = new Gtk.FileChooserDialog (
                                           _("Choose Destination Folder"),
-                                          App.instance.main_window as Gtk.Window,
+                                          null,
                                           Gtk.FileChooserAction.SELECT_FOLDER,
                                           _("Cancel"), Gtk.ResponseType.CANCEL,
                                           _("Select"), Gtk.ResponseType.ACCEPT);

@@ -265,7 +265,7 @@ namespace Arrive.Widgets {
 
         }
         public void create_add_dialog (string uri="", string dir="", int num_segment=0){            
-             var add_file_dialog = new AddFileDialog (uri);
+             var add_file_dialog = new AddFileDialog (download_list_model, settings, uri);
              add_file_dialog.show_all ();
         }
         private void hibernate (){
