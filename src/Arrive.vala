@@ -6,14 +6,7 @@ namespace Arrive {
         public Model.Settings settings;
         private static string? uri;
         public static bool quiet;
-        private static App _instance;
-        public static App instance {
-            get{
-                if (_instance == null)
-                    _instance = new App ();
-                return _instance;
-            }
-        }
+
         public App () {
             Object (application_id: "org.vikoadi.arrive");
         }
@@ -48,11 +41,6 @@ namespace Arrive {
         /*     about_license_type = Gtk.License.GPL_3_0; */
         /* } */
         protected override void activate () {
-            /* if (DEBUG) */
-            /*     Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.DEBUG; */
-            /* else */
-            /*     Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO; */
-
             message ("activate "+uri);
 
             if (Model.aria2 == null){
@@ -98,10 +86,9 @@ namespace Arrive {
             } catch (Error e) {
                 warning (e.message);
             }
+            var app = new App ();
 
-            instance.run (args);
-
-            return 0;
+            return app.run (args);
         }
     }
 }
