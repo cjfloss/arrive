@@ -57,10 +57,10 @@ namespace Arrive {
 
             if (Model.aria2 == null){
                 settings = new Model.Settings ();
-                string save_file = Environment.get_user_data_dir () + "/"
-                                    + "aria" + "/aria.xml";
+                string save_file = Environment.get_user_data_dir () + "Arrive/aria.xml";
                 download_list = new Model.DownloadList (save_file);
-                finished_list = new Model.FinishedList ();
+                string finished_save_path = Environment.get_user_data_dir () + "/Arrive/finished_list.xml";
+                finished_list = new Model.FinishedList (finished_save_path);
                 Model.aria2 = new Model.Aria2 (download_list, finished_list);
                 //bad bad code
                 (download_list as Model.DownloadList).start ();

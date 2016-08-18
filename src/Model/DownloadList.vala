@@ -1,8 +1,8 @@
 namespace Arrive.Model {
     public class DownloadList : Object, Model.IDownloadList {
         private List<Model.IDownloadItem> _files;
-        private string _save_file = Environment.get_user_data_dir () + "/"
-                                    + "aria" + "/aria.xml";
+        private string _save_file;
+
         public List<Model.IDownloadItem> files {
             get {return _files;}
         }

@@ -1,9 +1,10 @@
 namespace Arrive.Model {
     public class FinishedList : Object {
-        private string save_path = Environment.get_user_data_dir () + "/Arrive/finished_list.xml";
+        private string _save_path;
         private File save_file = File.new_for_path (Environment.get_user_data_dir () + "/Arrive/finished_list.xml");
         public List<FinishedItem> list;
-        public FinishedList () {
+        public FinishedList (string save_path) {
+            _save_path = save_path;
             load_list_from_file ();
             list_changed.connect (save_list_to_file);
         }
@@ -43,10 +44,10 @@ namespace Arrive.Model {
             }
             //create xml string of valuearray using build method_response instead of using separate libxml2
             string data = Soup.XMLRPC.build_method_response (va);
-            Utils.save_string (save_path, data);
+            Utils.save_string (_save_path, data);
         }
         private void load_list_from_file() {
-            string data = Utils.load_string (save_path);
+            string data = Utils.load_string (_save_path);
             try {
                 Value v;
                 if (Soup.XMLRPC.parse_method_response (data, -1, out v)
