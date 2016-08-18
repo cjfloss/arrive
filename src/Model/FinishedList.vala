@@ -48,6 +48,10 @@ namespace Arrive.Model {
         }
         private void load_list_from_file() {
             string data = Utils.load_string (_save_path);
+
+            if (data == null)
+                return;
+
             try {
                 Value v;
                 if (Soup.XMLRPC.parse_method_response (data, -1, out v)

@@ -39,7 +39,7 @@ public class Utils {
                 warning ("cant load string: %s", e.message);
             }
         } else
-            message ("can't load string");
+            warning ("can't load string"+path);
         return data;
     }
     public static bool remove_file (string path) {
