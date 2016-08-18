@@ -42,8 +42,9 @@ vala_precompile(VALA_C ../arrive
     Widgets/AddFileDialog.vala
     #Widgets/AddFilePopOver.vala
     Widgets/CellRenderer.vala
+    Widgets/WelcomeWidget.vala
     Widgets/DownloadingList.vala
-    #Widgets/DownloadListWelcome.vala
+    Widgets/DownloadListWelcome.vala
     Widgets/FinishedList.vala
     Widgets/FinishedListWelcome.vala
     Widgets/MainWindow.vala

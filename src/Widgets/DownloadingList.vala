@@ -23,7 +23,7 @@ namespace Arrive.Widgets {
             scrolled.add (tree_view);
             add_named (scrolled, "scrolled");
 
-            /* var welcome = new Granite.Widgets.Welcome (_("No Download Yet"), _("But you can add it")); */
+            var welcome = new WelcomeWidget (_("No Download Yet"), _("But you can add it"));
             /* welcome.append ("list-add", _("Add Download"), _("Any http, ftp, magnet link or torrent file")); */
             /* welcome.activated.connect ((index) => { */
             /*     switch (index) { */
@@ -34,9 +34,9 @@ namespace Arrive.Widgets {
 
             /*     } */
             /* }); */
-            /* add_named (welcome, "welcome"); */
+            add_named (welcome, "welcome");
 
-            /* add_named (new Granite.Widgets.Welcome ("", _("Search Not Found")), "not found"); */
+            add_named (new WelcomeWidget ("", _("Search Not Found")), "not found");
 
             tree_view.button_release_event.connect ((event) => {
                                                       if (event.button == 3)

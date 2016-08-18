@@ -53,15 +53,15 @@ namespace Arrive.Widgets {
             scrolled.add (tree_view);
             add_named (scrolled, "scrolled");
 
-            /* add_named (new Granite.Widgets.Welcome ( */
-            /*             "", */
-            /*             _("finished download\nwill be listed here")), */
-            /*         "welcome"); */
+            add_named (new WelcomeWidget (
+                        "",
+                        _("finished download\nwill be listed here")),
+                    "welcome");
 
-            /* add_named (new Granite.Widgets.Welcome ( */
-            /*             "", */
-            /*             _("Search Not Found")), */
-            /*         "not found"); */
+            add_named (new WelcomeWidget (
+                        "",
+                        _("Search Not Found")),
+                    "not found");
 
             finished_list.list_changed.connect (setup_list);
             tree_view.button_release_event.connect ((event) => {

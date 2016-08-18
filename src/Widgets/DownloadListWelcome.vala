@@ -1,4 +1,4 @@
-public class DownloadListWelcome : Granite.Widgets.Welcome {
+public class DownloadListWelcome : Arrive.Widgets.WelcomeWidget {
     public DownloadListWelcome () {
         base ("","");
     }
