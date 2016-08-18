@@ -9,11 +9,12 @@ configure_file (${CMAKE_SOURCE_DIR}/src/config.vala.cmake ${CMAKE_SOURCE_DIR}/sr
 message( ${CMAKE_SOURCE_DIR}/src/config.vala)
 add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 
-set (ARRIVE_DEPS "gtk+-3.0;libsoup-2.4;gee-0.8;gio-2.0;libnotify")
+set (ARRIVE_DEPS "gtk+-3.0;libsoup-2.4;gee-0.8;gio-2.0;unity;libnotify")
 find_package (PkgConfig)
 pkg_check_modules (GTK+ REQUIRED "gtk+-3.0 >= 3.10")
 pkg_check_modules (LIBSOUP REQUIRED "libsoup-2.4")
 pkg_check_modules (GEE REQUIRED "gee-0.8")
+pkg_check_modules (LIBUNITY REQUIRED "unity")
 pkg_check_modules (NOTIFY REQUIRED "libnotify")
 pkg_check_modules (GIO REQUIRED "gio-2.0")
 pkg_check_modules (DEPS REQUIRED ${ARRIVE_DEPS} gthread-2.0)
