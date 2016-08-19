@@ -3,7 +3,6 @@
 using Gtk;
 using Gdk;
 namespace Arrive.Widgets {
-    //public static MainWindow main_window;
     public class MainWindow : Gtk.Window {
         private Gtk.HeaderBar header_bar;
         private Gtk.ToolButton start_all;
@@ -21,7 +20,6 @@ namespace Arrive.Widgets {
         private Model.DownloadList download_list_model;
         private Model.FinishedList finished_list_model;
         private Model.Settings settings;
-        //private Arrive.Widgets.AddFileDialog add_file_dialog;
 
         public MainWindow (Model.IDownloadList d_list, Model.FinishedList f_list, Model.Settings _settings) {
 
@@ -311,9 +309,9 @@ namespace Arrive.Widgets {
             }
         }
         private void colorize_stack_switcher () {
-            // steal welcome background color for stack switcher
-            var welcome = new Gtk.TreeView ();
-            var bg_color = welcome.get_style_context ().get_background_color (Gtk.StateFlags.NORMAL);
+            // steal treeview background color for stack switcher
+            var dummy_treeview = new Gtk.TreeView ();
+            var bg_color = dummy_treeview.get_style_context ().get_background_color (Gtk.StateFlags.NORMAL);
             grid.override_background_color (Gtk.StateFlags.NORMAL, bg_color);
         }
     }

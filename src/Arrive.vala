@@ -66,7 +66,7 @@ namespace Arrive {
             else
                 main_window.present ();
 
-            var launcher_entry = new Arrive.Model.LauncherEntry ();
+            var launcher_entry = new Arrive.Model.LauncherEntry (Model.aria2.download_list);
         }
         public static const OptionEntry[] entries = {
                 { "add", 'a', 0, OptionArg.STRING, ref uri, "Show Add Download dialog.", null },
