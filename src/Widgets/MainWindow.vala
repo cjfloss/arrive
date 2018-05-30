@@ -255,10 +255,11 @@ namespace Arrive.Widgets {
 
             // Main Grid
             grid = new Gtk.Grid ();
-            grid.attach (stack_switcher, 0, 0, 1, 1);
+            //grid.attach (stack_switcher, 0, 0, 1, 1);
             grid.attach (stack, 0, 1, 1, 1);
             grid.attach (action_bar, 0, 2, 1, 1);
             colorize_stack_switcher ();
+            header_bar.set_custom_title (stack_switcher);
             add (grid);
 
         }
