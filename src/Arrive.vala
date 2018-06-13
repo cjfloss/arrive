@@ -70,7 +70,7 @@ public class App : Gtk.Application {
 
         var launcher_entry = new Arrive.Model.LauncherEntry (Model.aria2.download_list);
     }
-    public static const OptionEntry[] entries = {
+    public const OptionEntry[] entries = {
         { "add", 'a', 0, OptionArg.STRING, ref uri, "Show Add Download dialog.", null },
         { "quiet", 'q', 0, OptionArg.NONE, ref quiet, "Start downloading the url.", null },
         { null }
