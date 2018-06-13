@@ -46,10 +46,10 @@ public class Utils {
         message ("remove "+path);
         File file = File.new_for_path (path);
         if (file.query_exists ()
-            && file.query_file_type (0) != FileType.DIRECTORY){
-            try{
+                && file.query_file_type (0) != FileType.DIRECTORY) {
+            try {
                 return file.delete ();
-            }catch(Error e){
+            } catch(Error e) {
                 debug ("cant remove file : " + path);
             }
         }
@@ -57,7 +57,7 @@ public class Utils {
     }
     public static bool trash_file (string path) {
         File file = File.new_for_path (path);
-        if (file.query_exists ()){
+        if (file.query_exists ()) {
             try {
                 return file.trash ();
             } catch (Error e) {
