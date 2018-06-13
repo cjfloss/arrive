@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Version=0.4.0
+Name=Arrive
+Comment=Simple and practical download manager
+GenericName=Download Manager
+Exec=com.github.cjfloss.arrive
+Icon=com.github.cjfloss.arrive
+Terminal=false
+Categories=Network;GTK;
+StartupNotify=true
