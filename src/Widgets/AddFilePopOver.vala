@@ -1,15 +1,15 @@
 namespace Arrive.Widgets {
-    public class AddFilePopOver : Granite.Widgets.PopOver {
-        private Granite.Widgets.HintedEntry uri_entry;
-        public AddFilePopOver (){
+    public class AddFilePopOver : Gtk.Popover {
+        private Gtk.Entry uri_entry;
+        public AddFilePopOver () {
             var hbox=new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
             var grid=new Gtk.Grid ();
             grid.set_column_homogeneous (false);
             grid.set_row_homogeneous (true);
 
             grid.attach (new Gtk.Label ("uri :"), 0, 0, 1, 1);
-            uri_entry = new Granite.Widgets.HintedEntry ("http://...");
-            uri_entry.text="http://";
+            uri_entry = new Gtk.Entry ();
+            uri_entry.placeholder_text = ("http://...");
             grid.attach (uri_entry, 1, 0, 6, 1);
             grid.attach (new Gtk.Label ("save to :"), 0, 1, 1, 1);
             var file_chooser = new Gtk.FileChooserButton ("save to", Gtk.FileChooserAction.SELECT_FOLDER);
