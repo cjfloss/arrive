@@ -2,8 +2,8 @@ namespace Arrive.Widgets {
 public class AddFilePopOver : Gtk.Popover {
     private Gtk.Entry uri_entry;
     public AddFilePopOver () {
-        var hbox=new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
-        var grid=new Gtk.Grid ();
+        var hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
+        var grid = new Gtk.Grid ();
         grid.set_column_homogeneous (false);
         grid.set_row_homogeneous (true);
 
@@ -16,7 +16,7 @@ public class AddFilePopOver : Gtk.Popover {
         grid.attach (file_chooser, 1, 1, 3, 1);
 
         Gtk.Button add_button = new Gtk.Button.with_label ("add to list");
-        add_button.clicked.connect (()=> {
+        add_button.clicked.connect (() => {
             if (uri_entry.text != "http://") {
                 var v_array = new ValueArray (0);
                 v_array.append (uri_entry.text);

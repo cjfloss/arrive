@@ -20,7 +20,7 @@ public class DownloadList : Object, Model.IDownloadList {
     public Model.IDownloadItem nth_data (int nth) {
         return _files.nth_data (0);
     }
-    public Model.IDownloadItem? get_by_gid (string gid) {
+    public Model.IDownloadItem ? get_by_gid (string gid) {
         foreach (Model.IDownloadItem d_item in _files) {
             if (gid == d_item.gid)
                 return d_item;
@@ -36,18 +36,18 @@ public class DownloadList : Object, Model.IDownloadList {
         }
         return finished_items;
     }
-    public Model.IDownloadItem? get_by_filename (string filename) {
+    public Model.IDownloadItem ? get_by_filename (string filename) {
         return null;
     }
-    public Model.IDownloadItem? get_by_path (string path) {
+    public Model.IDownloadItem ? get_by_path (string path) {
         return null;
     }
     public int get_length () {
-        if (_files == null)return 0;
+        if (_files == null) return 0;
         return (int) _files.length ();
     }
     public void add_file (Model.IDownloadItem download_item) {
-        debug ("add_file:"+download_item.filename);
+        debug ("add_file:" + download_item.filename);
         _files.append (download_item);
         file_added (download_item);
         save_list (_save_file);
@@ -60,29 +60,29 @@ public class DownloadList : Object, Model.IDownloadList {
         _files.remove (download_item);
         file_removed (download_item);
         save_list (_save_file);
-        debug ("file removed, length "+get_length ().to_string ());
+        debug ("file removed, length " + get_length ().to_string () );
     }
     private void save_list (string filename) {
         ValueArray va = new ValueArray (0);
         foreach (Model.IDownloadItem d_item in _files)
             if (d_item is Model.AriaHttp) {
-                var val = Value (typeof(HashTable));
+                var val = Value (typeof (HashTable) );
                 val = (d_item as Model.AriaHttp).get_ht ();
                 va.append (val);
             } else {
-                var val = Value (typeof(HashTable));
+                var val = Value (typeof (HashTable) );
                 val = (d_item as AriaMagnet).get_ht ();
-                debug ("uris "+(d_item as AriaMagnet).uris);
+                debug ("uris " + (d_item as AriaMagnet).uris);
                 va.append (val);
             }
 
         var data = Soup.XMLRPC.build_method_response (va);
 
         Utils.save_string (_save_file, data);
-        debug ("list saved as :"+filename);
+        debug ("list saved as :" + filename);
     }
     private void load_list (string filename) {
-        debug ("load list from :"+filename);
+        debug ("load list from :" + filename);
         var data = Utils.load_string (_save_file);
 
         if (data == null)
@@ -90,22 +90,22 @@ public class DownloadList : Object, Model.IDownloadList {
 
         try {
             Value v;
-            if(Soup.XMLRPC.parse_method_response (data, -1, out v)
-                    && v.holds (typeof(ValueArray))) { //get value from xml string
+            if (Soup.XMLRPC.parse_method_response (data, -1, out v)
+                    && v.holds (typeof (ValueArray) ) ) { //get value from xml string
                 unowned ValueArray va;
-                va =(ValueArray) v;
-                foreach(Value viter in va) {
-                    if(viter.holds (typeof(HashTable))) {
-                        HashTable<string, Value ?> ht = (HashTable<string, Value ?>) viter;
-                        switch (ht.get ("item_type").get_string ()) {
-                        case "AriaHttp" :
-                            var aria_http = new Model.AriaHttp.with_ht (ht);
-                            add_file (aria_http);
-                            break;
-                        case "AriaMagnet" :
-                            var aria_magnet = new Model.AriaMagnet.with_ht (ht);
-                            add_file (aria_magnet);
-                            break;
+                va = (ValueArray) v;
+                foreach (Value viter in va) {
+                    if (viter.holds (typeof (HashTable) ) ) {
+                        HashTable < string, Value ? > ht = (HashTable < string, Value ? >) viter;
+                        switch (ht.get ("item_type").get_string () ) {
+                            case "AriaHttp" :
+                                var aria_http = new Model.AriaHttp.with_ht (ht);
+                                add_file (aria_http);
+                                break;
+                            case "AriaMagnet" :
+                                var aria_magnet = new Model.AriaMagnet.with_ht (ht);
+                                add_file (aria_magnet);
+                                break;
                         }
                     }
                 }

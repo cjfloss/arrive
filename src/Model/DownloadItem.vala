@@ -1,7 +1,7 @@
 using Soup;
 namespace Arrive.Model {
 public class DownloadItem : Object {
-    public string status {get; set; default=""; }
+    public string status {get; set; default = ""; }
     private string _gid;
     public string gid {
         get {return _gid; }
@@ -13,8 +13,8 @@ public class DownloadItem : Object {
     public string dir {get; set; }
     public uint64 total_length {get; set; }
     public uint64 completed_length {get; set; }
-    public int download_speed {get; set; default=0; }
-    public int upload_speed {get; set; default=0; }
+    public int download_speed {get; set; default = 0; }
+    public int upload_speed {get; set; default = 0; }
     public int num_pieces {get; set; }
     public int connections {get; set; }
     private ValueArray _uris;
@@ -23,13 +23,13 @@ public class DownloadItem : Object {
             return _uris;
         }
         set{
-            _uris=value.copy ();
+            _uris = value.copy ();
         }
     }
     public DownloadItem () {
-        _uris=new ValueArray (0);
+        _uris = new ValueArray (0);
     }
-    public void start(HashTable ? options) {
+    public void start (HashTable ? options) {
         Soup.Message msg;
         debug ("start");
         if (options != null)
@@ -41,13 +41,13 @@ public class DownloadItem : Object {
         string data = send_message (msg);
         stdout.printf (data);
         try {
-            Value v = Value (typeof (string));
-            if (XMLRPC.parse_method_response (data, -1, out v)) {
+            Value v = Value (typeof (string) );
+            if (XMLRPC.parse_method_response (data, -1, out v) ) {
                 string _gid;
-                if (v.holds (typeof (string))) {
+                if (v.holds (typeof (string) ) ) {
                     _gid = v.get_string ();
-                    debug ("added gid = %s \n".printf (_gid));
-                    this.gid =_gid;
+                    debug ("added gid = %s \n".printf (_gid) );
+                    this.gid = _gid;
                 }
             } else
                 debug ("cant parse_method_response");
@@ -87,15 +87,15 @@ public class DownloadItem : Object {
                "\n dir : " + dir +
                "\n";
     }
-    private string parse_filename(string path) {
+    private string parse_filename (string path) {
         if (path != null && path != "") {
             string[] array = path.split ("/");
-            var fn = array[array.length-1];
+            var fn = array[array.length - 1];
             return fn;
         }
         return "";
     }
-    private string send_message(Soup.Message msg) {
+    private string send_message (Soup.Message msg) {
         var session = new Soup.Session ();
         session.send_message (msg);
         string data = (string) msg.response_body.flatten ().data;

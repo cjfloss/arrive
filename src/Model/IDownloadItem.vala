@@ -2,7 +2,7 @@ namespace Arrive.Model {
 public interface IDownloadItem :
     Object {
     public enum Status {
-        ACTIVE=0,
+        ACTIVE = 0,
         WAITING,
         PAUSED,
         ERROR,

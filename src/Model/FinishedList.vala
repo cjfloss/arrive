@@ -8,7 +8,7 @@ public class FinishedList : Object {
         load_list_from_file ();
         list_changed.connect (save_list_to_file);
     }
-    public void append(IDownloadItem download_item) {
+    public void append (IDownloadItem download_item) {
         var finished_item = new FinishedItem (download_item);
         list.append (finished_item);
         list_changed ();
@@ -36,9 +36,9 @@ public class FinishedList : Object {
     private void save_list_to_file() {
         debug ("saving finishedlist file");
         //create ValueArray of all DownloadItem in list
-        ValueArray va= new ValueArray (0);
+        ValueArray va = new ValueArray (0);
         foreach (FinishedItem finished_item in list) {
-            var vht = Value (typeof(HashTable));
+            var vht = Value (typeof (HashTable) );
             vht = finished_item.get_ht ();
             va.append (vht);
         }
@@ -55,16 +55,16 @@ public class FinishedList : Object {
         try {
             Value v;
             if (Soup.XMLRPC.parse_method_response (data, -1, out v)
-                    && v.holds (typeof(ValueArray))) { //get value from xml string
+                    && v.holds (typeof (ValueArray) ) ) { //get value from xml string
                 unowned ValueArray va;
                 va = (ValueArray) v;
                 foreach (Value viter in va) {
-                    HashTable<string, Value ?> ht;
-                    if (viter.holds (typeof (HashTable))) {
-                        ht = (HashTable<string, Value ?>) viter;
-                        var finished_item=new FinishedItem.from_ht (ht);
+                    HashTable < string, Value ? > ht;
+                    if (viter.holds (typeof (HashTable) ) ) {
+                        ht = (HashTable < string, Value ? >) viter;
+                        var finished_item = new FinishedItem.from_ht (ht);
                         //finished_item.xml_value=viter; //set xml_value to be processed by FinishedItem
-                        if (finished_item.file_exist ())
+                        if (finished_item.file_exist () )
                             list.append (finished_item);
                     }
 
@@ -74,7 +74,7 @@ public class FinishedList : Object {
         } catch (Error e) {
             warning ("cant parse finishedlist : %s", e.message);
         }
-        debug ("finished list loaded, list lenght %u", list.length ());
+        debug ("finished list loaded, list lenght %u", list.length () );
     }
     public signal void list_changed ();
 }

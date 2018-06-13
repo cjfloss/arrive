@@ -23,19 +23,19 @@ public class Aria2 : Object {
         upload_speed = 0;
         //if(ip==null)aria_ip="http://localhost" else aria_ip = ip;
         //if(port==null)aria_port="6800" else aria_port = port;
-        aria_uri = aria_ip+":"+aria_port+"/rpc";
+        aria_uri = aria_ip + ":" + aria_port + "/rpc";
         start_aria2c ();
         download_list = d_list as DownloadList;
         finished_list = f_list;
         get_global_option ();
 
         var refresh_timer = new TimeoutSource (REFRESH_TIME);
-        refresh_timer.set_callback (()=> {
+        refresh_timer.set_callback (() => {
             refresh_status ();
             return true;
         });
         refresh_timer.attach (null);
-        debug ("using aria2 version = %s",get_version());
+        debug ("using aria2 version = %s", get_version() );
     }
     ~Aria2 () {
         shutdown ();
@@ -44,12 +44,12 @@ public class Aria2 : Object {
         var v_array = new ValueArray (0);
         v_array.append (uris);
 
-        var option = new HashTable<string, Value ?> (str_hash, str_equal);
+        var option = new HashTable < string, Value ? > (str_hash, str_equal);
         option.insert ("dir", dir);
         if (split < 1)
             split = 1;
-        option.insert ("split", split.to_string ());
-        option.insert ("pause", pause.to_string ());
+        option.insert ("split", split.to_string () );
+        option.insert ("pause", pause.to_string () );
 
         Soup.Message msg = Soup.XMLRPC.request_new (aria_uri,
                            "aria2.addUri",
@@ -59,7 +59,7 @@ public class Aria2 : Object {
         var data = send_message (msg);
         try {
             Value v;
-            if (Soup.XMLRPC.parse_method_response (data,-1,out v)) {
+            if (Soup.XMLRPC.parse_method_response (data, -1, out v) ) {
                 return v.get_string (); // return gid
             } else {
                 warning ("error while add_uri2");
@@ -75,20 +75,20 @@ public class Aria2 : Object {
         var byte = new GLib.ByteArray.take (encoded.data);
         Soup.Message msg = Soup.XMLRPC.request_new (Model.aria2.aria_uri,
                            "aria2.addTorrent",
-                           typeof(GLib.ByteArray), byte
+                           typeof (GLib.ByteArray), byte
                                                    );
-        if (msg==null)
+        if (msg == null)
             return "";
         var data = send_message (msg);
         try {
             Value v;
-            if (Soup.XMLRPC.parse_method_response (data,-1,out v)) {
+            if (Soup.XMLRPC.parse_method_response (data, -1, out v) ) {
                 return v.get_string();//return gid
             } else {
                 warning ("error while add_torrent2");
             }
-        } catch(Error e) {
-            warning ("error while add_uri "+e.message);
+        } catch (Error e) {
+            warning ("error while add_uri " + e.message);
         }
 
         return "";
@@ -96,9 +96,9 @@ public class Aria2 : Object {
     public string encode64 (string torrent_path) {
         string data = "";
         File save_file = File.new_for_path (torrent_path);
-        if( save_file.query_exists ()) { // check file exist
+        if ( save_file.query_exists () ) { // check file exist
             try {
-                var data_stream = new DataInputStream (save_file.read ());
+                var data_stream = new DataInputStream (save_file.read () );
                 data = data_stream.read_until ("", null);
                 data = Base64.encode (data.data);
             } catch (Error e) {
@@ -134,7 +134,7 @@ public class Aria2 : Object {
                            null,
                            spawn_args,
                            spawn_env,
-                           SpawnFlags.SEARCH_PATH|SpawnFlags.DO_NOT_REAP_CHILD,
+                           SpawnFlags.SEARCH_PATH | SpawnFlags.DO_NOT_REAP_CHILD,
                            null,
                            out child_pid,
                            out standard_input,
@@ -155,7 +155,7 @@ public class Aria2 : Object {
 
             /* if (!ret) */
             /*     return; */
-            ChildWatch.add (child_pid, (pid,status) => {
+            ChildWatch.add (child_pid, (pid, status) => {
                 Process.close_pid (pid);
                 Gtk.main_quit ();
             });
@@ -220,31 +220,31 @@ public class Aria2 : Object {
     private void refresh_waiting (bool add_new_to_list = false) {
         Soup.Message msg = Soup.XMLRPC.request_new (aria_uri
                            , "aria2.tellWaiting"
-                           , typeof(int), 0,
-                           typeof(int), 1000);
+                           , typeof (int), 0,
+                           typeof (int), 1000);
         string data = send_message (msg);
         put_data_to_list (data);
     }
     private void refresh_stopped (bool add_new_to_list = false) {
         Soup.Message msg = Soup.XMLRPC.request_new (aria_uri
                            , "aria2.tellStopped"
-                           , typeof(int), 0
-                           , typeof(int), 1000);
+                           , typeof (int), 0
+                           , typeof (int), 1000);
         string data = send_message (msg);
         put_data_to_list (data);
     }
     private void put_data_to_list (string data) {
         try {
             Value v;
-            if (Soup.XMLRPC.parse_method_response (data, -1, out v) && v.holds (typeof(ValueArray))) {
+            if (Soup.XMLRPC.parse_method_response (data, -1, out v) && v.holds (typeof (ValueArray) ) ) {
                 unowned ValueArray va;
                 va = (ValueArray) v;
                 foreach (Value viter in va) {
-                    if (viter.holds (typeof (HashTable))) { // viter will hold download list xml
-                        HashTable <string, Value?> ht;
+                    if (viter.holds (typeof (HashTable) ) ) { // viter will hold download list xml
+                        HashTable < string, Value ? > ht;
                         Value val;
 
-                        ht = (HashTable<string, Value ?>) viter;
+                        ht = (HashTable < string, Value ? >) viter;
                         val = ht.get ("gid");
                         var gid = val.get_string ();
 
@@ -295,7 +295,7 @@ public class Aria2 : Object {
                 foreach (Model.IDownloadItem dw_item in download_list.files) {
                     if (dw_item is AriaMagnet
                             && (dw_item as AriaMagnet).info_hash == (finished_item as AriaMagnet).info_hash) {
-                        (dw_item as AriaMagnet).set_uri ((finished_item as AriaMagnet).uris);
+                        (dw_item as AriaMagnet).set_uri ( (finished_item as AriaMagnet).uris);
                         debug ("uris :" + (finished_item as AriaMagnet).uris);
                         (dw_item as AriaMagnet).set_name (finished_item.filename);
                         (dw_item as Model.AriaMagnet).change_gid (finished_item.gid);
@@ -317,26 +317,26 @@ public class Aria2 : Object {
         string data = send_message (msg);
         try {
             Value v;
-            if (Soup.XMLRPC.parse_method_response (data, -1, out v)) {
-                HashTable<string,Value?> ht;
+            if (Soup.XMLRPC.parse_method_response (data, -1, out v) ) {
+                HashTable < string, Value ? > ht;
                 Value val;
 
-                ht = (HashTable <string,Value?>) v;
+                ht = (HashTable < string, Value ? >) v;
 
                 val = ht.get ("numStopped");
-                num_stopped = int.parse (val.get_string ());
+                num_stopped = int.parse (val.get_string () );
 
                 val = ht.get ("numWaiting");
-                num_waiting = int.parse (val.get_string ());
+                num_waiting = int.parse (val.get_string () );
 
                 val = ht.get ("numActive");
-                num_active = int.parse (val.get_string ());
+                num_active = int.parse (val.get_string () );
 
                 val = ht.get ("downloadSpeed");
-                download_speed = int.parse (val.get_string ());
+                download_speed = int.parse (val.get_string () );
 
                 val = ht.get ("uploadSpeed");
-                upload_speed = int.parse (val.get_string ());
+                upload_speed = int.parse (val.get_string () );
             }
         } catch (Error e) {
             warning ("Error while processing tellStatus response");
@@ -344,15 +344,15 @@ public class Aria2 : Object {
     }
     public string get_version () {
         string version = "";
-        Soup.Message msg = XMLRPC.request_new (aria_uri,"aria2.getVersion");
+        Soup.Message msg = XMLRPC.request_new (aria_uri, "aria2.getVersion");
         string data = send_message (msg);
         try {
             Value v;
-            if (Soup.XMLRPC.parse_method_response (data,-1,out v)) {
-                HashTable <string,Value?> ht;
+            if (Soup.XMLRPC.parse_method_response (data, -1, out v) ) {
+                HashTable < string, Value ? > ht;
                 Value val;
 
-                ht = (HashTable <string,Value?>) v;
+                ht = (HashTable < string, Value ? >) v;
 
                 val = ht.get ("version");
                 version = val.get_string ();

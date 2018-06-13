@@ -6,13 +6,13 @@ public class AddFileDialog : Gtk.Dialog {
     public AddFileDialog (Model.DownloadList download_list, Model.Settings settings, string uri) {
         _download_list = download_list;
         _settings = settings;
-        this.window_position=Gtk.WindowPosition.CENTER;
+        this.window_position = Gtk.WindowPosition.CENTER;
         this.set_resizable (false);
 
         var stack = new Gtk.Stack ();
-        stack.add_titled (create_page_1 (uri), _("http/ftp"), "http");
-        stack.add_titled (create_page_2 (uri), _("magnet"), "magnet");
-        stack.add_titled (create_page_3 (uri), _("torrent"), "torrent");
+        stack.add_titled (create_page_1 (uri), _ ("http/ftp"), "http");
+        stack.add_titled (create_page_2 (uri), _ ("magnet"), "magnet");
+        stack.add_titled (create_page_3 (uri), _ ("torrent"), "torrent");
 
         var stack_switcher = new Gtk.StackSwitcher ();
         stack_switcher.set_stack (stack);
@@ -30,44 +30,44 @@ public class AddFileDialog : Gtk.Dialog {
         return label;
     }
     private Gtk.Widget create_page_1 (string uri) {
-        var grid1=new Gtk.Grid ();
+        var grid1 = new Gtk.Grid ();
         grid1.set_column_homogeneous (false);
         grid1.set_row_homogeneous (true);
         grid1.set_column_spacing (5);
         grid1.set_row_spacing (5);
-        grid1.margin=15;
+        grid1.margin = 15;
         grid1.set_vexpand (true);
 
-        grid1.attach (create_right_align (_("Uri :")), 0, 0, 1, 1);
+        grid1.attach (create_right_align (_ ("Uri :") ), 0, 0, 1, 1);
         var uri_entry1 = new Gtk.Entry ();
         uri_entry1.set_placeholder_text ("http://");
         if (uri == "") {
-            Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ((clipboard, cbtext)=> {
+            Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ( (clipboard, cbtext) => {
                 if (cbtext != null)
                     uri_entry1.text = valid_http (cbtext) ?? "";
             });
         } else
-            uri_entry1.text=valid_http (uri)??"";
+            uri_entry1.text = valid_http (uri) ?? "";
 
         grid1.attach (uri_entry1, 1, 0, 6, 1);
-        grid1.attach (create_right_align(_("Save to :")), 0, 1, 1, 1);
-        var file_chooser1 = new Gtk.FileChooserButton (_("Save to"),
+        grid1.attach (create_right_align (_ ("Save to :") ), 0, 1, 1, 1);
+        var file_chooser1 = new Gtk.FileChooserButton (_ ("Save to"),
                 Gtk.FileChooserAction.SELECT_FOLDER);
-        file_chooser1.set_current_folder (Environment.get_user_special_dir (UserDirectory.DOWNLOAD));
+        file_chooser1.set_current_folder (Environment.get_user_special_dir (UserDirectory.DOWNLOAD) );
         grid1.attach (file_chooser1, 1, 1, 3, 1);
 
-        grid1.attach (create_right_align (_("Segment :")), 4, 1, 1, 1);
+        grid1.attach (create_right_align (_ ("Segment :") ), 4, 1, 1, 1);
         var segment_spin1 = new Gtk.SpinButton.with_range (1, 16, 1);
-        segment_spin1.set_value ((double) _settings.default_segment_num);
+        segment_spin1.set_value ( (double) _settings.default_segment_num);
         grid1.attach (segment_spin1, 5, 1, 1, 1);
 
-        var add_button1 = new Gtk.Button.with_label (_("Queue and start"));
+        var add_button1 = new Gtk.Button.with_label (_ ("Queue and start") );
         add_button1.clicked.connect (() => {
             if (uri_entry1.text != "http://") {
                 var aria_http = new Model.AriaHttp.with_attribute (
                     uri_entry1.text,
                     file_chooser1.get_uris ().nth_data (0).replace ("file://", ""),
-                    segment_spin1.get_value_as_int ());
+                    segment_spin1.get_value_as_int () );
                 aria_http.start ();
                 _download_list.add_file (aria_http);
             }
@@ -78,19 +78,19 @@ public class AddFileDialog : Gtk.Dialog {
         return grid1;
     }
     private Gtk.Widget create_page_2 (string magnet) {
-        var grid=new Gtk.Grid ();
+        var grid = new Gtk.Grid ();
         grid.set_column_homogeneous (false);
         grid.set_row_homogeneous (true);
         grid.set_row_spacing (5);
         grid.set_vexpand (true);
-        grid.margin=12;
+        grid.margin = 12;
 
-        grid.attach (create_right_align(_("Magnet Link :")), 0, 0, 1, 1);
+        grid.attach (create_right_align (_ ("Magnet Link :") ), 0, 0, 1, 1);
         var uri_entry1 = new Gtk.Entry ();
         uri_entry1.set_placeholder_text ("magnet:");
         uri_entry1.set_vexpand (true);
         if (magnet == "") {
-            Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ((clipboard, cbtext) => {
+            Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ( (clipboard, cbtext) => {
                 if (cbtext != null)
                     uri_entry1.text = valid_magnet (cbtext) ?? "";
             });
@@ -98,21 +98,21 @@ public class AddFileDialog : Gtk.Dialog {
             uri_entry1.text =  valid_magnet (magnet) ?? "";
 
         grid.attach (uri_entry1, 1, 0, 2, 1);
-        grid.attach (create_right_align(_("Save to :")), 0, 1, 1, 1);
-        var file_chooser1 = new Gtk.FileChooserButton (_("Save to"),
+        grid.attach (create_right_align (_ ("Save to :") ), 0, 1, 1, 1);
+        var file_chooser1 = new Gtk.FileChooserButton (_ ("Save to"),
                 Gtk.FileChooserAction.SELECT_FOLDER);
-        file_chooser1.set_current_folder (Environment.get_user_special_dir (UserDirectory.DOWNLOAD));
+        file_chooser1.set_current_folder (Environment.get_user_special_dir (UserDirectory.DOWNLOAD) );
         file_chooser1.set_vexpand (true);
         grid.attach (file_chooser1, 1, 1, 2, 1);
 
-        var add_button1 = new Gtk.Button.with_label (_("Queue and start"));
-        add_button1.clicked.connect (()=> {
-            if (is_valid_magnet(uri_entry1.text)) {
+        var add_button1 = new Gtk.Button.with_label (_ ("Queue and start") );
+        add_button1.clicked.connect (() => {
+            if (is_valid_magnet (uri_entry1.text) ) {
                 var aria_magnet = new Model.AriaMagnet.with_attribute (uri_entry1.text,
-                        file_chooser1.get_uris().nth_data(0).replace("file://", "")
+                        file_chooser1.get_uris().nth_data (0).replace ("file://", "")
                                                                       );
                 aria_magnet.start ();
-                _download_list.add_file(aria_magnet);
+                _download_list.add_file (aria_magnet);
             }
             this.destroy ();
         });
@@ -127,45 +127,45 @@ public class AddFileDialog : Gtk.Dialog {
         grid.margin = 12;
         grid.margin_top = 0;
 
-        grid.attach (create_right_align(_("Torrent file :")), 0, 0, 1, 1);
-        var file_chooser = new Gtk.FileChooserButton (_("Select .torrent file"),
+        grid.attach (create_right_align (_ ("Torrent file :") ), 0, 0, 1, 1);
+        var file_chooser = new Gtk.FileChooserButton (_ ("Select .torrent file"),
                 Gtk.FileChooserAction.OPEN);
-        file_chooser.set_current_folder (Environment.get_user_special_dir (UserDirectory.DOWNLOAD));
+        file_chooser.set_current_folder (Environment.get_user_special_dir (UserDirectory.DOWNLOAD) );
         var filter = new Gtk.FileFilter ();
         filter.add_mime_type ("application/x-bittorrent");
         file_chooser.set_filter (filter);
         grid.attach (file_chooser, 1, 0, 5, 1);
 
-        var add_button = new Gtk.Button.with_label (_("Queue and start"));
-        add_button.clicked.connect (()=> {
-            Model.aria2.add_torrent (file_chooser.get_uris ().nth_data(0).replace ("file://",""));
-            message (file_chooser.get_uris ().nth_data(0));
+        var add_button = new Gtk.Button.with_label (_ ("Queue and start") );
+        add_button.clicked.connect (() => {
+            Model.aria2.add_torrent (file_chooser.get_uris ().nth_data (0).replace ("file://", "") );
+            message (file_chooser.get_uris ().nth_data (0) );
             this.destroy ();
         });
         grid.attach (add_button, 1, 1, 1, 1);
 
         /* return grid; */
-        return new Gtk.Label("torrent file");
+        return new Gtk.Label ("torrent file");
     }
-    private bool is_valid_http (string? uri) {
-        return valid_http (uri)!=null;
+    private bool is_valid_http (string ? uri) {
+        return valid_http (uri) != null;
     }
-    private string? valid_http (string? uri) {
+    private string ? valid_http (string ? uri) {
         string valid = null;
-        if (uri!=null&&uri.has_prefix ("http://")||uri.has_prefix ("ftp://")) {
+        if (uri != null && uri.has_prefix ("http://") || uri.has_prefix ("ftp://") ) {
             valid = uri.down ();
-            valid = valid.split (" ")[0];
+            valid = valid.split (" ") [0];
         }
         return valid;
     }
     private bool is_valid_magnet (string uri) {
-        return valid_magnet (uri)!=null;
+        return valid_magnet (uri) != null;
     }
-    private string? valid_magnet (string? uri) {
+    private string ? valid_magnet (string ? uri) {
         string valid = null;
-        if (uri!=null&&uri.has_prefix ("magnet")) {
+        if (uri != null && uri.has_prefix ("magnet") ) {
             valid = uri.down ();
-            valid = valid.split (" ")[0];
+            valid = valid.split (" ") [0];
         }
         return valid;
     }

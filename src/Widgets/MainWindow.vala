@@ -39,47 +39,47 @@ public class MainWindow : Gtk.Window {
         stack.set_visible_child_name (saved_state.notebook_state);
 
         download_list_model.item_refreshed.connect (refresh_status);
-        download_list_model.file_removed.connect (()=> {
+        download_list_model.file_removed.connect (() => {
             if (download_list_model.files.length () == 0)
                 on_all_finished ();
         });
 
-        destroy.connect (()=> {
+        destroy.connect (() => {
             hide ();
             download_list_model.destroy ();
             Model.aria2.shutdown ();
             /* Gtk.main_quit (); */
         });
-        window_state_event.connect ((e)=> {
+        window_state_event.connect ( (e) => {
             if (e.changed_mask == Gdk.WindowState.FULLSCREEN) {
-                bool f = ((e.new_window_state & Gdk.WindowState.FULLSCREEN)!=0);
+                bool f = ( (e.new_window_state & Gdk.WindowState.FULLSCREEN) != 0);
                 Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = f;
                 colorize_stack_switcher ();
             }
             return false;
         });
 
-        Notify.init(get_title ());
+        Notify.init (get_title () );
     }
     private void refresh_status() {
         download_speed_label.set_text (
             "dl/up : %sps/%sps    ".printf (
-                format_size (total_download_speed ()),
-                format_size (total_upload_speed ())
-            ));
+                format_size (total_download_speed () ),
+                format_size (total_upload_speed () )
+            ) );
         determine_toolbutton_status ();
     }
     //i think this two doesnt belong here
     private uint64 total_download_speed () {
         uint64 total_speed = 0;
-        foreach(Model.IDownloadItem d_item in download_list_model.files) {
+        foreach (Model.IDownloadItem d_item in download_list_model.files) {
             total_speed += d_item.download_speed;
         }
         return total_speed;
     }
     private uint64 total_upload_speed () {
         uint64 total_upload = 0;
-        foreach(Model.IDownloadItem d_item in download_list_model.files) {
+        foreach (Model.IDownloadItem d_item in download_list_model.files) {
             total_upload += d_item.upload_speed;
         }
         return total_upload;
@@ -118,7 +118,7 @@ public class MainWindow : Gtk.Window {
             maximize ();
         search_bar.text = saved_state.search_string;
     }
-    public override bool delete_event(Gdk.EventAny event) {
+    public override bool delete_event (Gdk.EventAny event) {
         foreach (Model.IDownloadItem d_item in download_list_model.files) {
             if (d_item.status == "active") {
                 iconify ();
@@ -136,21 +136,21 @@ public class MainWindow : Gtk.Window {
         set_titlebar (header_bar);
 
         var add_button = new ToolButton (null, null);
-        add_button.set_tooltip_text (_("Add download"));
+        add_button.set_tooltip_text (_ ("Add download") );
         add_button.set_icon_name ("list-add");
-        add_button.clicked.connect (()=> {
+        add_button.clicked.connect (() => {
             create_add_dialog ();
         });
         start_all = new Gtk.ToolButton (null, null);
         start_all.set_icon_name ("media-playback-start");
-        start_all.clicked.connect (()=> {
-            foreach(Arrive.Model.IDownloadItem ditem in download_list_model.files)
+        start_all.clicked.connect (() => {
+            foreach (Arrive.Model.IDownloadItem ditem in download_list_model.files)
                 ditem.unpause ();
         });
         pause_all = new Gtk.ToolButton (null, null);
         pause_all.set_icon_name ("media-playback-pause");
-        pause_all.clicked.connect (()=> {
-            foreach(Arrive.Model.IDownloadItem ditem in download_list_model.files)
+        pause_all.clicked.connect (() => {
+            foreach (Arrive.Model.IDownloadItem ditem in download_list_model.files)
                 ditem.pause ();
         });
 
@@ -160,7 +160,7 @@ public class MainWindow : Gtk.Window {
 
         //toolbar right item
         search_bar = new Gtk.SearchEntry ();
-        search_bar.set_placeholder_text (_("Search"));
+        search_bar.set_placeholder_text (_ ("Search") );
         var search_bar_toolitem = new Gtk.ToolItem ();
         search_bar_toolitem.add (search_bar);
 
@@ -168,40 +168,40 @@ public class MainWindow : Gtk.Window {
 
 
         var power_menu = new Gtk.Menu();
-        var nothing_menu = new Gtk.RadioMenuItem.with_label (null, _("Nothing"));
+        var nothing_menu = new Gtk.RadioMenuItem.with_label (null, _ ("Nothing") );
         var suspend_menu =
-            new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _("Suspend"));
+            new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _ ("Suspend") );
         var hibernate_menu =
-            new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _("Hibernate"));
+            new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _ ("Hibernate") );
         var shutdown_menu =
-            new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _("Shutdown"));
+            new Gtk.RadioMenuItem.with_label (nothing_menu.get_group (), _ ("Shutdown") );
 
-        nothing_menu.activate.connect (()=> {
+        nothing_menu.activate.connect (() => {
             settings.finished_action = Model.FinishedAction.NOTHING;
         });
-        suspend_menu.activate.connect (()=> {
+        suspend_menu.activate.connect (() => {
             settings.finished_action = Model.FinishedAction.SUSPEND;
         });
-        hibernate_menu.activate.connect (()=> {
+        hibernate_menu.activate.connect (() => {
             settings.finished_action = Model.FinishedAction.HIBERNATE;
         });
-        shutdown_menu.activate.connect (()=> {
+        shutdown_menu.activate.connect (() => {
             settings.finished_action = Model.FinishedAction.SHUTDOWN;
         });
-        settings.notify["finished-action"].connect (()=> {
+        settings.notify["finished-action"].connect (() => {
             switch (settings.finished_action) {
-            case Model.FinishedAction.NOTHING:
-                nothing_menu.set_active (true);
-                break;
-            case Model.FinishedAction.SUSPEND:
-                suspend_menu.set_active (true);
-                break;
-            case Model.FinishedAction.HIBERNATE:
-                hibernate_menu.set_active (true);
-                break;
-            case Model.FinishedAction.SHUTDOWN:
-                shutdown_menu.set_active (true);
-                break;
+                case Model.FinishedAction.NOTHING:
+                    nothing_menu.set_active (true);
+                    break;
+                case Model.FinishedAction.SUSPEND:
+                    suspend_menu.set_active (true);
+                    break;
+                case Model.FinishedAction.HIBERNATE:
+                    hibernate_menu.set_active (true);
+                    break;
+                case Model.FinishedAction.SHUTDOWN:
+                    shutdown_menu.set_active (true);
+                    break;
             }
         });
         power_menu.append (nothing_menu);
@@ -216,7 +216,7 @@ public class MainWindow : Gtk.Window {
         var finish_button = new Gtk.MenuButton();
         finish_button.set_popup (power_menu);
         finish_button.set_direction (ArrowType.UP);
-        finish_button.set_tooltip_text (_("When download finished..."));
+        finish_button.set_tooltip_text (_ ("When download finished...") );
         finish_button.image = new Gtk.Image.from_icon_name ("object-select-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
 
         //downloading list
@@ -224,20 +224,20 @@ public class MainWindow : Gtk.Window {
         downloading_list.set_vexpand (true);
 
         //finished list
-        finished_list =new Arrive.Widgets.FinishedList (finished_list_model);
-        finished_list.notify["status"].connect ((s, p)=> {
-            status_label.set_text(finished_list.status);
+        finished_list = new Arrive.Widgets.FinishedList (finished_list_model);
+        finished_list.notify["status"].connect ( (s, p) => {
+            status_label.set_text (finished_list.status);
         });
 
-        search_bar.search_changed.connect (()=> {
+        search_bar.search_changed.connect (() => {
             downloading_list.filter (search_bar.text);
             finished_list.filter (search_bar.text);
         });
 
         // Stack
         stack = new Gtk.Stack ();
-        stack.add_titled (downloading_list, "downloading_list", _("Downloading"));
-        stack.add_titled (finished_list, "finished_list", _("Finished"));
+        stack.add_titled (downloading_list, "downloading_list", _ ("Downloading") );
+        stack.add_titled (finished_list, "finished_list", _ ("Finished") );
         stack_switcher = new Gtk.StackSwitcher ();
         stack_switcher.set_hexpand (true);
         stack_switcher.set_margin_top (2);
@@ -247,7 +247,7 @@ public class MainWindow : Gtk.Window {
 
         //action bar
         action_bar = new Gtk.ActionBar ();
-        download_speed_label = new Label (_("download idle"));
+        download_speed_label = new Label (_ ("download idle") );
         status_label = new Label ("");
         action_bar.pack_start (finish_button);
         action_bar.pack_end (download_speed_label);
@@ -263,7 +263,7 @@ public class MainWindow : Gtk.Window {
         add (grid);
 
     }
-    public void create_add_dialog (string uri="", string dir="", int num_segment=0) {
+    public void create_add_dialog (string uri = "", string dir = "", int num_segment = 0) {
         var add_file_dialog = new AddFileDialog (download_list_model, settings, uri);
         add_file_dialog.show_all ();
     }
@@ -276,11 +276,11 @@ public class MainWindow : Gtk.Window {
                                                 "org.freedesktop.UPower", "/org/freedesktop/UPower");
             if (to_disk) {
                 //hibernate
-                if (upower.HibernateAllowed ())
+                if (upower.HibernateAllowed () )
                     upower.Hibernate ();
             } else {
                 //suspend
-                if (upower.SuspendAllowed ())
+                if (upower.SuspendAllowed () )
                     upower.Suspend ();
             }
         } catch (Error e) {
@@ -291,7 +291,7 @@ public class MainWindow : Gtk.Window {
         try {
             GnomeSessionManager session_manager = Bus.get_proxy_sync (BusType.SESSION,
                                                   "org.gnome.SessionManager", "/org/gnome/SessionManager");
-            if (session_manager.CanShutdown ())
+            if (session_manager.CanShutdown () )
                 session_manager.Shutdown ();
         } catch (Error e) {
             warning (e.message);
@@ -299,18 +299,18 @@ public class MainWindow : Gtk.Window {
     }
     private void on_all_finished () {
         switch (settings.finished_action) {
-        case Model.FinishedAction.SUSPEND:
-            settings.finished_action = Model.FinishedAction.NOTHING;
-            suspend ();
-            break;
-        case Model.FinishedAction.HIBERNATE:
-            settings.finished_action = Model.FinishedAction.NOTHING;
-            hibernate ();
-            break;
-        case Model.FinishedAction.SHUTDOWN:
-            settings.finished_action = Model.FinishedAction.NOTHING;
-            shutdown ();
-            break;
+            case Model.FinishedAction.SUSPEND:
+                settings.finished_action = Model.FinishedAction.NOTHING;
+                suspend ();
+                break;
+            case Model.FinishedAction.HIBERNATE:
+                settings.finished_action = Model.FinishedAction.NOTHING;
+                hibernate ();
+                break;
+            case Model.FinishedAction.SHUTDOWN:
+                settings.finished_action = Model.FinishedAction.NOTHING;
+                shutdown ();
+                break;
         }
     }
     private void colorize_stack_switcher () {

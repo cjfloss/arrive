@@ -14,9 +14,9 @@ public class Utils {
     public static bool save_string (string path, string data) {
         try {
             File save_file = File.new_for_path (path);
-            if (!save_file.get_parent ().query_exists ())
+            if (!save_file.get_parent ().query_exists () )
                 save_file.get_parent ().make_directory_with_parents ();
-            if (save_file.query_exists ())
+            if (save_file.query_exists () )
                 save_file.delete ();
 
             var file_stream = save_file.create (FileCreateFlags.NONE);
@@ -24,32 +24,32 @@ public class Utils {
             if (data != null) data_stream.put_string (data);
             return true;
         } catch (Error e) {
-            warning ("cant save :"+ path + e.message);
+            warning ("cant save :" + path + e.message);
         }
         return false;
     }
     public static string load_string (string path) {
         string data = "";
         File save_file = File.new_for_path (path);
-        if (save_file.query_exists ()) { //check file exist
+        if (save_file.query_exists () ) { //check file exist
             try {
-                var data_stream = new DataInputStream (save_file.read ());
+                var data_stream = new DataInputStream (save_file.read () );
                 data = data_stream.read_until ("", null);
             } catch (Error e) {
                 warning ("cant load string: %s", e.message);
             }
         } else
-            warning ("can't load string"+path);
+            warning ("can't load string" + path);
         return data;
     }
     public static bool remove_file (string path) {
-        message ("remove "+path);
+        message ("remove " + path);
         File file = File.new_for_path (path);
         if (file.query_exists ()
                 && file.query_file_type (0) != FileType.DIRECTORY) {
             try {
                 return file.delete ();
-            } catch(Error e) {
+            } catch (Error e) {
                 debug ("cant remove file : " + path);
             }
         }
@@ -57,7 +57,7 @@ public class Utils {
     }
     public static bool trash_file (string path) {
         File file = File.new_for_path (path);
-        if (file.query_exists ()) {
+        if (file.query_exists () ) {
             try {
                 return file.trash ();
             } catch (Error e) {

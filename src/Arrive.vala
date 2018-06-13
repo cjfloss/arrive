@@ -4,7 +4,7 @@ public class App : Gtk.Application {
     public Model.IDownloadList download_list;
     public Model.FinishedList finished_list;
     public Model.Settings settings;
-    private static string? uri;
+    private static string ? uri;
     public static bool quiet;
 
     public App () {
@@ -41,7 +41,7 @@ public class App : Gtk.Application {
     /*     about_license_type = Gtk.License.GPL_3_0; */
     /* } */
     protected override void activate () {
-        message ("activate "+uri);
+        message ("activate " + uri);
 
         if (Model.aria2 == null) {
             settings = new Model.Settings ();
@@ -79,7 +79,7 @@ public class App : Gtk.Application {
 
         var context = new OptionContext ("");
         context.add_main_entries (entries, "arrive");
-        context.add_group (Gtk.get_option_group (true));
+        context.add_group (Gtk.get_option_group (true) );
 
         try {
             context.parse (ref args);

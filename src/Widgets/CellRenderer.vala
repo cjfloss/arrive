@@ -18,23 +18,23 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
         set {
             _file = value;
 
-            icon_renderer.pixbuf=get_icon_for_file();
+            icon_renderer.pixbuf = get_icon_for_file();
 
             //file_name_renderer.text=_file.filename;//parse file from path
             file_name_renderer.markup = Markup.printf_escaped ( "<span weight='bold' size='larger'>%s</span>",
                     _file.filename);
 
             if (_file.total_length != 0)
-                download_progress_renderer.value = (int)(100 * _file.completed_length / _file.total_length);
+                download_progress_renderer.value = (int) (100 * _file.completed_length / _file.total_length);
             download_progress_renderer.text = "%s of %s".printf (format_size (_file.completed_length),
-                    format_size (_file.total_length));
+                    format_size (_file.total_length) );
             //if (_file is Model.AriaHttp)
-            status_renderer.text = _("status:%s connections:%s").printf (_file.status,_file.gid);
+            status_renderer.text = _ ("status:%s connections:%s").printf (_file.status, _file.gid);
             //if (_file is Model.AriaMagnet)
             //    status_renderer.text = _("status:%s file:%s").printf (_file.status,(_file as Model.AriaMagnet).path_files.length ());
 
-            download_renderer.text = format_size (_file.download_speed)+"ps";
-            upload_renderer.text = format_size (_file.upload_speed)+"ps";
+            download_renderer.text = format_size (_file.download_speed) + "ps";
+            upload_renderer.text = format_size (_file.upload_speed) + "ps";
             time_renderer.text = get_remaining_time ();
 
 
@@ -91,7 +91,7 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
         upload_renderer = new Gtk.CellRendererText ();
         time_renderer = new Gtk.CellRendererText ();
     }
-    public override void get_size (Gtk.Widget widget, Gdk.Rectangle? cell_area,
+    public override void get_size (Gtk.Widget widget, Gdk.Rectangle ? cell_area,
                                    out int x_offset, out int y_offset,
                                    out int width, out int height) {
         int file_name_renderer_height;
@@ -101,7 +101,7 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
         file_name_renderer.get_preferred_height (widget, null, out file_name_renderer_height);
         status_renderer.get_preferred_height (widget, null, out status_renderer_height);
         download_progress_renderer.get_preferred_height (widget, null, out download_progress_renderer_height);
-        icon_renderer.get_size(widget, null, out x_offset, out y_offset, out width, out height);
+        icon_renderer.get_size (widget, null, out x_offset, out y_offset, out width, out height);
         height = 2 * PADDING + file_name_renderer_height
                  + download_progress_renderer_height + status_renderer_height;
         width = 100;
@@ -114,7 +114,7 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
         int file_name_renderer_height;
         int status_renderer_height;
         int download_progress_renderer_height;
-        file_name_renderer.get_preferred_height (widget,null, out file_name_renderer_height);
+        file_name_renderer.get_preferred_height (widget, null, out file_name_renderer_height);
         status_renderer.get_preferred_height (widget, null, out status_renderer_height);
         download_progress_renderer.get_preferred_height (widget, null, out download_progress_renderer_height);
 
@@ -131,9 +131,9 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
             height = file_name_renderer_height
         };
         Gdk.Rectangle download_progress_rect = Gdk.Rectangle () {
-            x= cell_area.x + ICON_SIZE + PADDING,
-            y= cell_area.y + file_name_renderer_height + PADDING,
-            width= cell_area.width - (ICON_SIZE + RIGHT_COLUMN_WIDTH + 2 * PADDING),
+            x = cell_area.x + ICON_SIZE + PADDING,
+            y = cell_area.y + file_name_renderer_height + PADDING,
+            width = cell_area.width - (ICON_SIZE + RIGHT_COLUMN_WIDTH + 2 * PADDING),
             height = download_progress_renderer_height
         };
         Gdk.Rectangle status_renderer_rect = Gdk.Rectangle () {
@@ -152,9 +152,9 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
         int download_renderer_height;
         int upload_renderer_height;
         int time_renderer_height;
-        download_renderer.get_preferred_height (widget,null, out download_renderer_height);
-        upload_renderer.get_preferred_height (widget,null, out upload_renderer_height);
-        time_renderer.get_preferred_height (widget,null, out time_renderer_height);
+        download_renderer.get_preferred_height (widget, null, out download_renderer_height);
+        upload_renderer.get_preferred_height (widget, null, out upload_renderer_height);
+        time_renderer.get_preferred_height (widget, null, out time_renderer_height);
 
         Gdk.Rectangle download_renderer_rect = Gdk.Rectangle() {
 
@@ -184,16 +184,16 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
         var ri_renderer = new Gtk.CellRendererPixbuf();
         var ri_renderer_rect = Gdk.Rectangle() {
             x = cell_area.x + cell_area.width - RIGHT_COLUMN_WIDTH,
-            y =download_renderer_rect.y,
+            y = download_renderer_rect.y,
             height = download_renderer_height,
             width = download_renderer_height
         };
         try {
-            ri_renderer.pixbuf = Gtk.IconTheme.get_default().load_icon("go-down", download_renderer_height-6,0);
+            ri_renderer.pixbuf = Gtk.IconTheme.get_default().load_icon ("go-down", download_renderer_height - 6, 0);
         } catch (Error e) {
             debug ("error code %d", e.code);
         }
-        ri_renderer.render(ctx, widget, ri_renderer_rect, ri_renderer_rect, flags);//download icon
+        ri_renderer.render (ctx, widget, ri_renderer_rect, ri_renderer_rect, flags); //download icon
 
         ri_renderer_rect = Gdk.Rectangle() {
             x = cell_area.x + cell_area.width - RIGHT_COLUMN_WIDTH,
@@ -202,9 +202,9 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
             width = upload_renderer_height
         };
         try {
-            ri_renderer.pixbuf = Gtk.IconTheme.get_default().load_icon("go-up", upload_renderer_height - 6,0);
+            ri_renderer.pixbuf = Gtk.IconTheme.get_default().load_icon ("go-up", upload_renderer_height - 6, 0);
         } catch (Error e) {
-            debug("error code %d",e.code);
+            debug ("error code %d", e.code);
         }
         ri_renderer.render (ctx, widget, ri_renderer_rect, ri_renderer_rect, flags);//upload icon
 
@@ -224,47 +224,47 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
     }
     private string get_remaining_time () {
         if (_file.download_speed == 0)
-            return _("unknown");
+            return _ ("unknown");
         if (_file.total_length < _file.completed_length)
-            return _("few seconds");
-        uint64 seconds = (_file.total_length -_file.completed_length) /_file.download_speed;
+            return _ ("few seconds");
+        uint64 seconds = (_file.total_length - _file.completed_length) / _file.download_speed;
 
         string remaining = "";
         uint64 div;
         //divided by one week
         div = seconds / 604800;
         if (div >= 1) {
-            remaining +=_("%lldw").printf (div);
+            remaining += _ ("%lldw").printf (div);
             seconds = seconds % 604800;
         }
         //divided by one day
         div = seconds / 86400;
         if (div >= 1) {
-            remaining += _("%lldd").printf (div);
+            remaining += _ ("%lldd").printf (div);
             seconds = seconds % 86400;
         }
         //divided by one day
         div = seconds / 3600;
         if (div >= 1) {
-            remaining += _("%lldh").printf (div);
+            remaining += _ ("%lldh").printf (div);
             seconds = seconds % 3600;
         }
         //divided by one minute
         div = seconds / 60;
         if (div >= 1) {
-            remaining += _("%lldm").printf (div);
+            remaining += _ ("%lldm").printf (div);
             seconds = seconds % 60;
         }
         //adding seconds left
-        remaining += _("%llds").printf (seconds);
+        remaining += _ ("%llds").printf (seconds);
         return remaining;
 
     }
-    private Gdk.Pixbuf? get_icon_for_file () {
+    private Gdk.Pixbuf ? get_icon_for_file () {
         string icon_name;
         Gdk.Pixbuf pixbuf = null;
 
-        string content_type = ContentType.guess (_file.filename,null,null);
+        string content_type = ContentType.guess (_file.filename, null, null);
         Icon icon = ContentType.get_icon (content_type);
 
         if (icon is ThemedIcon)
@@ -275,8 +275,8 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
         if (icon_name == null)
             return null;
         try {
-            pixbuf = Gtk.IconTheme.get_default ().load_icon (icon_name, ICON_SIZE,0);
-        } catch(Error e) {
+            pixbuf = Gtk.IconTheme.get_default ().load_icon (icon_name, ICON_SIZE, 0);
+        } catch (Error e) {
             pixbuf = null;
         }
         return pixbuf;

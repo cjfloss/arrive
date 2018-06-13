@@ -16,7 +16,7 @@ public class FinishedList : Gtk.Stack {
         this.finished_list = finished_list;
         filter_string = "";
 
-        tree_store = new Gtk.TreeStore (3, typeof (string), typeof (string), typeof (Model.FinishedItem));
+        tree_store = new Gtk.TreeStore (3, typeof (string), typeof (string), typeof (Model.FinishedItem) );
         tree_filter = new Gtk.TreeModelFilter (tree_store, null);
         tree_filter.set_visible_func (visible_func);
         tree_view = new Gtk.TreeView ();
@@ -27,9 +27,9 @@ public class FinishedList : Gtk.Stack {
 
         Gtk.TreeViewColumn column =
             new Gtk.TreeViewColumn.with_attributes (
-            _("filename"),
+            _ ("filename"),
         new Gtk.CellRendererText () {
-            ellipsize=Pango.EllipsizeMode.END
+            ellipsize = Pango.EllipsizeMode.END
         },
         "text",
         0,
@@ -41,9 +41,9 @@ public class FinishedList : Gtk.Stack {
 
         Gtk.TreeViewColumn column_s =
             new Gtk.TreeViewColumn.with_attributes (
-            _("size"),
+            _ ("size"),
         new Gtk.CellRendererText () {
-            xalign=1.0f
+            xalign = 1.0f
         },
         "text",
         1,
@@ -59,24 +59,24 @@ public class FinishedList : Gtk.Stack {
 
         add_named (new WelcomeWidget (
                        "",
-                       _("finished download\nwill be listed here")),
+                       _ ("finished download\nwill be listed here") ),
                    "welcome");
 
         add_named (new WelcomeWidget (
                        "",
-                       _("Search Not Found")),
+                       _ ("Search Not Found") ),
                    "not found");
 
         finished_list.list_changed.connect (setup_list);
-        tree_view.button_release_event.connect ((event) => {
+        tree_view.button_release_event.connect ( (event) => {
             switch (event.button) {
-            /*case 1:
-                if (get_selected_files ().length () == 1)
-                    get_selected_files ().nth_data (0).open_file ();
-                break;*/
-            case 3:
-                show_popup_menu (event);
-                break;
+                /*case 1:
+                    if (get_selected_files ().length () == 1)
+                        get_selected_files ().nth_data (0).open_file ();
+                    break;*/
+                case 3:
+                    show_popup_menu (event);
+                    break;
             }
             return false;
         });
@@ -85,11 +85,11 @@ public class FinishedList : Gtk.Stack {
     private bool visible_func (Gtk.TreeModel t_model, Gtk.TreeIter t_iter) {
         if (filter_string == "")
             return true;
-        if (t_model.iter_has_child (t_iter)) { // check if its date iter
-            for (int i=0; i<t_model.iter_n_children (t_iter); i++) {
+        if (t_model.iter_has_child (t_iter) ) { // check if its date iter
+            for (int i = 0; i < t_model.iter_n_children (t_iter); i++) {
                 Gtk.TreeIter child_iter;
                 t_model.iter_nth_child (out child_iter, t_iter, i);
-                if (contains_string (t_model, child_iter))
+                if (contains_string (t_model, child_iter) )
                     return true;//one of iter child contains search string
             }
         } else {
@@ -101,7 +101,7 @@ public class FinishedList : Gtk.Stack {
         Value item;
         t_model.get_value (t_iter, 2, out item);
         Model.FinishedItem f_item = (Model.FinishedItem) item;
-        if (f_item.path.down ().contains (filter_string.down ())) {
+        if (f_item.path.down ().contains (filter_string.down () ) ) {
             return true;
         }
         return false;
@@ -110,10 +110,10 @@ public class FinishedList : Gtk.Stack {
         tree_store.clear ();
         foreach (Arrive.Model.FinishedItem finished_item in finished_list.list) {
             var item = Gtk.TreeIter ();
-            var iter = get_iter_with_string (0, finished_item.get_date_localized ());
+            var iter = get_iter_with_string (0, finished_item.get_date_localized () );
             if (iter == null) { //if the date hasnt been added then add new date item
                 tree_store.prepend (out iter, null);
-                tree_store.set (iter, 0, finished_item.get_date_localized ());
+                tree_store.set (iter, 0, finished_item.get_date_localized () );
             }
             tree_store.prepend (out item, iter); //adding item in the proper date
             tree_store.set (item, 0, finished_item.filename,
@@ -138,15 +138,15 @@ public class FinishedList : Gtk.Stack {
     }
     private void show_popup_menu (Gdk.EventButton event) {
         List<Model.FinishedItem> selected_files;
-        selected_files=get_selected_files ();
+        selected_files = get_selected_files ();
         var menu = new Gtk.Menu ();
-        var open_file = new Gtk.MenuItem.with_label (_("Open File"));
-        var open_folder = new Gtk.MenuItem.with_label (_("Open Folder"));
-        var move_to = new Gtk.MenuItem.with_label (_("Move to..."));
-        var copy = new Gtk.MenuItem.with_label (_("Copy to..."));
-        var forget = new Gtk.MenuItem.with_label (_("Forget"));
-        var move_to_trash = new Gtk.MenuItem.with_label (_("Move to Trash"));
-        var properties = new Gtk.MenuItem.with_label (_("Properties"));
+        var open_file = new Gtk.MenuItem.with_label (_ ("Open File") );
+        var open_folder = new Gtk.MenuItem.with_label (_ ("Open Folder") );
+        var move_to = new Gtk.MenuItem.with_label (_ ("Move to...") );
+        var copy = new Gtk.MenuItem.with_label (_ ("Copy to...") );
+        var forget = new Gtk.MenuItem.with_label (_ ("Forget") );
+        var move_to_trash = new Gtk.MenuItem.with_label (_ ("Move to Trash") );
+        var properties = new Gtk.MenuItem.with_label (_ ("Properties") );
 
         open_file.activate.connect (() => {
             if (get_selected_files ().length () == 1)
@@ -158,15 +158,15 @@ public class FinishedList : Gtk.Stack {
         });
         move_to.activate.connect (() => {
             var file_chooser = new Gtk.FileChooserDialog (
-                _("Choose Destination Folder"),
+                _ ("Choose Destination Folder"),
                 null,
                 Gtk.FileChooserAction.SELECT_FOLDER,
-                _("Cancel"), Gtk.ResponseType.CANCEL,
-                _("Select"), Gtk.ResponseType.ACCEPT);
+                _ ("Cancel"), Gtk.ResponseType.CANCEL,
+                _ ("Select"), Gtk.ResponseType.ACCEPT);
             if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
                 var dest = file_chooser.get_filename();
                 status = "moving file";
-                foreach (Model.FinishedItem f_item in get_selected_files ()) {
+                foreach (Model.FinishedItem f_item in get_selected_files () ) {
                     finished_list.move_to (f_item, dest);
                 }
                 status = "";
@@ -175,15 +175,15 @@ public class FinishedList : Gtk.Stack {
         });
         copy.activate.connect (() => {
             var file_chooser = new Gtk.FileChooserDialog (
-                _("Choose Destination Folder"),
+                _ ("Choose Destination Folder"),
                 null,
                 Gtk.FileChooserAction.SELECT_FOLDER,
-                _("Cancel"), Gtk.ResponseType.CANCEL,
-                _("Select"), Gtk.ResponseType.ACCEPT);
+                _ ("Cancel"), Gtk.ResponseType.CANCEL,
+                _ ("Select"), Gtk.ResponseType.ACCEPT);
             if (file_chooser.run () == Gtk.ResponseType.ACCEPT) {
                 var dest = file_chooser.get_filename ();
                 status = "copying file";
-                foreach (Model.FinishedItem f_item in get_selected_files ()) {
+                foreach (Model.FinishedItem f_item in get_selected_files () ) {
                     finished_list.copy_to (f_item, dest);
                 }
                 status = "";
@@ -191,27 +191,27 @@ public class FinishedList : Gtk.Stack {
             file_chooser.destroy ();
         });
         forget.activate.connect (() => {
-            foreach (Model.FinishedItem f_item in get_selected_files ()) {
+            foreach (Model.FinishedItem f_item in get_selected_files () ) {
                 finished_list.forget (f_item);
             }
         });
         move_to_trash.activate.connect (() => {
-            foreach (Model.FinishedItem f_item in get_selected_files ()) {
+            foreach (Model.FinishedItem f_item in get_selected_files () ) {
                 finished_list.trash (f_item);
             }
         });
-        properties.activate.connect (()=> {});
+        properties.activate.connect (() => {});
 
         //only at item if one file selected
         if (get_selected_files ().length () == 1) {
             menu.add (open_file);
             menu.add (open_folder);
-            menu.add (new Gtk.SeparatorMenuItem ());
+            menu.add (new Gtk.SeparatorMenuItem () );
         }
 
         menu.add (move_to);
         menu.add (copy);
-        menu.add (new Gtk.SeparatorMenuItem ());
+        menu.add (new Gtk.SeparatorMenuItem () );
         menu.add (forget);
         menu.add (move_to_trash);
 
@@ -221,13 +221,13 @@ public class FinishedList : Gtk.Stack {
     }
     //search for item with date string
     private Gtk.TreeIter ? get_iter_with_string (int column, string text) {
-        Gtk.TreeIter ? iter=null;
+        Gtk.TreeIter ? iter = null;
         Gtk.TreeIter comparator; //used for comparison
-        for (bool next = tree_store.get_iter_first (out comparator); next; next = tree_store.iter_next (ref comparator)) {
+        for (bool next = tree_store.get_iter_first (out comparator); next; next = tree_store.iter_next (ref comparator) ) {
             Value val1;
             tree_store.get_value (comparator, column, out val1);
             if (text == (string) val1) { //iter found, breaking
-                iter=comparator;
+                iter = comparator;
                 break;
             }
         }
@@ -236,7 +236,7 @@ public class FinishedList : Gtk.Stack {
     private int length () {
         int length = 0;
         Gtk.TreeIter iter;
-        for (bool next = tree_filter.get_iter_first (out iter); next; next = tree_filter.iter_next (ref iter)) {
+        for (bool next = tree_filter.get_iter_first (out iter); next; next = tree_filter.iter_next (ref iter) ) {
             length++;
         }
         return length;
@@ -253,10 +253,10 @@ public class FinishedList : Gtk.Stack {
             Value vf_item;
             model.get_iter (out selection_iter, selection_item);
             model.get_value (selection_iter, 2, out vf_item);
-            if (vf_item.holds (typeof (Model.FinishedItem))) {
+            if (vf_item.holds (typeof (Model.FinishedItem) ) ) {
                 var f_item = (Model.FinishedItem) vf_item;
                 if (f_item.filename != null)
-                    list.append ((Model.FinishedItem) f_item);
+                    list.append ( (Model.FinishedItem) f_item);
             } else
                 debug ("value arent FinishedItem");
         }

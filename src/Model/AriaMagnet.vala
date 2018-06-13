@@ -10,7 +10,7 @@ public class AriaMagnet : Object, IDownloadItem {
 
         this.gid = Model.aria2.add_uri (uris, dir, 1, pause);
     }
-    public AriaMagnet.with_ht (HashTable<string, Value ?> ht) {
+    public AriaMagnet.with_ht (HashTable < string, Value ? > ht) {
         this.item_type = "AriaMagnet";
         update_by_ht (ht);
 
@@ -40,46 +40,46 @@ public class AriaMagnet : Object, IDownloadItem {
         aria2.pause (gid);
     }
     public void unpause () {
-        message (gid.to_string ());
+        message (gid.to_string () );
         aria2.unpause (gid);
     }
     public void remove () {
         aria2.pause (gid);
         aria2.remove (gid);
-        Utils.remove_file (dir+"/"+filename);
-        Utils.remove_file (dir+"/"+filename+".aria2");
+        Utils.remove_file (dir + "/" + filename);
+        Utils.remove_file (dir + "/" + filename + ".aria2");
     }
     public void cancel () {
     }
-    public void update_by_ht (HashTable<string, Value ?> ht) {
+    public void update_by_ht (HashTable < string, Value ? > ht) {
         if (status == null || status == "active") {
             status = get_string_from_ht (ht, "status");
-            total_length = uint64.parse (get_string_from_ht (ht, "totalLength"));
-            completed_length = uint64.parse (get_string_from_ht (ht, "completedLength"));
+            total_length = uint64.parse (get_string_from_ht (ht, "totalLength") );
+            completed_length = uint64.parse (get_string_from_ht (ht, "completedLength") );
         }
 
         if (get_string_from_ht (ht, "status") == "complete" && path_files.length () == 0)
             status = "waiting";
 
-        Value val = Value (typeof(string));
+        Value val = Value (typeof (string) );
         gid = get_string_from_ht (ht, "gid");
-        download_speed = int.parse (get_string_from_ht (ht, "downloadSpeed"));
-        upload_speed = int.parse (get_string_from_ht (ht, "uploadSpeed"));
+        download_speed = int.parse (get_string_from_ht (ht, "downloadSpeed") );
+        upload_speed = int.parse (get_string_from_ht (ht, "uploadSpeed") );
         dir = get_string_from_ht (ht, "dir");
         info_hash = get_string_from_ht (ht, "infoHash");
 
         val = ht.get ("files");
-        if(val.holds (typeof(ValueArray))) {
+        if (val.holds (typeof (ValueArray) ) ) {
             unowned ValueArray va;
-            va=(ValueArray) val; //va contains array
+            va = (ValueArray) val; //va contains array
             path_files = new List<string> ();
-            foreach(Value vhtable in va) {
+            foreach (Value vhtable in va) {
                 //extract hashtable from v
-                HashTable<string, Value ?> htable=(HashTable<string, Value ?>)vhtable;
-                var path = parse_filename (get_string_from_ht (htable, "path"));
+                HashTable < string, Value ? > htable = (HashTable < string, Value ? >) vhtable;
+                var path = parse_filename (get_string_from_ht (htable, "path") );
                 path_files.append (path);
 
-                if(path != "")
+                if (path != "")
                     filename = path;
                 else
                     filename = parse_filename (uris);
@@ -103,65 +103,65 @@ public class AriaMagnet : Object, IDownloadItem {
                         filename = parse_filename (uris);
                 }*/
         } else
-            filename=_("cant get filename");
+            filename = _ ("cant get filename");
 
         if (get_string_from_ht (ht, "status") == "complete" && path_files.length () == 0) {
             status = "waiting";
         } else
             status = get_string_from_ht (ht, "status");
     }
-    public HashTable<string, Value ?> get_ht () {
-        var ht = new HashTable<string, Value ?>(str_hash, str_equal);
-        Value val = Value(typeof(string));
+    public HashTable < string, Value ? > get_ht () {
+        var ht = new HashTable < string, Value ? > (str_hash, str_equal);
+        Value val = Value (typeof (string) );
 
         val.set_string (gid);
-        ht.insert("gid",val);
+        ht.insert ("gid", val);
 
         val.set_string (item_type);
-        ht.insert("item_type",val);
-        val.set_string (total_length.to_string ());
+        ht.insert ("item_type", val);
+        val.set_string (total_length.to_string () );
         ht.insert ("totalLength", val);
-        val.set_string (completed_length.to_string ());
+        val.set_string (completed_length.to_string () );
         ht.insert ("completedLength", val);
         val.set_string (dir);
         ht.insert ("dir", val);
         val.set_string (info_hash);
-        ht.insert("infoHash", val);
+        ht.insert ("infoHash", val);
 
         //create the frustating files Value Array
-        val = Value(typeof(ValueArray));
-        var va = new ValueArray(0);
+        val = Value (typeof (ValueArray) );
+        var va = new ValueArray (0);
         val = va;
         //http download only consist of one file
-        var vhtable = Value (typeof(HashTable));
-        var htable = new HashTable<string, Value ?> (str_hash, str_equal);
-        Value vfiles = Value (typeof(string));
-        vfiles.set_string (dir+"/"+filename);
-        htable.insert("path", vfiles);
+        var vhtable = Value (typeof (HashTable) );
+        var htable = new HashTable < string, Value ? > (str_hash, str_equal);
+        Value vfiles = Value (typeof (string) );
+        vfiles.set_string (dir + "/" + filename);
+        htable.insert ("path", vfiles);
         //FIXME:uris should be consist of a few uri
-        Value vuris = Value (typeof (ValueArray));
+        Value vuris = Value (typeof (ValueArray) );
         ValueArray duris = new ValueArray (0);
-        Value vuri = Value(typeof(HashTable));
-        var hturi = new HashTable<string, Value ?> (str_hash, str_equal);
-        hturi.insert("uri",uris);
+        Value vuri = Value (typeof (HashTable) );
+        var hturi = new HashTable < string, Value ? > (str_hash, str_equal);
+        hturi.insert ("uri", uris);
         vuri = hturi;
         duris.append (vuri);
         vuris = duris;
-        htable.insert("uris", vuris);
+        htable.insert ("uris", vuris);
 
         vhtable = htable;
         va.append (htable);//append the one and only file
         val = va;
-        ht.insert("files", val);
+        ht.insert ("files", val);
 
-        val = Value(typeof(string));
+        val = Value (typeof (string) );
         val.set_string (status);
         ht.insert ("status", val);
 
         return ht;
     }
     public Value get_value () {
-        var val = Value(typeof(string));
+        var val = Value (typeof (string) );
         return val;
     }
     public void set_value (Value value) {
@@ -177,17 +177,17 @@ public class AriaMagnet : Object, IDownloadItem {
         this.gid = gid;
         message (this.gid);
     }
-    private string get_string_from_ht(HashTable<string, Value?> ht, string key) {
+    private string get_string_from_ht (HashTable < string, Value ? > ht, string key) {
         if (ht.get (key) != null) {
             Value val = ht.get (key);
             return val.get_string ();
         } else
             return "";
     }
-    private string parse_filename(string path) {
+    private string parse_filename (string path) {
         if (path != null && path != "") {
             string[] array = path.split ("/");
-            var fn = array[array.length-1];
+            var fn = array[array.length - 1];
             return fn;
         }
         return "";
