@@ -74,8 +74,9 @@ public class FinishedItem : Object {
             if (file != null && dest != null && !dest.query_exists () ) {
                 file.copy_async.begin (dest, FileCopyFlags.NONE);
                 return true;
-            } else
+            } else {
                 debug ("do not copy");
+            }
         } catch (Error e) {
             warning (e.message);
         }

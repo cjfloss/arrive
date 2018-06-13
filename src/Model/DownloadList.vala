@@ -22,8 +22,9 @@ public class DownloadList : Object, Model.IDownloadList {
     }
     public Model.IDownloadItem ? get_by_gid (string gid) {
         foreach (Model.IDownloadItem d_item in _files) {
-            if (gid == d_item.gid)
+            if (gid == d_item.gid) {
                 return d_item;
+            }
         }
         return null;
     }
@@ -43,7 +44,9 @@ public class DownloadList : Object, Model.IDownloadList {
         return null;
     }
     public int get_length () {
-        if (_files == null) return 0;
+        if (_files == null) {
+            return 0;
+        }
         return (int) _files.length ();
     }
     public void add_file (Model.IDownloadItem download_item) {
@@ -85,8 +88,9 @@ public class DownloadList : Object, Model.IDownloadList {
         debug ("load list from :" + filename);
         var data = Utils.load_string (_save_file);
 
-        if (data == null)
+        if (data == null) {
             return;
+        }
 
         try {
             Value v;

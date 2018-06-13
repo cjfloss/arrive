@@ -40,8 +40,9 @@ public class MainWindow : Gtk.Window {
 
         download_list_model.item_refreshed.connect (refresh_status);
         download_list_model.file_removed.connect (() => {
-            if (download_list_model.files.length () == 0)
+            if (download_list_model.files.length () == 0) {
                 on_all_finished ();
+            }
         });
 
         destroy.connect (() => {
@@ -88,20 +89,23 @@ public class MainWindow : Gtk.Window {
         bool active_all = true;
         bool paused_all = true;
         foreach (Model.IDownloadItem ditem in download_list_model.files) {
-            if (ditem.status != "active")
+            if (ditem.status != "active") {
                 active_all = false;
-            if (ditem.status != "paused")
+            }
+            if (ditem.status != "paused") {
                 paused_all = false;
+            }
         }
         start_all.sensitive = !active_all;
         pause_all.sensitive = !paused_all;
     }
     private void save_window_state () {
         //FIXME:get_window dont want to return Gdk.Window
-        if (get_window ().get_state () == Gdk.WindowState.MAXIMIZED)
+        if (get_window ().get_state () == Gdk.WindowState.MAXIMIZED) {
             saved_state.window_state = Model.WindowState.MAXIMIZED;
-        else
+        } else {
             saved_state.window_state = Model.WindowState.NORMAL;
+        }
 
         if (saved_state.window_state == Model.WindowState.NORMAL) {
             int width, height;
@@ -114,8 +118,9 @@ public class MainWindow : Gtk.Window {
     }
     private void restore_window_state () {
         resize (saved_state.window_width, saved_state.window_height);
-        if (saved_state.window_state == Model.WindowState.MAXIMIZED)
+        if (saved_state.window_state == Model.WindowState.MAXIMIZED) {
             maximize ();
+        }
         search_bar.text = saved_state.search_string;
     }
     public override bool delete_event (Gdk.EventAny event) {
@@ -144,14 +149,16 @@ public class MainWindow : Gtk.Window {
         start_all = new Gtk.ToolButton (null, null);
         start_all.set_icon_name ("media-playback-start");
         start_all.clicked.connect (() => {
-            foreach (Arrive.Model.IDownloadItem ditem in download_list_model.files)
+            foreach (Arrive.Model.IDownloadItem ditem in download_list_model.files) {
                 ditem.unpause ();
+            }
         });
         pause_all = new Gtk.ToolButton (null, null);
         pause_all.set_icon_name ("media-playback-pause");
         pause_all.clicked.connect (() => {
-            foreach (Arrive.Model.IDownloadItem ditem in download_list_model.files)
+            foreach (Arrive.Model.IDownloadItem ditem in download_list_model.files) {
                 ditem.pause ();
+            }
         });
 
         header_bar.pack_start (add_button);
@@ -276,12 +283,14 @@ public class MainWindow : Gtk.Window {
                                                 "org.freedesktop.UPower", "/org/freedesktop/UPower");
             if (to_disk) {
                 //hibernate
-                if (upower.HibernateAllowed () )
+                if (upower.HibernateAllowed () ) {
                     upower.Hibernate ();
+                }
             } else {
                 //suspend
-                if (upower.SuspendAllowed () )
+                if (upower.SuspendAllowed () ) {
                     upower.Suspend ();
+                }
             }
         } catch (Error e) {
             warning (e.message);
@@ -291,8 +300,9 @@ public class MainWindow : Gtk.Window {
         try {
             GnomeSessionManager session_manager = Bus.get_proxy_sync (BusType.SESSION,
                                                   "org.gnome.SessionManager", "/org/gnome/SessionManager");
-            if (session_manager.CanShutdown () )
+            if (session_manager.CanShutdown () ) {
                 session_manager.Shutdown ();
+            }
         } catch (Error e) {
             warning (e.message);
         }

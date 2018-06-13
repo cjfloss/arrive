@@ -54,17 +54,19 @@ public class App : Gtk.Application {
             (download_list as Model.DownloadList).start ();
         }
 
-        if (main_window == null)
+        if (main_window == null) {
             main_window = new Widgets.MainWindow (download_list, finished_list, settings);
+        }
 
         main_window.set_application (this);
 
-        if (quiet)
+        if (quiet) {
             message ("download " + uri);
-        else if (uri != null)
+        } else if (uri != null) {
             main_window.create_add_dialog (uri);
-        else
+        } else {
             main_window.present ();
+        }
 
         var launcher_entry = new Arrive.Model.LauncherEntry (Model.aria2.download_list);
     }

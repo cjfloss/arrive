@@ -14,14 +14,18 @@ public class Utils {
     public static bool save_string (string path, string data) {
         try {
             File save_file = File.new_for_path (path);
-            if (!save_file.get_parent ().query_exists () )
+            if (!save_file.get_parent ().query_exists () ) {
                 save_file.get_parent ().make_directory_with_parents ();
-            if (save_file.query_exists () )
+            }
+            if (save_file.query_exists () ) {
                 save_file.delete ();
+            }
 
             var file_stream = save_file.create (FileCreateFlags.NONE);
             var data_stream = new DataOutputStream (file_stream);
-            if (data != null) data_stream.put_string (data);
+            if (data != null) {
+                data_stream.put_string (data);
+            }
             return true;
         } catch (Error e) {
             warning ("cant save :" + path + e.message);
@@ -38,8 +42,9 @@ public class Utils {
             } catch (Error e) {
                 warning ("cant load string: %s", e.message);
             }
-        } else
+        } else {
             warning ("can't load string" + path);
+        }
         return data;
     }
     public static bool remove_file (string path) {

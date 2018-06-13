@@ -1,4 +1,4 @@
 #!/bin/sh
-astyle --style=java -s4 -S -d -p -xg -R "src/*.vala"
+astyle --style=java -s4 -S -d -j -c -p -xg --lineend=linux -R "src/*.vala"
 rm src/*.orig
 rm src/*/*.orig

@@ -46,8 +46,9 @@ public class Aria2 : Object {
 
         var option = new HashTable < string, Value ? > (str_hash, str_equal);
         option.insert ("dir", dir);
-        if (split < 1)
+        if (split < 1) {
             split = 1;
+        }
         option.insert ("split", split.to_string () );
         option.insert ("pause", pause.to_string () );
 
@@ -77,8 +78,9 @@ public class Aria2 : Object {
                            "aria2.addTorrent",
                            typeof (GLib.ByteArray), byte
                                                    );
-        if (msg == null)
+        if (msg == null) {
             return "";
+        }
         var data = send_message (msg);
         try {
             Value v;
@@ -104,8 +106,9 @@ public class Aria2 : Object {
             } catch (Error e) {
                 warning ("cant load string: %s", e.message);
             }
-        } else
+        } else {
             warning ("can't load string");
+        }
         return data;
     }
     private void start_aria2c () {
@@ -254,20 +257,23 @@ public class Aria2 : Object {
                             var aria_magnet = new Model.AriaMagnet ();
                             aria_magnet.update_by_ht (ht);
                             if (aria_magnet.info_hash != null && aria_magnet.info_hash != "") {
-                                if (aria_magnet.status != "complete")
+                                if (aria_magnet.status != "complete") {
                                     download_list.add_file (aria_magnet);
+                                }
                             } else {
                                 var aria_http = new Model.AriaHttp ();
                                 aria_http.update_by_ht (ht);
-                                if (aria_http.status != "complete")
+                                if (aria_http.status != "complete") {
                                     download_list.add_file (aria_http);
+                                }
                             }
                         } else {
                             //just update the content
-                            if (d_item is AriaHttp)
+                            if (d_item is AriaHttp) {
                                 (d_item as AriaHttp).update_by_ht (ht);
-                            else if (d_item is AriaMagnet)
+                            } else if (d_item is AriaMagnet) {
                                 (d_item as AriaMagnet).update_by_ht (ht);
+                            }
                         }
                     }
                 }

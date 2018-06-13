@@ -49,8 +49,9 @@ public class FinishedList : Object {
     private void load_list_from_file() {
         string data = Utils.load_string (_save_path);
 
-        if (data == null)
+        if (data == null) {
             return;
+        }
 
         try {
             Value v;
@@ -64,8 +65,9 @@ public class FinishedList : Object {
                         ht = (HashTable < string, Value ? >) viter;
                         var finished_item = new FinishedItem.from_ht (ht);
                         //finished_item.xml_value=viter; //set xml_value to be processed by FinishedItem
-                        if (finished_item.file_exist () )
+                        if (finished_item.file_exist () ) {
                             list.append (finished_item);
+                        }
                     }
 
                 }

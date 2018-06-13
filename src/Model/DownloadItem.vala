@@ -36,8 +36,9 @@ public class DownloadItem : Object {
             msg = XMLRPC.request_new (aria2.aria_uri, "aria2.addUri",
                                       typeof (ValueArray), _uris,
                                       typeof (HashTable), options);
-        else
+        else {
             msg = XMLRPC.request_new (aria2.aria_uri, "aria2.addUri", typeof (ValueArray), _uris);
+        }
         string data = send_message (msg);
         stdout.printf (data);
         try {
@@ -49,8 +50,9 @@ public class DownloadItem : Object {
                     debug ("added gid = %s \n".printf (_gid) );
                     this.gid = _gid;
                 }
-            } else
+            } else {
                 debug ("cant parse_method_response");
+            }
         } catch (Error e) {
             debug ("Error while processing addUri response");
         }

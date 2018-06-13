@@ -39,8 +39,9 @@ public class DownloadingList : Gtk.Stack {
         add_named (new WelcomeWidget ("", _ ("Search Not Found") ), "not found");
 
         tree_view.button_release_event.connect ( (event) => {
-            if (event.button == 3)
+            if (event.button == 3) {
                 show_popup_menu (event);
+            }
             return false;
         });
 
@@ -86,14 +87,21 @@ public class DownloadingList : Gtk.Stack {
         //TODO:implement right click event
         start.activate.connect (() => {
             foreach (Arrive.Model.IDownloadItem d_item in selected_files) {
-                if (d_item.status == "paused") d_item.unpause ();
-                if (d_item.status == "") d_item.start ();
-                if (d_item.status == "stopped") d_item.start ();
+                if (d_item.status == "paused") {
+                    d_item.unpause ();
+                }
+                if (d_item.status == "") {
+                    d_item.start ();
+                }
+                if (d_item.status == "stopped") {
+                    d_item.start ();
+                }
             }
         });
         pause.activate.connect (() => {
-            foreach (Arrive.Model.IDownloadItem d_item in selected_files)
+            foreach (Arrive.Model.IDownloadItem d_item in selected_files) {
                 d_item.pause ();
+            }
         });
         remove.activate.connect (() => {
             string text;
@@ -112,8 +120,9 @@ public class DownloadingList : Gtk.Stack {
             msg.set_title (_ ("Delete Download") );
             msg.response.connect ( (response_id) => {
                 if (response_id == Gtk.ResponseType.YES) {
-                    foreach (Arrive.Model.IDownloadItem d_item in selected_files)
+                    foreach (Arrive.Model.IDownloadItem d_item in selected_files) {
                         download_list.remove_file (d_item);
+                    }
                 }
                 msg.destroy ();
             });
@@ -121,10 +130,16 @@ public class DownloadingList : Gtk.Stack {
         });
         //~         properties.connect();
 
-        if (allow_start (selected_files) ) menu.add (start);
-        if (allow_pause (selected_files) ) menu.add (pause);
+        if (allow_start (selected_files) ) {
+            menu.add (start);
+        }
+        if (allow_pause (selected_files) ) {
+            menu.add (pause);
+        }
         menu.add (new Gtk.SeparatorMenuItem () );
-        if (allow_remove (selected_files) ) menu.add (remove);
+        if (allow_remove (selected_files) ) {
+            menu.add (remove);
+        }
         //if(allow_properties (selected_files)) menu.add (properties);
 
         menu.attach_to_widget (tree_view, null);
@@ -134,15 +149,18 @@ public class DownloadingList : Gtk.Stack {
     private bool allow_start (List<Arrive.Model.IDownloadItem> selected_files) {
         bool allow = false;
         foreach (Arrive.Model.IDownloadItem d_item in selected_files) {
-            if (d_item.status != "active")
+            if (d_item.status != "active") {
                 allow = true;
+            }
         }
         return allow;
     }
     private bool allow_pause (List<Arrive.Model.IDownloadItem> selected_files) {
         bool allow = false;
         foreach (Arrive.Model.IDownloadItem d_item in selected_files)
-            if (d_item.status == "active") allow = true;
+            if (d_item.status == "active") {
+                allow = true;
+            }
         return allow;
     }
     private bool allow_remove (List<Arrive.Model.IDownloadItem> selected_files) {
@@ -161,23 +179,26 @@ public class DownloadingList : Gtk.Stack {
             Value d_item;
             model.get_iter (out selection_iter, selection_item);
             model.get_value (selection_iter, 0, out d_item);
-            if (d_item.holds (typeof (Model.IDownloadItem) ) )
+            if (d_item.holds (typeof (Model.IDownloadItem) ) ) {
                 list.append ( (Model.IDownloadItem) d_item);
-            else
+            } else {
                 debug ("value arent download item");
+            }
         }
         return list;
     }
     //filetering using search bar
     private bool visible_func (Gtk.TreeModel t_model, Gtk.TreeIter t_iter) {
-        if (filter_string == "" || filter_string == null)
+        if (filter_string == "" || filter_string == null) {
             return true;
+        }
         if (t_model.iter_has_child (t_iter) ) { //check if its date iter
             for (int i = 0; i < t_model.iter_n_children (t_iter); i++) {
                 Gtk.TreeIter child_iter;
                 t_model.iter_nth_child (out child_iter, t_iter, i);
-                if (contains_string (t_model, child_iter) )
-                    return true;//one of iter child contains search string
+                if (contains_string (t_model, child_iter) ) {
+                    return true;    //one of iter child contains search string
+                }
             }
         } else {
             return contains_string (t_model, t_iter);
@@ -190,12 +211,14 @@ public class DownloadingList : Gtk.Stack {
         var row_length = length ();
         //simple logic for showing welcome screen and search not found
         if (row_length == 0) {
-            if (this.filter_string == "")
+            if (this.filter_string == "") {
                 this.set_visible_child_name ("welcome");
-            else
+            } else {
                 this.set_visible_child_name ("not found");
-        } else
+            }
+        } else {
             this.set_visible_child_name ("scrolled");
+        }
     }
     private int length () {
         int length = 0;

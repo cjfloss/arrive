@@ -83,14 +83,16 @@ public class FinishedList : Gtk.Stack {
     }
     //filetering using search bar
     private bool visible_func (Gtk.TreeModel t_model, Gtk.TreeIter t_iter) {
-        if (filter_string == "")
+        if (filter_string == "") {
             return true;
+        }
         if (t_model.iter_has_child (t_iter) ) { // check if its date iter
             for (int i = 0; i < t_model.iter_n_children (t_iter); i++) {
                 Gtk.TreeIter child_iter;
                 t_model.iter_nth_child (out child_iter, t_iter, i);
-                if (contains_string (t_model, child_iter) )
-                    return true;//one of iter child contains search string
+                if (contains_string (t_model, child_iter) ) {
+                    return true;    //one of iter child contains search string
+                }
             }
         } else {
             return contains_string (t_model, t_iter);
@@ -128,12 +130,14 @@ public class FinishedList : Gtk.Stack {
         var row_length = length ();
         //simple logic for showing welcome screen and search not found
         if (row_length == 0) {
-            if (this.filter_string == "")
+            if (this.filter_string == "") {
                 set_visible_child_name ("welcome");
-            else
+            } else {
                 set_visible_child_name ("not found");
-        } else
+            }
+        } else {
             set_visible_child_name ("scrolled");
+        }
         tree_view.expand_all ();
     }
     private void show_popup_menu (Gdk.EventButton event) {
@@ -149,12 +153,14 @@ public class FinishedList : Gtk.Stack {
         var properties = new Gtk.MenuItem.with_label (_ ("Properties") );
 
         open_file.activate.connect (() => {
-            if (get_selected_files ().length () == 1)
+            if (get_selected_files ().length () == 1) {
                 get_selected_files ().nth_data (0).open_file ();
+            }
         });
         open_folder.activate.connect (() => {
-            if (get_selected_files ().length () == 1)
+            if (get_selected_files ().length () == 1) {
                 get_selected_files ().nth_data (0).open_folder ();
+            }
         });
         move_to.activate.connect (() => {
             var file_chooser = new Gtk.FileChooserDialog (
@@ -248,17 +254,20 @@ public class FinishedList : Gtk.Stack {
         GLib.List<Gtk.TreePath> d_items = selection.get_selected_rows (null);
         Gtk.TreeModel model = tree_view.get_model ();
         foreach (Gtk.TreePath selection_item in d_items) {
-            if (selection_item.get_depth () < 2)
+            if (selection_item.get_depth () < 2) {
                 continue;
+            }
             Value vf_item;
             model.get_iter (out selection_iter, selection_item);
             model.get_value (selection_iter, 2, out vf_item);
             if (vf_item.holds (typeof (Model.FinishedItem) ) ) {
                 var f_item = (Model.FinishedItem) vf_item;
-                if (f_item.filename != null)
+                if (f_item.filename != null) {
                     list.append ( (Model.FinishedItem) f_item);
-            } else
+                }
+            } else {
                 debug ("value arent FinishedItem");
+            }
         }
         return list;
     }

@@ -24,8 +24,9 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
             file_name_renderer.markup = Markup.printf_escaped ( "<span weight='bold' size='larger'>%s</span>",
                     _file.filename);
 
-            if (_file.total_length != 0)
+            if (_file.total_length != 0) {
                 download_progress_renderer.value = (int) (100 * _file.completed_length / _file.total_length);
+            }
             download_progress_renderer.text = "%s of %s".printf (format_size (_file.completed_length),
                     format_size (_file.total_length) );
             //if (_file is Model.AriaHttp)
@@ -223,10 +224,12 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
         ri_renderer.render (ctx, widget, ri_renderer_rect, ri_renderer_rect, flags);//time icon
     }
     private string get_remaining_time () {
-        if (_file.download_speed == 0)
+        if (_file.download_speed == 0) {
             return _ ("unknown");
-        if (_file.total_length < _file.completed_length)
+        }
+        if (_file.total_length < _file.completed_length) {
             return _ ("few seconds");
+        }
         uint64 seconds = (_file.total_length - _file.completed_length) / _file.download_speed;
 
         string remaining = "";
@@ -267,13 +270,15 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
         string content_type = ContentType.guess (_file.filename, null, null);
         Icon icon = ContentType.get_icon (content_type);
 
-        if (icon is ThemedIcon)
+        if (icon is ThemedIcon) {
             icon_name = (icon as ThemedIcon).names[0];
-        else
+        } else {
             icon_name = "text-x-generic";
+        }
 
-        if (icon_name == null)
+        if (icon_name == null) {
             return null;
+        }
         try {
             pixbuf = Gtk.IconTheme.get_default ().load_icon (icon_name, ICON_SIZE, 0);
         } catch (Error e) {

@@ -27,8 +27,9 @@ public class AriaHttp : Object, IDownloadItem {
         update_by_ht (ht);
 
         bool pause = true;
-        if (this.status == "active")
+        if (this.status == "active") {
             pause = false;
+        }
         this.gid = Model.aria2.add_uri (this.uris, this.dir, this.connections, pause);
     }
     public void start () {
@@ -88,13 +89,15 @@ public class AriaHttp : Object, IDownloadItem {
                     _uris.append (get_string_from_ht (hturi, "uri") );
                     this.uris = get_string_from_ht (hturi, "uri");
                 }
-                if (path != "")
+                if (path != "") {
                     filename = path;
-                else
+                } else {
                     filename = parse_filename (_uris.get_nth (0).get_string () );
+                }
             }
-        } else
+        } else {
             filename = _ ("cant get filename");
+        }
 
         status = get_string_from_ht (ht, "status");
     }
@@ -152,8 +155,9 @@ public class AriaHttp : Object, IDownloadItem {
         if (ht.get (key) != null) {
             Value val = ht.get (key);
             return val.get_string ();
-        } else
+        } else {
             return "";
+        }
     }
     private string parse_filename (string path) {
         if (path != null && path != "") {

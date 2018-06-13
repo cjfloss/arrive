@@ -43,11 +43,13 @@ public class AddFileDialog : Gtk.Dialog {
         uri_entry1.set_placeholder_text ("http://");
         if (uri == "") {
             Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ( (clipboard, cbtext) => {
-                if (cbtext != null)
+                if (cbtext != null) {
                     uri_entry1.text = valid_http (cbtext) ?? "";
+                }
             });
-        } else
+        } else {
             uri_entry1.text = valid_http (uri) ?? "";
+        }
 
         grid1.attach (uri_entry1, 1, 0, 6, 1);
         grid1.attach (create_right_align (_ ("Save to :") ), 0, 1, 1, 1);
@@ -91,11 +93,13 @@ public class AddFileDialog : Gtk.Dialog {
         uri_entry1.set_vexpand (true);
         if (magnet == "") {
             Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ( (clipboard, cbtext) => {
-                if (cbtext != null)
+                if (cbtext != null) {
                     uri_entry1.text = valid_magnet (cbtext) ?? "";
+                }
             });
-        } else
+        } else {
             uri_entry1.text =  valid_magnet (magnet) ?? "";
+        }
 
         grid.attach (uri_entry1, 1, 0, 2, 1);
         grid.attach (create_right_align (_ ("Save to :") ), 0, 1, 1, 1);
