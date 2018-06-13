@@ -245,6 +245,8 @@ public class MainWindow : Gtk.Window {
         stack = new Gtk.Stack ();
         stack.add_titled (downloading_list, "downloading_list", _ ("Downloading") );
         stack.add_titled (finished_list, "finished_list", _ ("Finished") );
+        stack.set_transition_type (Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
+
         stack_switcher = new Gtk.StackSwitcher ();
         stack_switcher.set_hexpand (true);
         stack_switcher.set_margin_top (2);

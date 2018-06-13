@@ -4,22 +4,27 @@ public class AddFileDialog : Gtk.Dialog {
     private Model.Settings _settings;
     private Model.DownloadList _download_list;
     public AddFileDialog (Model.DownloadList download_list, Model.Settings settings, string uri) {
+        Object (use_header_bar: 1,
+                resizable: false,
+                window_position: Gtk.WindowPosition.CENTER
+                );
+
         _download_list = download_list;
         _settings = settings;
-        this.window_position = Gtk.WindowPosition.CENTER;
-        this.set_resizable (false);
 
         var stack = new Gtk.Stack ();
         stack.add_titled (create_page_1 (uri), _ ("http/ftp"), "http");
         stack.add_titled (create_page_2 (uri), _ ("magnet"), "magnet");
         stack.add_titled (create_page_3 (uri), _ ("torrent"), "torrent");
+        stack.set_transition_type (Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
 
         var stack_switcher = new Gtk.StackSwitcher ();
         stack_switcher.set_stack (stack);
         stack_switcher.set_halign (Gtk.Align.CENTER);
+        ((Gtk.HeaderBar) this.get_header_bar ()).set_custom_title (stack_switcher);
 
         var grid = new Gtk.Grid ();
-        grid.attach (stack_switcher, 0, 0, 1, 1);
+        //grid.attach (stack_switcher, 0, 0, 1, 1);
         grid.attach (stack, 0, 1, 1, 1);
         get_content_area ().pack_start (grid);
 
