@@ -1,8 +1,8 @@
 namespace Arrive.Widgets {
 public class DownloadCellRenderer : Gtk.CellRenderer {
-    private static const int PADDING = 4;
-    private static const int ICON_SIZE = 48;
-    private static const int RIGHT_COLUMN_WIDTH = 80;
+    private const int PADDING = 4;
+    private const int ICON_SIZE = 48;
+    private const int RIGHT_COLUMN_WIDTH = 80;
 
     private Gtk.CellRendererPixbuf icon_renderer;
     private Gtk.CellRendererText file_name_renderer;
@@ -27,10 +27,11 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
             if (_file.total_length != 0) {
                 download_progress_renderer.value = (int) (100 * _file.completed_length / _file.total_length);
             }
+
             download_progress_renderer.text = "%s of %s".printf (format_size (_file.completed_length),
                     format_size (_file.total_length) );
             //if (_file is Model.AriaHttp)
-            status_renderer.text = _ ("status:%s connections:%s").printf (_file.status, _file.gid);
+            status_renderer.text = _ ("status: %s connections: %s").printf (_file.status, _file.gid);
             //if (_file is Model.AriaMagnet)
             //    status_renderer.text = _("status:%s file:%s").printf (_file.status,(_file as Model.AriaMagnet).path_files.length ());
 
@@ -189,11 +190,13 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
             height = download_renderer_height,
             width = download_renderer_height
         };
+
         try {
             ri_renderer.pixbuf = Gtk.IconTheme.get_default().load_icon ("go-down", download_renderer_height - 6, 0);
         } catch (Error e) {
             debug ("error code %d", e.code);
         }
+
         ri_renderer.render (ctx, widget, ri_renderer_rect, ri_renderer_rect, flags); //download icon
 
         ri_renderer_rect = Gdk.Rectangle() {
@@ -202,11 +205,13 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
             height = upload_renderer_height,
             width = upload_renderer_height
         };
+
         try {
             ri_renderer.pixbuf = Gtk.IconTheme.get_default().load_icon ("go-up", upload_renderer_height - 6, 0);
         } catch (Error e) {
             debug ("error code %d", e.code);
         }
+
         ri_renderer.render (ctx, widget, ri_renderer_rect, ri_renderer_rect, flags);//upload icon
 
         ri_renderer_rect = Gdk.Rectangle() {
@@ -215,49 +220,61 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
             height = time_renderer_height,
             width = time_renderer_height
         };
+
         try {
             ri_renderer.pixbuf = Gtk.IconTheme.get_default ().load_icon ("preferences-system-time",
                                  time_renderer_height - 6, 0);
         } catch (Error e) {
             debug ("error code %d", e.code);
         }
+
         ri_renderer.render (ctx, widget, ri_renderer_rect, ri_renderer_rect, flags);//time icon
     }
     private string get_remaining_time () {
         if (_file.download_speed == 0) {
             return _ ("unknown");
         }
+
         if (_file.total_length < _file.completed_length) {
             return _ ("few seconds");
         }
+
         uint64 seconds = (_file.total_length - _file.completed_length) / _file.download_speed;
 
         string remaining = "";
         uint64 div;
         //divided by one week
         div = seconds / 604800;
+
         if (div >= 1) {
             remaining += _ ("%lldw").printf (div);
             seconds = seconds % 604800;
         }
+
         //divided by one day
         div = seconds / 86400;
+
         if (div >= 1) {
             remaining += _ ("%lldd").printf (div);
             seconds = seconds % 86400;
         }
+
         //divided by one day
         div = seconds / 3600;
+
         if (div >= 1) {
             remaining += _ ("%lldh").printf (div);
             seconds = seconds % 3600;
         }
+
         //divided by one minute
         div = seconds / 60;
+
         if (div >= 1) {
             remaining += _ ("%lldm").printf (div);
             seconds = seconds % 60;
         }
+
         //adding seconds left
         remaining += _ ("%llds").printf (seconds);
         return remaining;
@@ -279,11 +296,13 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
         if (icon_name == null) {
             return null;
         }
+
         try {
             pixbuf = Gtk.IconTheme.get_default ().load_icon (icon_name, ICON_SIZE, 0);
         } catch (Error e) {
             pixbuf = null;
         }
+
         return pixbuf;
     }
 }
