@@ -31,7 +31,7 @@ executable(
     'Model/Settings.vala',
 
     dependencies: [
-        dependency('gtk+-3.0', version :'>=3.10'),
+        dependency('gtk+-3.0', version :'>=3.22'),
         dependency('libsoup-2.4',),
         dependency('gee-0.8'),
         dependency('gio-2.0'),

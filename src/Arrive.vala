@@ -8,7 +8,7 @@ public class App : Gtk.Application {
     public static bool quiet;
 
     public App () {
-        Object (application_id: "org.vikoadi.arrive");
+        Object (application_id: "com.github.cjfloss.arrive");
     }
     /* construct { */
     /*     message ("construct"); */
@@ -41,7 +41,7 @@ public class App : Gtk.Application {
     /*     about_license_type = Gtk.License.GPL_3_0; */
     /* } */
     protected override void activate () {
-        message ("activate " + uri);
+        debug ("-- func: activate -- " + uri);
 
         if (Model.aria2 == null) {
             settings = new Model.Settings ();
@@ -77,7 +77,7 @@ public class App : Gtk.Application {
     };
     public static int main (string[] args) {
         Gtk.init (ref args);
-        message ("main");
+        debug ("-- func: main --");
 
         var context = new OptionContext ("");
         context.add_main_entries (entries, "arrive");
@@ -88,6 +88,7 @@ public class App : Gtk.Application {
         } catch (Error e) {
             warning (e.message);
         }
+
         var app = new App ();
 
         return app.run (args);

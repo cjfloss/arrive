@@ -33,7 +33,7 @@ public class SavedState {
     }
 
     public SavedState () {
-        schema = new GLib.Settings ("org.pantheon.arrive.saved-state");
+        schema = new GLib.Settings ("com.github.cjfloss.arrive.saved-state");
     }
 }
 
@@ -51,7 +51,7 @@ public class Settings : Object {
     }
     public FinishedAction finished_action {get; set;}
     public Settings () {
-        schema = new GLib.Settings ("org.pantheon.arrive.settings");
+        schema = new GLib.Settings ("com.github.cjfloss.arrive.settings");
     }
 }
 }

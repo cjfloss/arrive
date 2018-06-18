@@ -42,6 +42,7 @@ public class DownloadingList : Gtk.Stack {
             if (event.button == 3) {
                 show_popup_menu (event);
             }
+
             return false;
         });
 
@@ -70,6 +71,7 @@ public class DownloadingList : Gtk.Stack {
     private void populate_list_store () {
         list_store.clear ();
         debug ("list lenght %u", download_list.files.length () );
+
         foreach (Arrive.Model.IDownloadItem file in download_list.files) {
             Gtk.TreeIter iter;
             list_store.append (out iter);
@@ -90,9 +92,11 @@ public class DownloadingList : Gtk.Stack {
                 if (d_item.status == "paused") {
                     d_item.unpause ();
                 }
+
                 if (d_item.status == "") {
                     d_item.start ();
                 }
+
                 if (d_item.status == "stopped") {
                     d_item.start ();
                 }
@@ -105,6 +109,7 @@ public class DownloadingList : Gtk.Stack {
         });
         remove.activate.connect (() => {
             string text;
+
             if (selected_files.length () == 1) {
                 text =
                     _ ("Are You sure you want to delete %s ?").printf (selected_files.nth_data (0).filename);
@@ -112,6 +117,7 @@ public class DownloadingList : Gtk.Stack {
                 text =
                     _ ("Are You sure you want to delete %d downloads?").printf ( (int) selected_files.length () );
             }
+
             Gtk.MessageDialog msg = new Gtk.MessageDialog (null,
                     Gtk.DialogFlags.MODAL,
                     Gtk.MessageType.WARNING,
@@ -124,6 +130,7 @@ public class DownloadingList : Gtk.Stack {
                         download_list.remove_file (d_item);
                     }
                 }
+
                 msg.destroy ();
             });
             msg.show ();
@@ -133,34 +140,42 @@ public class DownloadingList : Gtk.Stack {
         if (allow_start (selected_files) ) {
             menu.add (start);
         }
+
         if (allow_pause (selected_files) ) {
             menu.add (pause);
         }
+
         menu.add (new Gtk.SeparatorMenuItem () );
+
         if (allow_remove (selected_files) ) {
             menu.add (remove);
         }
+
         //if(allow_properties (selected_files)) menu.add (properties);
 
         menu.attach_to_widget (tree_view, null);
         menu.show_all ();
-        menu.popup (null, null, null, event.button, event.time);
+        menu.popup_at_pointer (event);
     }
     private bool allow_start (List<Arrive.Model.IDownloadItem> selected_files) {
         bool allow = false;
+
         foreach (Arrive.Model.IDownloadItem d_item in selected_files) {
             if (d_item.status != "active") {
                 allow = true;
             }
         }
+
         return allow;
     }
     private bool allow_pause (List<Arrive.Model.IDownloadItem> selected_files) {
         bool allow = false;
+
         foreach (Arrive.Model.IDownloadItem d_item in selected_files)
             if (d_item.status == "active") {
                 allow = true;
             }
+
         return allow;
     }
     private bool allow_remove (List<Arrive.Model.IDownloadItem> selected_files) {
@@ -175,16 +190,19 @@ public class DownloadingList : Gtk.Stack {
         Gtk.TreeSelection selection = tree_view.get_selection ();
         GLib.List<Gtk.TreePath> d_items = selection.get_selected_rows (null);
         Gtk.TreeModel model = tree_view.get_model ();
+
         foreach (Gtk.TreePath selection_item in d_items) {
             Value d_item;
             model.get_iter (out selection_iter, selection_item);
             model.get_value (selection_iter, 0, out d_item);
+
             if (d_item.holds (typeof (Model.IDownloadItem) ) ) {
                 list.append ( (Model.IDownloadItem) d_item);
             } else {
                 debug ("value arent download item");
             }
         }
+
         return list;
     }
     //filetering using search bar
@@ -192,10 +210,12 @@ public class DownloadingList : Gtk.Stack {
         if (filter_string == "" || filter_string == null) {
             return true;
         }
+
         if (t_model.iter_has_child (t_iter) ) { //check if its date iter
             for (int i = 0; i < t_model.iter_n_children (t_iter); i++) {
                 Gtk.TreeIter child_iter;
                 t_model.iter_nth_child (out child_iter, t_iter, i);
+
                 if (contains_string (t_model, child_iter) ) {
                     return true;    //one of iter child contains search string
                 }
@@ -203,12 +223,14 @@ public class DownloadingList : Gtk.Stack {
         } else {
             return contains_string (t_model, t_iter);
         }
+
         return false;
     }
     public void filter (string filter_string) {
         this.filter_string = filter_string;
         tree_filter.refilter ();
         var row_length = length ();
+
         //simple logic for showing welcome screen and search not found
         if (row_length == 0) {
             if (this.filter_string == "") {
@@ -223,18 +245,22 @@ public class DownloadingList : Gtk.Stack {
     private int length () {
         int length = 0;
         Gtk.TreeIter iter;
+
         for (bool next = tree_filter.get_iter_first (out iter); next; next = tree_filter.iter_next (ref iter) ) {
             length++;
         }
+
         return length;
     }
     private bool contains_string (Gtk.TreeModel t_model, Gtk.TreeIter t_iter) {
         Value item;
         t_model.get_value (t_iter, 0, out item);
         Model.IDownloadItem d_item = (Model.IDownloadItem) item;
+
         if (d_item.filename.down ().contains (filter_string.down () ) ) {
             return true;
         }
+
         return false;
     }
 }
