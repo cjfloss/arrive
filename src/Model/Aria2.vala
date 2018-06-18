@@ -46,9 +46,11 @@ public class Aria2 : Object {
 
         var option = new HashTable < string, Value ? > (str_hash, str_equal);
         option.insert ("dir", dir);
+
         if (split < 1) {
             split = 1;
         }
+
         option.insert ("split", split.to_string () );
         option.insert ("pause", pause.to_string () );
 
@@ -58,8 +60,10 @@ public class Aria2 : Object {
                            typeof (HashTable), option
                                                    );
         var data = send_message (msg);
+
         try {
             Value v;
+
             if (Soup.XMLRPC.parse_method_response (data, -1, out v) ) {
                 return v.get_string (); // return gid
             } else {
@@ -68,6 +72,7 @@ public class Aria2 : Object {
         } catch (Error e) {
             warning ("error while add_uri " + e.message);
         }
+
         return "";
     }
     public string add_torrent (string torrent_path) {
@@ -78,12 +83,16 @@ public class Aria2 : Object {
                            "aria2.addTorrent",
                            typeof (GLib.ByteArray), byte
                                                    );
+
         if (msg == null) {
             return "";
         }
+
         var data = send_message (msg);
+
         try {
             Value v;
+
             if (Soup.XMLRPC.parse_method_response (data, -1, out v) ) {
                 return v.get_string();//return gid
             } else {
@@ -98,10 +107,11 @@ public class Aria2 : Object {
     public string encode64 (string torrent_path) {
         string data = "";
         File save_file = File.new_for_path (torrent_path);
+
         if ( save_file.query_exists () ) { // check file exist
             try {
                 var data_stream = new DataInputStream (save_file.read () );
-                data = data_stream.read_until ("", null);
+                data = data_stream.read_upto ("", "".length, null);
                 data = Base64.encode (data.data);
             } catch (Error e) {
                 warning ("cant load string: %s", e.message);
@@ -109,6 +119,7 @@ public class Aria2 : Object {
         } else {
             warning ("can't load string");
         }
+
         return data;
     }
     private void start_aria2c () {
@@ -166,8 +177,10 @@ public class Aria2 : Object {
         } catch (GLib.SpawnError error) {
             critical ("cant start aria2c %s", error.message);
         }
+
         //need to wait for aria to load
         Thread.usleep (500000);
+
         if (get_version () == "") {
             critical ("cant start or bind port, please restart and wait a few second before reruning Arrive");
             is_listened = false;
@@ -239,9 +252,11 @@ public class Aria2 : Object {
     private void put_data_to_list (string data) {
         try {
             Value v;
+
             if (Soup.XMLRPC.parse_method_response (data, -1, out v) && v.holds (typeof (ValueArray) ) ) {
                 unowned ValueArray va;
                 va = (ValueArray) v;
+
                 foreach (Value viter in va) {
                     if (viter.holds (typeof (HashTable) ) ) { // viter will hold download list xml
                         HashTable < string, Value ? > ht;
@@ -252,10 +267,12 @@ public class Aria2 : Object {
                         var gid = val.get_string ();
 
                         var d_item = download_list.get_by_gid (gid);
+
                         if ( d_item == null) {
                             //TODO:item that arent exist in download_list should be added to download_list
                             var aria_magnet = new Model.AriaMagnet ();
                             aria_magnet.update_by_ht (ht);
+
                             if (aria_magnet.info_hash != null && aria_magnet.info_hash != "") {
                                 if (aria_magnet.status != "complete") {
                                     download_list.add_file (aria_magnet);
@@ -263,6 +280,7 @@ public class Aria2 : Object {
                             } else {
                                 var aria_http = new Model.AriaHttp ();
                                 aria_http.update_by_ht (ht);
+
                                 if (aria_http.status != "complete") {
                                     download_list.add_file (aria_http);
                                 }
@@ -284,6 +302,7 @@ public class Aria2 : Object {
     }
     private void clean_finished () {
         List<IDownloadItem> finished_items = download_list.get_by_status ("complete");
+
         foreach (IDownloadItem finished_item in finished_items) {
             try {
                 new Notify.Notification (finished_item.filename,
@@ -321,8 +340,10 @@ public class Aria2 : Object {
     private void get_global_stat () {
         Soup.Message msg = XMLRPC.request_new (aria_uri, "aria2.getGlobalStat");
         string data = send_message (msg);
+
         try {
             Value v;
+
             if (Soup.XMLRPC.parse_method_response (data, -1, out v) ) {
                 HashTable < string, Value ? > ht;
                 Value val;
@@ -352,8 +373,10 @@ public class Aria2 : Object {
         string version = "";
         Soup.Message msg = XMLRPC.request_new (aria_uri, "aria2.getVersion");
         string data = send_message (msg);
+
         try {
             Value v;
+
             if (Soup.XMLRPC.parse_method_response (data, -1, out v) ) {
                 HashTable < string, Value ? > ht;
                 Value val;
@@ -366,6 +389,7 @@ public class Aria2 : Object {
         } catch (Error e) {
             warning ("Error while processing getVersion response");
         }
+
         return version;
     }
     public void shutdown () {
@@ -381,6 +405,7 @@ public class Aria2 : Object {
     }
     private string send_message (Soup.Message message) {
         string data = "";
+
         if (is_listened) {
             var session = new Session ();
             session.send_message (message);
@@ -392,6 +417,7 @@ public class Aria2 : Object {
                 debug ("send_message return null");
             }
         }
+
         return data;
     }
 }
