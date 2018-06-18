@@ -71,6 +71,7 @@ public class FinishedItem : Object {
         try {
             File file = File.new_for_path (path);
             File dest = File.new_for_path (destination + "/" + filename);
+
             if (file != null && dest != null && !dest.query_exists () ) {
                 file.copy_async.begin (dest, FileCopyFlags.NONE);
                 return true;
@@ -80,6 +81,7 @@ public class FinishedItem : Object {
         } catch (Error e) {
             warning (e.message);
         }
+
         return false;
     }
     //FIXME: file copy doesnt work

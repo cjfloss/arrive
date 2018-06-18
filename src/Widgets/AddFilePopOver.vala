@@ -22,6 +22,7 @@ public class AddFilePopOver : Gtk.Popover {
                 v_array.append (uri_entry.text);
                 Arrive.App.aria2.add_file (v_array);
             }
+
             destroy ();
         });
         grid.attach (new Gtk.Label ("segment :"), 4, 1, 1, 1);

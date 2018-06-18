@@ -26,15 +26,18 @@ public class DownloadList : Object, Model.IDownloadList {
                 return d_item;
             }
         }
+
         return null;
     }
     public List<Model.IDownloadItem> get_by_status (string status) {
         var finished_items = new List<Model.IDownloadItem> ();
+
         foreach (Model.IDownloadItem d_item in _files) {
             if (d_item.status == status) {
                 finished_items.append (d_item);
             }
         }
+
         return finished_items;
     }
     public Model.IDownloadItem ? get_by_filename (string filename) {
@@ -47,6 +50,7 @@ public class DownloadList : Object, Model.IDownloadList {
         if (_files == null) {
             return 0;
         }
+
         return (int) _files.length ();
     }
     public void add_file (Model.IDownloadItem download_item) {
@@ -67,6 +71,7 @@ public class DownloadList : Object, Model.IDownloadList {
     }
     private void save_list (string filename) {
         ValueArray va = new ValueArray (0);
+
         foreach (Model.IDownloadItem d_item in _files)
             if (d_item is Model.AriaHttp) {
                 var val = Value (typeof (HashTable) );
@@ -94,18 +99,22 @@ public class DownloadList : Object, Model.IDownloadList {
 
         try {
             Value v;
+
             if (Soup.XMLRPC.parse_method_response (data, -1, out v)
                     && v.holds (typeof (ValueArray) ) ) { //get value from xml string
                 unowned ValueArray va;
                 va = (ValueArray) v;
+
                 foreach (Value viter in va) {
                     if (viter.holds (typeof (HashTable) ) ) {
                         HashTable < string, Value ? > ht = (HashTable < string, Value ? >) viter;
+
                         switch (ht.get ("item_type").get_string () ) {
                             case "AriaHttp" :
                                 var aria_http = new Model.AriaHttp.with_ht (ht);
                                 add_file (aria_http);
                                 break;
+
                             case "AriaMagnet" :
                                 var aria_magnet = new Model.AriaMagnet.with_ht (ht);
                                 add_file (aria_magnet);

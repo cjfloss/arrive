@@ -34,6 +34,7 @@ public class LauncherEntry : Object {
                 total_length += d_item.total_length;
             }
         }
+
         double completed_percentage = (double) completed_length / total_length;
         return completed_percentage;
     }

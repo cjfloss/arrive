@@ -32,6 +32,7 @@ public class DownloadItem : Object {
     public void start (HashTable ? options) {
         Soup.Message msg;
         debug ("start");
+
         if (options != null)
             msg = XMLRPC.request_new (aria2.aria_uri, "aria2.addUri",
                                       typeof (ValueArray), _uris,
@@ -39,12 +40,16 @@ public class DownloadItem : Object {
         else {
             msg = XMLRPC.request_new (aria2.aria_uri, "aria2.addUri", typeof (ValueArray), _uris);
         }
+
         string data = send_message (msg);
         stdout.printf (data);
+
         try {
             Value v = Value (typeof (string) );
+
             if (XMLRPC.parse_method_response (data, -1, out v) ) {
                 string _gid;
+
                 if (v.holds (typeof (string) ) ) {
                     _gid = v.get_string ();
                     debug ("added gid = %s \n".printf (_gid) );
@@ -95,6 +100,7 @@ public class DownloadItem : Object {
             var fn = array[array.length - 1];
             return fn;
         }
+
         return "";
     }
     private string send_message (Soup.Message msg) {

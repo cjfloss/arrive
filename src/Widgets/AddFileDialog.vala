@@ -7,7 +7,7 @@ public class AddFileDialog : Gtk.Dialog {
         Object (use_header_bar: 1,
                 resizable: false,
                 window_position: Gtk.WindowPosition.CENTER
-                );
+               );
 
         _download_list = download_list;
         _settings = settings;
@@ -21,7 +21,7 @@ public class AddFileDialog : Gtk.Dialog {
         var stack_switcher = new Gtk.StackSwitcher ();
         stack_switcher.set_stack (stack);
         stack_switcher.set_halign (Gtk.Align.CENTER);
-        ((Gtk.HeaderBar) this.get_header_bar ()).set_custom_title (stack_switcher);
+        ( (Gtk.HeaderBar) this.get_header_bar () ).set_custom_title (stack_switcher);
 
         var grid = new Gtk.Grid ();
         //grid.attach (stack_switcher, 0, 0, 1, 1);
@@ -46,6 +46,7 @@ public class AddFileDialog : Gtk.Dialog {
         grid1.attach (create_right_align (_ ("Uri :") ), 0, 0, 1, 1);
         var uri_entry1 = new Gtk.Entry ();
         uri_entry1.set_placeholder_text ("http://");
+
         if (uri == "") {
             Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ( (clipboard, cbtext) => {
                 if (cbtext != null) {
@@ -78,6 +79,7 @@ public class AddFileDialog : Gtk.Dialog {
                 aria_http.start ();
                 _download_list.add_file (aria_http);
             }
+
             this.destroy ();
         });
         grid1.attach (add_button1, 5, 2, 1, 1);
@@ -96,6 +98,7 @@ public class AddFileDialog : Gtk.Dialog {
         var uri_entry1 = new Gtk.Entry ();
         uri_entry1.set_placeholder_text ("magnet:");
         uri_entry1.set_vexpand (true);
+
         if (magnet == "") {
             Gtk.Clipboard.get (Gdk.SELECTION_CLIPBOARD).request_text ( (clipboard, cbtext) => {
                 if (cbtext != null) {
@@ -123,6 +126,7 @@ public class AddFileDialog : Gtk.Dialog {
                 aria_magnet.start ();
                 _download_list.add_file (aria_magnet);
             }
+
             this.destroy ();
         });
         grid.attach (add_button1, 1, 2, 1, 1);
@@ -161,10 +165,12 @@ public class AddFileDialog : Gtk.Dialog {
     }
     private string ? valid_http (string ? uri) {
         string valid = null;
+
         if (uri != null && uri.has_prefix ("http://") || uri.has_prefix ("ftp://") ) {
             valid = uri.down ();
             valid = valid.split (" ") [0];
         }
+
         return valid;
     }
     private bool is_valid_magnet (string uri) {
@@ -172,10 +178,12 @@ public class AddFileDialog : Gtk.Dialog {
     }
     private string ? valid_magnet (string ? uri) {
         string valid = null;
+
         if (uri != null && uri.has_prefix ("magnet") ) {
             valid = uri.down ();
             valid = valid.split (" ") [0];
         }
+
         return valid;
     }
 }

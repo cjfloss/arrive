@@ -55,8 +55,8 @@ public class MainWindow : Gtk.Window {
             if (e.changed_mask == Gdk.WindowState.FULLSCREEN) {
                 bool f = ( (e.new_window_state & Gdk.WindowState.FULLSCREEN) != 0);
                 Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = f;
-                colorize_stack_switcher ();
             }
+
             return false;
         });
 
@@ -73,29 +73,36 @@ public class MainWindow : Gtk.Window {
     //i think this two doesnt belong here
     private uint64 total_download_speed () {
         uint64 total_speed = 0;
+
         foreach (Model.IDownloadItem d_item in download_list_model.files) {
             total_speed += d_item.download_speed;
         }
+
         return total_speed;
     }
     private uint64 total_upload_speed () {
         uint64 total_upload = 0;
+
         foreach (Model.IDownloadItem d_item in download_list_model.files) {
             total_upload += d_item.upload_speed;
         }
+
         return total_upload;
     }
     private void determine_toolbutton_status () {
         bool active_all = true;
         bool paused_all = true;
+
         foreach (Model.IDownloadItem ditem in download_list_model.files) {
             if (ditem.status != "active") {
                 active_all = false;
             }
+
             if (ditem.status != "paused") {
                 paused_all = false;
             }
         }
+
         start_all.sensitive = !active_all;
         pause_all.sensitive = !paused_all;
     }
@@ -113,14 +120,17 @@ public class MainWindow : Gtk.Window {
             saved_state.window_width = width;
             saved_state.window_height = height;
         }
+
         saved_state.notebook_state = stack.get_visible_child_name ();
         saved_state.search_string = search_bar.text;
     }
     private void restore_window_state () {
         resize (saved_state.window_width, saved_state.window_height);
+
         if (saved_state.window_state == Model.WindowState.MAXIMIZED) {
             maximize ();
         }
+
         search_bar.text = saved_state.search_string;
     }
     public override bool delete_event (Gdk.EventAny event) {
@@ -130,6 +140,7 @@ public class MainWindow : Gtk.Window {
                 return true;
             }
         }
+
         save_window_state ();
         return false;
     }
@@ -200,12 +211,15 @@ public class MainWindow : Gtk.Window {
                 case Model.FinishedAction.NOTHING:
                     nothing_menu.set_active (true);
                     break;
+
                 case Model.FinishedAction.SUSPEND:
                     suspend_menu.set_active (true);
                     break;
+
                 case Model.FinishedAction.HIBERNATE:
                     hibernate_menu.set_active (true);
                     break;
+
                 case Model.FinishedAction.SHUTDOWN:
                     shutdown_menu.set_active (true);
                     break;
@@ -267,7 +281,6 @@ public class MainWindow : Gtk.Window {
         //grid.attach (stack_switcher, 0, 0, 1, 1);
         grid.attach (stack, 0, 1, 1, 1);
         grid.attach (action_bar, 0, 2, 1, 1);
-        colorize_stack_switcher ();
         header_bar.set_custom_title (stack_switcher);
         add (grid);
 
@@ -283,6 +296,7 @@ public class MainWindow : Gtk.Window {
         try {
             UPower upower = Bus.get_proxy_sync (BusType.SYSTEM,
                                                 "org.freedesktop.UPower", "/org/freedesktop/UPower");
+
             if (to_disk) {
                 //hibernate
                 if (upower.HibernateAllowed () ) {
@@ -302,6 +316,7 @@ public class MainWindow : Gtk.Window {
         try {
             GnomeSessionManager session_manager = Bus.get_proxy_sync (BusType.SESSION,
                                                   "org.gnome.SessionManager", "/org/gnome/SessionManager");
+
             if (session_manager.CanShutdown () ) {
                 session_manager.Shutdown ();
             }
@@ -315,21 +330,17 @@ public class MainWindow : Gtk.Window {
                 settings.finished_action = Model.FinishedAction.NOTHING;
                 suspend ();
                 break;
+
             case Model.FinishedAction.HIBERNATE:
                 settings.finished_action = Model.FinishedAction.NOTHING;
                 hibernate ();
                 break;
+
             case Model.FinishedAction.SHUTDOWN:
                 settings.finished_action = Model.FinishedAction.NOTHING;
                 shutdown ();
                 break;
         }
-    }
-    private void colorize_stack_switcher () {
-        // steal treeview background color for stack switcher
-        var dummy_treeview = new Gtk.TreeView ();
-        var bg_color = dummy_treeview.get_style_context ().get_background_color (Gtk.StateFlags.NORMAL);
-        grid.override_background_color (Gtk.StateFlags.NORMAL, bg_color);
     }
 }
 }

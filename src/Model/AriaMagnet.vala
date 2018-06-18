@@ -15,9 +15,11 @@ public class AriaMagnet : Object, IDownloadItem {
         update_by_ht (ht);
 
         bool pause = true;
+
         if (this.status == "active") {
             pause = false;
         }
+
         this.gid = Model.aria2.add_uri (uris, this.dir, 1, pause);
 
     }
@@ -71,10 +73,12 @@ public class AriaMagnet : Object, IDownloadItem {
         info_hash = get_string_from_ht (ht, "infoHash");
 
         val = ht.get ("files");
+
         if (val.holds (typeof (ValueArray) ) ) {
             unowned ValueArray va;
             va = (ValueArray) val; //va contains array
             path_files = new List<string> ();
+
             foreach (Value vhtable in va) {
                 //extract hashtable from v
                 HashTable < string, Value ? > htable = (HashTable < string, Value ? >) vhtable;
@@ -87,6 +91,7 @@ public class AriaMagnet : Object, IDownloadItem {
                     filename = parse_filename (uris);
                 }
             }/*
+
                 if(va.n_values > 0) {
                     //extract hashtable from v
                     HashTable<string, Value ?> htable=(HashTable<string, Value ?>)vhtable;
@@ -196,6 +201,7 @@ public class AriaMagnet : Object, IDownloadItem {
             var fn = array[array.length - 1];
             return fn;
         }
+
         return "";
     }
 }

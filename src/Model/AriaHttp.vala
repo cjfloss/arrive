@@ -27,9 +27,11 @@ public class AriaHttp : Object, IDownloadItem {
         update_by_ht (ht);
 
         bool pause = true;
+
         if (this.status == "active") {
             pause = false;
         }
+
         this.gid = Model.aria2.add_uri (this.uris, this.dir, this.connections, pause);
     }
     public void start () {
@@ -63,6 +65,7 @@ public class AriaHttp : Object, IDownloadItem {
         upload_speed = int.parse (get_string_from_ht (ht, "uploadSpeed") );
         dir = get_string_from_ht (ht, "dir");
         connections = int.parse (get_string_from_ht (ht, "connections") );
+
         //the update_by_ht should not update completed_length and total_length, if download
         //is not active. aria will return 0
         if (status == null || status == "active") {
@@ -72,9 +75,11 @@ public class AriaHttp : Object, IDownloadItem {
 
         Value val = Value (typeof (string) );
         val = ht.get ("files");
+
         if (val.holds (typeof (ValueArray) ) ) {
             unowned ValueArray va;
             va = (ValueArray) val; //va contains array
+
             if (va.n_values > 0) {
                 Value vhtable = va.get_nth (0); //we choose the first array member
                 //extract hashtable from v
@@ -84,11 +89,13 @@ public class AriaHttp : Object, IDownloadItem {
                 Value vuris = htable.get ("uris");
                 ValueArray _uris = new ValueArray (0);
                 var duris = ( (ValueArray) vuris).copy ();
+
                 foreach (Value vuri in duris) {
                     var hturi = (HashTable < string, Value ? >) vuri;
                     _uris.append (get_string_from_ht (hturi, "uri") );
                     this.uris = get_string_from_ht (hturi, "uri");
                 }
+
                 if (path != "") {
                     filename = path;
                 } else {
@@ -165,6 +172,7 @@ public class AriaHttp : Object, IDownloadItem {
             var fn = array[array.length - 1];
             return fn;
         }
+
         return "";
     }
     public string to_string () {
