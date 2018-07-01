@@ -243,7 +243,7 @@ public class FinishedList : Gtk.Stack {
 
         menu.attach_to_widget (tree_view, null);
         menu.show_all ();
-        menu.popup_at_pointer (event);
+        menu.popup (null, null, null, event.button, event.time);
     }
     //search for item with date string
     private Gtk.TreeIter ? get_iter_with_string (int column, string text) {

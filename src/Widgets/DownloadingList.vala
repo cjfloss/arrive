@@ -155,7 +155,7 @@ public class DownloadingList : Gtk.Stack {
 
         menu.attach_to_widget (tree_view, null);
         menu.show_all ();
-        menu.popup_at_pointer (event);
+        menu.popup (null, null, null, event.button, event.time);
     }
     private bool allow_start (List<Arrive.Model.IDownloadItem> selected_files) {
         bool allow = false;
