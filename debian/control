@@ -1,0 +1,20 @@
+Source: com.github.cjfloss.arrive
+Section: x11
+Priority: extra
+Maintainer: Cleiton Floss <cleitonfloss@gmail.com>
+Build-Depends: meson,
+               debhelper (>= 8.0.0),
+               valac (>= 0.26.1),
+               libgranite-dev (>= 0.3.0),
+               libgtk-3-dev (>= 3.22.0),
+               libgee-0.8-dev,
+               libnotify-dev,
+               libsoup2.4-dev,
+               libglib2.0-dev
+
+Standards-Version: 3.9.3
+Package: com.github.cjfloss.arrive
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Pre-Depends: dpkg (>= 1.15.6)
+Description: Simple and practical download manager
