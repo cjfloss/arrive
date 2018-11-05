@@ -11,7 +11,7 @@ public class LauncherEntry : Object {
 
         var refresh_timer = new TimeoutSource (REFRESH_TIME);
         refresh_timer.set_callback (() => {
-            set_progress (calculate_progress () );
+            set_progress (calculate_progress ());
             return true;
         });
         refresh_timer.attach (null);

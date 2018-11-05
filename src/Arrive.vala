@@ -81,7 +81,7 @@ public class App : Gtk.Application {
 
         var context = new OptionContext ("");
         context.add_main_entries (entries, "arrive");
-        context.add_group (Gtk.get_option_group (true) );
+        context.add_group (Gtk.get_option_group (true));
 
         try {
             context.parse (ref args);

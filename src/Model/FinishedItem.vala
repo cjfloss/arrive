@@ -37,7 +37,7 @@ public class FinishedItem : Object {
         _path = dir + "/" + filename;
 
         val = ht.get ("totalLength");
-        total_length = uint64.parse (val.get_string () );
+        total_length = uint64.parse (val.get_string ());
 
         val = ht.get ("dateFinished");
         var finished_string = val.get_string ();
@@ -49,9 +49,9 @@ public class FinishedItem : Object {
         //FIXME:inserting some value causing corruption
         finished_item.insert ("filename", filename);
         finished_item.insert ("dir", dir);
-        finished_item.insert ("totalLength", total_length.to_string () );
+        finished_item.insert ("totalLength", total_length.to_string ());
         //TODO:finished date should be saved
-        finished_item.insert ("dateFinished", date_finished.to_string (Soup.DateFormat.ISO8601_COMPACT) );
+        finished_item.insert ("dateFinished", date_finished.to_string (Soup.DateFormat.ISO8601_COMPACT));
         return finished_item;
     }
     public void open_file () {
@@ -62,7 +62,7 @@ public class FinishedItem : Object {
         Utils.open_file (dir);
     }
     public void move_to (string destination) {
-        if (copy_to (destination) ) {
+        if (copy_to (destination)) {
             remove_file ();
             dir = destination;
         }
@@ -72,7 +72,7 @@ public class FinishedItem : Object {
             File file = File.new_for_path (path);
             File dest = File.new_for_path (destination + "/" + filename);
 
-            if (file != null && dest != null && !dest.query_exists () ) {
+            if (file != null && dest != null && !dest.query_exists ()) {
                 file.copy_async.begin (dest, FileCopyFlags.NONE);
                 return true;
             } else {

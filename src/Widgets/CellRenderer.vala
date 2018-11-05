@@ -29,9 +29,9 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
             }
 
             download_progress_renderer.text = "%s of %s".printf (format_size (_file.completed_length),
-                    format_size (_file.total_length) );
+                    format_size (_file.total_length));
             //if (_file is Model.AriaHttp)
-            status_renderer.text = _ ("status: %s connections: %s").printf (_file.status, _file.gid);
+            status_renderer.text = _("status: %s connections: %s").printf (_file.status, _file.gid);
             //if (_file is Model.AriaMagnet)
             //    status_renderer.text = _("status:%s file:%s").printf (_file.status,(_file as Model.AriaMagnet).path_files.length ());
 
@@ -232,11 +232,11 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
     }
     private string get_remaining_time () {
         if (_file.download_speed == 0) {
-            return _ ("unknown");
+            return _("unknown");
         }
 
         if (_file.total_length < _file.completed_length) {
-            return _ ("few seconds");
+            return _("few seconds");
         }
 
         uint64 seconds = (_file.total_length - _file.completed_length) / _file.download_speed;
@@ -247,7 +247,7 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
         div = seconds / 604800;
 
         if (div >= 1) {
-            remaining += _ ("%lldw").printf (div);
+            remaining += _("%lldw").printf (div);
             seconds = seconds % 604800;
         }
 
@@ -255,7 +255,7 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
         div = seconds / 86400;
 
         if (div >= 1) {
-            remaining += _ ("%lldd").printf (div);
+            remaining += _("%lldd").printf (div);
             seconds = seconds % 86400;
         }
 
@@ -263,7 +263,7 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
         div = seconds / 3600;
 
         if (div >= 1) {
-            remaining += _ ("%lldh").printf (div);
+            remaining += _("%lldh").printf (div);
             seconds = seconds % 3600;
         }
 
@@ -271,12 +271,12 @@ public class DownloadCellRenderer : Gtk.CellRenderer {
         div = seconds / 60;
 
         if (div >= 1) {
-            remaining += _ ("%lldm").printf (div);
+            remaining += _("%lldm").printf (div);
             seconds = seconds % 60;
         }
 
         //adding seconds left
-        remaining += _ ("%llds").printf (seconds);
+        remaining += _("%llds").printf (seconds);
         return remaining;
 
     }

@@ -45,14 +45,14 @@ public class DownloadItem : Object {
         stdout.printf (data);
 
         try {
-            Value v = Value (typeof (string) );
+            Value v = Value (typeof (string));
 
-            if (XMLRPC.parse_method_response (data, -1, out v) ) {
+            if (XMLRPC.parse_method_response (data, -1, out v)) {
                 string _gid;
 
-                if (v.holds (typeof (string) ) ) {
+                if (v.holds (typeof (string))) {
                     _gid = v.get_string ();
-                    debug ("added gid = %s \n".printf (_gid) );
+                    debug ("added gid = %s \n".printf (_gid));
                     this.gid = _gid;
                 }
             } else {

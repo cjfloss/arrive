@@ -15,11 +15,11 @@ public class Utils {
         try {
             File save_file = File.new_for_path (path);
 
-            if (!save_file.get_parent ().query_exists () ) {
+            if (!save_file.get_parent ().query_exists ()) {
                 save_file.get_parent ().make_directory_with_parents ();
             }
 
-            if (save_file.query_exists () ) {
+            if (save_file.query_exists ()) {
                 save_file.delete ();
             }
 
@@ -41,9 +41,9 @@ public class Utils {
         string data = "";
         File save_file = File.new_for_path (path);
 
-        if (save_file.query_exists () ) { //check file exist
+        if (save_file.query_exists ()) { //check file exist
             try {
-                var data_stream = new DataInputStream (save_file.read () );
+                var data_stream = new DataInputStream (save_file.read ());
                 data = data_stream.read_upto ("", "".length, null);
             } catch (Error e) {
                 warning ("cant load string: %s", e.message);
@@ -72,7 +72,7 @@ public class Utils {
     public static bool trash_file (string path) {
         File file = File.new_for_path (path);
 
-        if (file.query_exists () ) {
+        if (file.query_exists ()) {
             try {
                 return file.trash ();
             } catch (Error e) {

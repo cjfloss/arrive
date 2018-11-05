@@ -35,7 +35,7 @@ public class Aria2 : Object {
             return true;
         });
         refresh_timer.attach (null);
-        debug ("using aria2 version = %s", get_version() );
+        debug ("using aria2 version = %s", get_version());
     }
     ~Aria2 () {
         shutdown ();
@@ -51,8 +51,8 @@ public class Aria2 : Object {
             split = 1;
         }
 
-        option.insert ("split", split.to_string () );
-        option.insert ("pause", pause.to_string () );
+        option.insert ("split", split.to_string ());
+        option.insert ("pause", pause.to_string ());
 
         Soup.Message msg = Soup.XMLRPC.request_new (aria_uri,
                            "aria2.addUri",
@@ -64,7 +64,7 @@ public class Aria2 : Object {
         try {
             Value v;
 
-            if (Soup.XMLRPC.parse_method_response (data, -1, out v) ) {
+            if (Soup.XMLRPC.parse_method_response (data, -1, out v)) {
                 return v.get_string (); // return gid
             } else {
                 warning ("error while add_uri2");
@@ -93,7 +93,7 @@ public class Aria2 : Object {
         try {
             Value v;
 
-            if (Soup.XMLRPC.parse_method_response (data, -1, out v) ) {
+            if (Soup.XMLRPC.parse_method_response (data, -1, out v)) {
                 return v.get_string();//return gid
             } else {
                 warning ("error while add_torrent2");
@@ -108,9 +108,9 @@ public class Aria2 : Object {
         string data = "";
         File save_file = File.new_for_path (torrent_path);
 
-        if ( save_file.query_exists () ) { // check file exist
+        if ( save_file.query_exists ()) { // check file exist
             try {
-                var data_stream = new DataInputStream (save_file.read () );
+                var data_stream = new DataInputStream (save_file.read ());
                 data = data_stream.read_upto ("", "".length, null);
                 data = Base64.encode (data.data);
             } catch (Error e) {
@@ -253,12 +253,12 @@ public class Aria2 : Object {
         try {
             Value v;
 
-            if (Soup.XMLRPC.parse_method_response (data, -1, out v) && v.holds (typeof (ValueArray) ) ) {
+            if (Soup.XMLRPC.parse_method_response (data, -1, out v) && v.holds (typeof (ValueArray))) {
                 unowned ValueArray va;
                 va = (ValueArray) v;
 
                 foreach (Value viter in va) {
-                    if (viter.holds (typeof (HashTable) ) ) { // viter will hold download list xml
+                    if (viter.holds (typeof (HashTable))) { // viter will hold download list xml
                         HashTable < string, Value ? > ht;
                         Value val;
 
@@ -320,7 +320,7 @@ public class Aria2 : Object {
                 foreach (Model.IDownloadItem dw_item in download_list.files) {
                     if (dw_item is AriaMagnet
                             && (dw_item as AriaMagnet).info_hash == (finished_item as AriaMagnet).info_hash) {
-                        (dw_item as AriaMagnet).set_uri ( (finished_item as AriaMagnet).uris);
+                        (dw_item as AriaMagnet).set_uri ((finished_item as AriaMagnet).uris);
                         debug ("uris :" + (finished_item as AriaMagnet).uris);
                         (dw_item as AriaMagnet).set_name (finished_item.filename);
                         (dw_item as Model.AriaMagnet).change_gid (finished_item.gid);
@@ -344,26 +344,26 @@ public class Aria2 : Object {
         try {
             Value v;
 
-            if (Soup.XMLRPC.parse_method_response (data, -1, out v) ) {
+            if (Soup.XMLRPC.parse_method_response (data, -1, out v)) {
                 HashTable < string, Value ? > ht;
                 Value val;
 
                 ht = (HashTable < string, Value ? >) v;
 
                 val = ht.get ("numStopped");
-                num_stopped = int.parse (val.get_string () );
+                num_stopped = int.parse (val.get_string ());
 
                 val = ht.get ("numWaiting");
-                num_waiting = int.parse (val.get_string () );
+                num_waiting = int.parse (val.get_string ());
 
                 val = ht.get ("numActive");
-                num_active = int.parse (val.get_string () );
+                num_active = int.parse (val.get_string ());
 
                 val = ht.get ("downloadSpeed");
-                download_speed = int.parse (val.get_string () );
+                download_speed = int.parse (val.get_string ());
 
                 val = ht.get ("uploadSpeed");
-                upload_speed = int.parse (val.get_string () );
+                upload_speed = int.parse (val.get_string ());
             }
         } catch (Error e) {
             warning ("Error while processing tellStatus response");
@@ -377,7 +377,7 @@ public class Aria2 : Object {
         try {
             Value v;
 
-            if (Soup.XMLRPC.parse_method_response (data, -1, out v) ) {
+            if (Soup.XMLRPC.parse_method_response (data, -1, out v)) {
                 HashTable < string, Value ? > ht;
                 Value val;
 

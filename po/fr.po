@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.cjfloss.arrive\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-13 07:07-0400\n"
+"POT-Creation-Date: 2018-11-05 02:51-0300\n"
 "PO-Revision-Date: 2018-06-13 07:07-0400\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,87 +17,87 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: src/Widgets/AddFileDialog.vala:13
+#: src/Widgets/AddFileDialog.vala:16
 msgid "http/ftp"
 msgstr ""
 
-#: src/Widgets/AddFileDialog.vala:14
+#: src/Widgets/AddFileDialog.vala:17
 msgid "magnet"
 msgstr ""
 
-#: src/Widgets/AddFileDialog.vala:15
+#: src/Widgets/AddFileDialog.vala:18
 msgid "torrent"
 msgstr ""
 
-#: src/Widgets/AddFileDialog.vala:41
+#: src/Widgets/AddFileDialog.vala:46
 msgid "Uri :"
 msgstr ""
 
-#: src/Widgets/AddFileDialog.vala:53 src/Widgets/AddFileDialog.vala:101
+#: src/Widgets/AddFileDialog.vala:61 src/Widgets/AddFileDialog.vala:113
 msgid "Save to :"
 msgstr ""
 
-#: src/Widgets/AddFileDialog.vala:54 src/Widgets/AddFileDialog.vala:102
+#: src/Widgets/AddFileDialog.vala:62 src/Widgets/AddFileDialog.vala:114
 msgid "Save to"
 msgstr ""
 
-#: src/Widgets/AddFileDialog.vala:59
+#: src/Widgets/AddFileDialog.vala:67
 msgid "Segment :"
 msgstr ""
 
-#: src/Widgets/AddFileDialog.vala:64 src/Widgets/AddFileDialog.vala:108
-#: src/Widgets/AddFileDialog.vala:139
+#: src/Widgets/AddFileDialog.vala:72 src/Widgets/AddFileDialog.vala:120
+#: src/Widgets/AddFileDialog.vala:152
 msgid "Queue and start"
 msgstr ""
 
-#: src/Widgets/AddFileDialog.vala:88
+#: src/Widgets/AddFileDialog.vala:97
 msgid "Magnet Link :"
 msgstr ""
 
-#: src/Widgets/AddFileDialog.vala:130
+#: src/Widgets/AddFileDialog.vala:143
 msgid "Torrent file :"
 msgstr ""
 
-#: src/Widgets/AddFileDialog.vala:131
+#: src/Widgets/AddFileDialog.vala:144
 msgid "Select .torrent file"
 msgstr ""
 
 #. if (_file is Model.AriaHttp)
-#: src/Widgets/CellRenderer.vala:32
+#: src/Widgets/CellRenderer.vala:34
 #, c-format
-msgid "status:%s connections:%s"
+msgid "status: %s connections: %s"
 msgstr ""
 
-#: src/Widgets/CellRenderer.vala:227
+#: src/Widgets/CellRenderer.vala:235
 msgid "unknown"
 msgstr ""
 
-#: src/Widgets/CellRenderer.vala:229
+#: src/Widgets/CellRenderer.vala:239
 msgid "few seconds"
 msgstr ""
 
-#: src/Widgets/CellRenderer.vala:237
+#: src/Widgets/CellRenderer.vala:250
 #, c-format
 msgid "%lldw"
 msgstr ""
 
-#: src/Widgets/CellRenderer.vala:243
+#: src/Widgets/CellRenderer.vala:258
 #, c-format
 msgid "%lldd"
 msgstr ""
 
-#: src/Widgets/CellRenderer.vala:249
+#: src/Widgets/CellRenderer.vala:266
 #, c-format
 msgid "%lldh"
 msgstr ""
 
-#: src/Widgets/CellRenderer.vala:255
+#: src/Widgets/CellRenderer.vala:274
 #, c-format
 msgid "%lldm"
 msgstr ""
 
 #. adding seconds left
-#: src/Widgets/CellRenderer.vala:259
+#: src/Widgets/CellRenderer.vala:279
 #, c-format
 msgid "%llds"
 msgstr ""
@@ -110,37 +110,37 @@ msgstr ""
 msgid "But you can add it"
 msgstr ""
 
-#: src/Widgets/DownloadingList.vala:39 src/Widgets/FinishedList.vala:63
+#: src/Widgets/DownloadingList.vala:39 src/Widgets/FinishedList.vala:67
 msgid "Search Not Found"
 msgstr ""
 
-#: src/Widgets/DownloadingList.vala:82
+#: src/Widgets/DownloadingList.vala:85
 msgid "Continue"
 msgstr ""
 
-#: src/Widgets/DownloadingList.vala:83
+#: src/Widgets/DownloadingList.vala:86
 msgid "Pause"
 msgstr ""
 
-#: src/Widgets/DownloadingList.vala:84
+#: src/Widgets/DownloadingList.vala:87
 msgid "Remove"
 msgstr ""
 
-#: src/Widgets/DownloadingList.vala:85 src/Widgets/FinishedList.vala:145
+#: src/Widgets/DownloadingList.vala:88 src/Widgets/FinishedList.vala:165
 msgid "Properties"
 msgstr ""
 
-#: src/Widgets/DownloadingList.vala:102
+#: src/Widgets/DownloadingList.vala:115
 #, c-format
 msgid "Are You sure you want to delete %s ?"
 msgstr ""
 
-#: src/Widgets/DownloadingList.vala:105
+#: src/Widgets/DownloadingList.vala:118
 #, c-format
 msgid "Are You sure you want to delete %d downloads?"
 msgstr ""
 
-#: src/Widgets/DownloadingList.vala:112
+#: src/Widgets/DownloadingList.vala:126
 msgid "Delete Download"
 msgstr ""
 
@@ -148,95 +148,95 @@ msgstr ""
 msgid "filename"
 msgstr ""
 
-#: src/Widgets/FinishedList.vala:42
+#: src/Widgets/FinishedList.vala:44
 msgid "size"
 msgstr ""
 
-#: src/Widgets/FinishedList.vala:58
+#: src/Widgets/FinishedList.vala:62
 msgid ""
 "finished download\n"
 "will be listed here"
 msgstr ""
 
-#: src/Widgets/FinishedList.vala:139
+#: src/Widgets/FinishedList.vala:159
 msgid "Open File"
 msgstr ""
 
-#: src/Widgets/FinishedList.vala:140
+#: src/Widgets/FinishedList.vala:160
 msgid "Open Folder"
 msgstr ""
 
-#: src/Widgets/FinishedList.vala:141
+#: src/Widgets/FinishedList.vala:161
 msgid "Move to..."
 msgstr ""
 
-#: src/Widgets/FinishedList.vala:142
+#: src/Widgets/FinishedList.vala:162
 msgid "Copy to..."
 msgstr ""
 
-#: src/Widgets/FinishedList.vala:143
+#: src/Widgets/FinishedList.vala:163
 msgid "Forget"
 msgstr ""
 
-#: src/Widgets/FinishedList.vala:144
+#: src/Widgets/FinishedList.vala:164
 msgid "Move to Trash"
 msgstr ""
 
-#: src/Widgets/FinishedList.vala:157 src/Widgets/FinishedList.vala:174
+#: src/Widgets/FinishedList.vala:179 src/Widgets/FinishedList.vala:200
 msgid "Choose Destination Folder"
 msgstr ""
 
-#: src/Widgets/FinishedList.vala:160 src/Widgets/FinishedList.vala:177
+#: src/Widgets/FinishedList.vala:182 src/Widgets/FinishedList.vala:203
 msgid "Cancel"
 msgstr ""
 
-#: src/Widgets/FinishedList.vala:161 src/Widgets/FinishedList.vala:178
+#: src/Widgets/FinishedList.vala:183 src/Widgets/FinishedList.vala:204
 msgid "Select"
 msgstr ""
 
-#: src/Widgets/MainWindow.vala:139
+#: src/Widgets/MainWindow.vala:155
 msgid "Add download"
 msgstr ""
 
 #. toolbar right item
-#: src/Widgets/MainWindow.vala:163
+#: src/Widgets/MainWindow.vala:181
 msgid "Search"
 msgstr ""
 
-#: src/Widgets/MainWindow.vala:171
+#: src/Widgets/MainWindow.vala:189
 msgid "Nothing"
 msgstr ""
 
-#: src/Widgets/MainWindow.vala:173
+#: src/Widgets/MainWindow.vala:191
 msgid "Suspend"
 msgstr ""
 
-#: src/Widgets/MainWindow.vala:175
+#: src/Widgets/MainWindow.vala:193
 msgid "Hibernate"
 msgstr ""
 
-#: src/Widgets/MainWindow.vala:177
+#: src/Widgets/MainWindow.vala:195
 msgid "Shutdown"
 msgstr ""
 
-#: src/Widgets/MainWindow.vala:219
+#: src/Widgets/MainWindow.vala:240
 msgid "When download finished..."
 msgstr ""
 
 #. Stack
-#: src/Widgets/MainWindow.vala:239
+#: src/Widgets/MainWindow.vala:260
 msgid "Downloading"
 msgstr ""
 
-#: src/Widgets/MainWindow.vala:240
+#: src/Widgets/MainWindow.vala:261
 msgid "Finished"
 msgstr ""
 
 #. action bar
-#: src/Widgets/MainWindow.vala:250
+#: src/Widgets/MainWindow.vala:273
 msgid "download idle"
 msgstr ""
 
-#: src/Model/AriaHttp.vala:97 src/Model/AriaMagnet.vala:106
+#: src/Model/AriaHttp.vala:106 src/Model/AriaMagnet.vala:114
 msgid "cant get filename"
 msgstr ""

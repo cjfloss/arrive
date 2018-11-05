@@ -13,7 +13,7 @@ public class DownloadingList : Gtk.Stack {
         this.download_list = download_list;
         filter_string = "";
 
-        list_store = new Gtk.ListStore (1, typeof (Arrive.Model.IDownloadItem) );
+        list_store = new Gtk.ListStore (1, typeof (Arrive.Model.IDownloadItem));
         tree_filter = new Gtk.TreeModelFilter (list_store, null);
         tree_filter.set_visible_func (visible_func);
         tree_view = new Gtk.TreeView.with_model (tree_filter);
@@ -23,7 +23,7 @@ public class DownloadingList : Gtk.Stack {
         scrolled.add (tree_view);
         add_named (scrolled, "scrolled");
 
-        var welcome = new WelcomeWidget (_ ("No Download Yet"), _ ("But you can add it") );
+        var welcome = new WelcomeWidget (_("No Download Yet"), _("But you can add it"));
         /* welcome.append ("list-add", _("Add Download"), _("Any http, ftp, magnet link or torrent file")); */
         /* welcome.activated.connect ((index) => { */
         /*     switch (index) { */
@@ -36,9 +36,9 @@ public class DownloadingList : Gtk.Stack {
         /* }); */
         add_named (welcome, "welcome");
 
-        add_named (new WelcomeWidget ("", _ ("Search Not Found") ), "not found");
+        add_named (new WelcomeWidget ("", _("Search Not Found")), "not found");
 
-        tree_view.button_release_event.connect ( (event) => {
+        tree_view.button_release_event.connect ((event) => {
             if (event.button == 3) {
                 show_popup_menu (event);
             }
@@ -70,7 +70,7 @@ public class DownloadingList : Gtk.Stack {
     }
     private void populate_list_store () {
         list_store.clear ();
-        debug ("list lenght %u", download_list.files.length () );
+        debug ("list lenght %u", download_list.files.length ());
 
         foreach (Arrive.Model.IDownloadItem file in download_list.files) {
             Gtk.TreeIter iter;
@@ -82,10 +82,10 @@ public class DownloadingList : Gtk.Stack {
         List<Arrive.Model.IDownloadItem> selected_files;
         selected_files = get_selected_files ();
         var menu = new Gtk.Menu ();
-        var start = new Gtk.MenuItem.with_label (_ ("Continue") );
-        var pause = new Gtk.MenuItem.with_label (_ ("Pause") );
-        var remove = new Gtk.MenuItem.with_label (_ ("Remove") );
-        var properties = new Gtk.MenuItem.with_label (_ ("Properties") );
+        var start = new Gtk.MenuItem.with_label (_("Continue"));
+        var pause = new Gtk.MenuItem.with_label (_("Pause"));
+        var remove = new Gtk.MenuItem.with_label (_("Remove"));
+        var properties = new Gtk.MenuItem.with_label (_("Properties"));
         //TODO:implement right click event
         start.activate.connect (() => {
             foreach (Arrive.Model.IDownloadItem d_item in selected_files) {
@@ -112,10 +112,10 @@ public class DownloadingList : Gtk.Stack {
 
             if (selected_files.length () == 1) {
                 text =
-                    _ ("Are You sure you want to delete %s ?").printf (selected_files.nth_data (0).filename);
+                    _("Are You sure you want to delete %s ?").printf (selected_files.nth_data (0).filename);
             } else {
                 text =
-                    _ ("Are You sure you want to delete %d downloads?").printf ( (int) selected_files.length () );
+                    _("Are You sure you want to delete %d downloads?").printf ((int) selected_files.length ());
             }
 
             Gtk.MessageDialog msg = new Gtk.MessageDialog (null,
@@ -123,8 +123,8 @@ public class DownloadingList : Gtk.Stack {
                     Gtk.MessageType.WARNING,
                     Gtk.ButtonsType.YES_NO,
                     text);
-            msg.set_title (_ ("Delete Download") );
-            msg.response.connect ( (response_id) => {
+            msg.set_title (_("Delete Download"));
+            msg.response.connect ((response_id) => {
                 if (response_id == Gtk.ResponseType.YES) {
                     foreach (Arrive.Model.IDownloadItem d_item in selected_files) {
                         download_list.remove_file (d_item);
@@ -137,17 +137,17 @@ public class DownloadingList : Gtk.Stack {
         });
         //~         properties.connect();
 
-        if (allow_start (selected_files) ) {
+        if (allow_start (selected_files)) {
             menu.add (start);
         }
 
-        if (allow_pause (selected_files) ) {
+        if (allow_pause (selected_files)) {
             menu.add (pause);
         }
 
-        menu.add (new Gtk.SeparatorMenuItem () );
+        menu.add (new Gtk.SeparatorMenuItem ());
 
-        if (allow_remove (selected_files) ) {
+        if (allow_remove (selected_files)) {
             menu.add (remove);
         }
 
@@ -196,8 +196,8 @@ public class DownloadingList : Gtk.Stack {
             model.get_iter (out selection_iter, selection_item);
             model.get_value (selection_iter, 0, out d_item);
 
-            if (d_item.holds (typeof (Model.IDownloadItem) ) ) {
-                list.append ( (Model.IDownloadItem) d_item);
+            if (d_item.holds (typeof (Model.IDownloadItem))) {
+                list.append ((Model.IDownloadItem) d_item);
             } else {
                 debug ("value arent download item");
             }
@@ -211,12 +211,12 @@ public class DownloadingList : Gtk.Stack {
             return true;
         }
 
-        if (t_model.iter_has_child (t_iter) ) { //check if its date iter
+        if (t_model.iter_has_child (t_iter)) { //check if its date iter
             for (int i = 0; i < t_model.iter_n_children (t_iter); i++) {
                 Gtk.TreeIter child_iter;
                 t_model.iter_nth_child (out child_iter, t_iter, i);
 
-                if (contains_string (t_model, child_iter) ) {
+                if (contains_string (t_model, child_iter)) {
                     return true;    //one of iter child contains search string
                 }
             }
@@ -246,7 +246,7 @@ public class DownloadingList : Gtk.Stack {
         int length = 0;
         Gtk.TreeIter iter;
 
-        for (bool next = tree_filter.get_iter_first (out iter); next; next = tree_filter.iter_next (ref iter) ) {
+        for (bool next = tree_filter.get_iter_first (out iter); next; next = tree_filter.iter_next (ref iter)) {
             length++;
         }
 
@@ -257,7 +257,7 @@ public class DownloadingList : Gtk.Stack {
         t_model.get_value (t_iter, 0, out item);
         Model.IDownloadItem d_item = (Model.IDownloadItem) item;
 
-        if (d_item.filename.down ().contains (filter_string.down () ) ) {
+        if (d_item.filename.down ().contains (filter_string.down ())) {
             return true;
         }
 
